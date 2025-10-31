@@ -1,0 +1,5 @@
+QuestID,Title,Description,Type,ObjectiveCount,ObjectiveCount,RewardAmount
+Q_KillRedDragon,Slay the Red Dragon,The Red Dragon devastated the village. Kill the Red Dragon.,Kill,1,RedDragon,100
+Q_CollectBlueDragonScales,Collect Blue Dragon Scales,Gather 3 Blue Dragon Scales from the Lake.,Collect,3,BlueDragon,300
+Q_KillGreenDragon,Slay the Green Dragon,The Green Dragon devastated the village. Kill the Green Dragon.,Kill,1,GreenDragon,500
+Q_CollectGoldDragonScales,Collect Blue Gold Scales,Gather 5 Gold Dragon Scales from the Forest.,Collect,5,GoldDragon,1000
