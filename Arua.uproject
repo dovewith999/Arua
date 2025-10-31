@@ -29,6 +29,10 @@
 		{
 			"Name": "SkeletalMerging",
 			"Enabled": true
+		},
+		{
+			"Name": "CommonUI",
+			"Enabled": true
 		}
 	]
 }
