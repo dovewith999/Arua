@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ViewModelBase.h"
 #include "ViewBase.generated.h"
 
 class UViewModelBase;

@@ -5,7 +5,7 @@
 #include "UObject/Object.h"
 #include "ViewModelBase.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPropertyChanged, FName);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnViewModelPropertyChanged, FName);
 
 /**
  * WPF의 INotifyPropertyChanged 패턴을 구현한 ViewModel 베이스 클래스
@@ -20,7 +20,7 @@ class ARUA_API UViewModelBase : public UObject
 
 public:
     // Property Changed 델리게이트 (PropertyName을 전달)
-    FOnPropertyChanged OnPropertyChanged;
+    FOnViewModelPropertyChanged OnPropertyChanged;
 
 protected:
     //Property가 변경되었음을 알림
