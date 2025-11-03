@@ -13,5 +13,8 @@ UCLASS()
 class ARUA_API ACommonUIPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void OnPossess(APawn* aPawn) override;
 	
 };

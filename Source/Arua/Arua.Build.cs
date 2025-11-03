@@ -28,6 +28,8 @@ public class Arua : ModuleRules
             "MovieScene",
             "MovieSceneTracks",
             "LevelSequence",
+            "CommonUI",
+            "CommonInput"
         });
 
 

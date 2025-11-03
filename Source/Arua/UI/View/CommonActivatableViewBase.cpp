@@ -1,13 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "UI/View/ViewBase.h"
+#include "CommonActivatableViewBase.h"
 #include "UI/ViewModel/ViewModelBase.h"
-#include "CommonViewBase.h"
 
-void UViewBase::SetViewModel(UViewModelBase* InViewModel)
+void UCommonActivatableViewBase::SetViewModel(UViewModelBase* InViewModel)
 {
-    // 기존 ViewModel 언바인딩
     if (ViewModel)
     {
         UnbindViewModel();
@@ -18,39 +15,25 @@ void UViewBase::SetViewModel(UViewModelBase* InViewModel)
         }
     }
 
-    // 새 ViewModel 설정
     ViewModel = InViewModel;
 
-    // 새 ViewModel 바인딩
-    if (ViewModel)
+    if (ViewModel && bIsActivated)
     {
         PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
-            this, &UViewBase::HandlePropertyChanged);
+            this, &UCommonActivatableViewBase::HandlePropertyChanged);
 
         BindViewModel();
-
-        // 초기 데이터 로드
         OnViewModelPropertyChanged(NAME_None);
     }
 }
-void UViewBase::NativeConstruct()
+
+void UCommonActivatableViewBase::NativeConstruct()
 {
     Super::NativeConstruct();
-
-    // ViewModel이 이미 설정되어 있다면 바인딩
-    if (ViewModel)
-    {
-        PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
-            this, &UViewBase::HandlePropertyChanged);
-
-        BindViewModel();
-        OnViewModelPropertyChanged(NAME_None);
-    }
 }
 
-void UViewBase::NativeDestruct()
+void UCommonActivatableViewBase::NativeDestruct()
 {
-    // ViewModel 언바인딩
     if (ViewModel && PropertyChangedHandle.IsValid())
     {
         UnbindViewModel();
@@ -61,7 +44,39 @@ void UViewBase::NativeDestruct()
     Super::NativeDestruct();
 }
 
-void UViewBase::HandlePropertyChanged(FName PropertyName)
+void UCommonActivatableViewBase::NativeOnActivated()
+{
+    Super::NativeOnActivated();
+
+    bIsActivated = true;
+
+    // Activate 시 ViewModel 바인딩
+    if (ViewModel)
+    {
+        PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
+            this, &UCommonActivatableViewBase::HandlePropertyChanged);
+
+        BindViewModel();
+        OnViewModelPropertyChanged(NAME_None);
+    }
+}
+
+void UCommonActivatableViewBase::NativeOnDeactivated()
+{
+    // Deactivate 시 ViewModel 언바인딩
+    if (ViewModel && PropertyChangedHandle.IsValid())
+    {
+        UnbindViewModel();
+        ViewModel->OnPropertyChanged.Remove(PropertyChangedHandle);
+        PropertyChangedHandle.Reset();
+    }
+
+    bIsActivated = false;
+
+    Super::NativeOnDeactivated();
+}
+
+void UCommonActivatableViewBase::HandlePropertyChanged(FName PropertyName)
 {
     OnViewModelPropertyChanged(PropertyName);
 }
