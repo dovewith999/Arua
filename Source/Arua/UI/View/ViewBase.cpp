@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/View/ViewBase.h"
@@ -7,7 +7,7 @@
 
 void UViewBase::SetViewModel(UViewModelBase* InViewModel)
 {
-    // ±âÁ¸ ViewModel ¾ğ¹ÙÀÎµù
+    // ê¸°ì¡´ ViewModel ì–¸ë°”ì¸ë”©
     if (ViewModel)
     {
         UnbindViewModel();
@@ -18,10 +18,10 @@ void UViewBase::SetViewModel(UViewModelBase* InViewModel)
         }
     }
 
-    // »õ ViewModel ¼³Á¤
+    // ìƒˆ ViewModel ì„¤ì •
     ViewModel = InViewModel;
 
-    // »õ ViewModel ¹ÙÀÎµù
+    // ìƒˆ ViewModel ë°”ì¸ë”©
     if (ViewModel)
     {
         PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
@@ -29,7 +29,7 @@ void UViewBase::SetViewModel(UViewModelBase* InViewModel)
 
         BindViewModel();
 
-        // ÃÊ±â µ¥ÀÌÅÍ ·Îµå
+        // ì´ˆê¸° ë°ì´í„° ë¡œë“œ
         OnViewModelPropertyChanged(NAME_None);
     }
 }
@@ -37,7 +37,7 @@ void UViewBase::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // ViewModelÀÌ ÀÌ¹Ì ¼³Á¤µÇ¾î ÀÖ´Ù¸é ¹ÙÀÎµù
+    // ViewModelì´ ì´ë¯¸ ì„¤ì •ë˜ì–´ ìˆë‹¤ë©´ ë°”ì¸ë”©
     if (ViewModel)
     {
         PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
@@ -50,7 +50,7 @@ void UViewBase::NativeConstruct()
 
 void UViewBase::NativeDestruct()
 {
-    // ViewModel ¾ğ¹ÙÀÎµù
+    // ViewModel ì–¸ë°”ì¸ë”©
     if (ViewModel && PropertyChangedHandle.IsValid())
     {
         UnbindViewModel();

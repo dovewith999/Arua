@@ -1,4 +1,4 @@
-// ViewModelBase.h
+ï»¿// ViewModelBase.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,10 +8,10 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPropertyChanged, FName);
 
 /**
- * WPFÀÇ INotifyPropertyChanged ÆĞÅÏÀ» ±¸ÇöÇÑ ViewModel º£ÀÌ½º Å¬·¡½º
- * ¸ğµç ViewModelÀº ÀÌ Å¬·¡½º¸¦ »ó¼Ó¹Ş¾Æ ±¸Çö
- * ÀÛ¼ºÀÚ : ÀÓÈñ¼·
- * ÀÛ¼ºÀÏ : 25/11/03
+ * WPFì˜ INotifyPropertyChanged íŒ¨í„´ì„ êµ¬í˜„í•œ ViewModel ë² ì´ìŠ¤ í´ë˜ìŠ¤
+ * ëª¨ë“  ViewModelì€ ì´ í´ë˜ìŠ¤ë¥¼ ìƒì†ë°›ì•„ êµ¬í˜„
+ * ì‘ì„±ì : ì„í¬ì„­
+ * ì‘ì„±ì¼ : 25/11/03
  */
 UCLASS(Blueprintable, BlueprintType)
 class ARUA_API UViewModelBase : public UObject
@@ -19,20 +19,20 @@ class ARUA_API UViewModelBase : public UObject
     GENERATED_BODY()
 
 public:
-    // Property Changed µ¨¸®°ÔÀÌÆ® (PropertyNameÀ» Àü´Ş)
+    // Property Changed ë¸ë¦¬ê²Œì´íŠ¸ (PropertyNameì„ ì „ë‹¬)
     FOnPropertyChanged OnPropertyChanged;
 
 protected:
-    //Property°¡ º¯°æµÇ¾úÀ½À» ¾Ë¸²
+    //Propertyê°€ ë³€ê²½ë˜ì—ˆìŒì„ ì•Œë¦¼
 
     UFUNCTION(BlueprintCallable, Category = "ViewModel")
     void NotifyPropertyChanged(FName PropertyName);
 
-    // ¿©·¯ Property°¡ º¯°æµÇ¾úÀ½À» ¾Ë¸²
+    // ì—¬ëŸ¬ Propertyê°€ ë³€ê²½ë˜ì—ˆìŒì„ ì•Œë¦¼
     UFUNCTION(BlueprintCallable, Category = "ViewModel")
     void NotifyPropertiesChanged(const TArray<FName>& PropertyNames);
 
-     //¸ğµç Property°¡ º¯°æµÇ¾úÀ½À» ¾Ë¸² (ÀüÃ¼ °»½Å)
+     //ëª¨ë“  Propertyê°€ ë³€ê²½ë˜ì—ˆìŒì„ ì•Œë¦¼ (ì „ì²´ ê°±ì‹ )
     UFUNCTION(BlueprintCallable, Category = "ViewModel")
     void NotifyAllPropertiesChanged();
 };

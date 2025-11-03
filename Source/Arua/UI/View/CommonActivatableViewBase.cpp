@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CommonActivatableViewBase.h"
 #include "UI/ViewModel/ViewModelBase.h"
@@ -50,7 +50,7 @@ void UCommonActivatableViewBase::NativeOnActivated()
 
     bIsActivated = true;
 
-    // Activate ½Ã ViewModel ¹ÙÀÎµù
+    // Activate ì‹œ ViewModel ë°”ì¸ë”©
     if (ViewModel)
     {
         PropertyChangedHandle = ViewModel->OnPropertyChanged.AddUObject(
@@ -63,7 +63,7 @@ void UCommonActivatableViewBase::NativeOnActivated()
 
 void UCommonActivatableViewBase::NativeOnDeactivated()
 {
-    // Deactivate ½Ã ViewModel ¾ğ¹ÙÀÎµù
+    // Deactivate ì‹œ ViewModel ì–¸ë°”ì¸ë”©
     if (ViewModel && PropertyChangedHandle.IsValid())
     {
         UnbindViewModel();

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,10 +9,10 @@
 
 class UViewModelBase;
 /**
- * ÀÏ¹İ UMG Widget¿ë ViewBase Å¬·¡½º
- * È­¸é UI¿Í 3D ¿ùµå À§Á¬ ¸ğµÎ »ç¿ë °¡´É
- * ÀÛ¼ºÀÚ : ÀÓÈñ¼·
- * ÀÛ¼ºÀÏ : 25/11/03
+ * ì¼ë°˜ UMG Widgetìš© ViewBase í´ë˜ìŠ¤
+ * í™”ë©´ UIì™€ 3D ì›”ë“œ ìœ„ì ¯ ëª¨ë‘ ì‚¬ìš© ê°€ëŠ¥
+ * ì‘ì„±ì : ì„í¬ì„­
+ * ì‘ì„±ì¼ : 25/11/03
  */
 UCLASS(Abstract)
 class ARUA_API UViewBase : public UUserWidget
@@ -33,34 +33,34 @@ protected:
 	// end UserWidget Interface
 
 protected:
-	// ViewModelÀ» UI¿¡ ¹ÙÀÎµù
-	// ÆÄ»ı Å¬·¡½º¿¡¼­ ±¸ÇöÇÏ¿© ½ÇÁ¦ ¹ÙÀÎµù ·ÎÁ÷ ÀÛ¼º
+	// ViewModelì„ UIì— ë°”ì¸ë”©
+	// íŒŒìƒ í´ë˜ìŠ¤ì—ì„œ êµ¬í˜„í•˜ì—¬ ì‹¤ì œ ë°”ì¸ë”© ë¡œì§ ì‘ì„±
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void BindViewModel();
 	virtual void BindViewModel_Implementation() {}
 
-	// ViewModel ¹ÙÀÎµù ÇØÁ¦
-	// ÆÄ»ı Å¬·¡½º¿¡¼­ ±¸ÇöÇÏ¿© ½ÇÁ¦ ¾ğ¹ÙÀÎµù ·ÎÁ÷ ÀÛ¼º
+	// ViewModel ë°”ì¸ë”© í•´ì œ
+	// íŒŒìƒ í´ë˜ìŠ¤ì—ì„œ êµ¬í˜„í•˜ì—¬ ì‹¤ì œ ì–¸ë°”ì¸ë”© ë¡œì§ ì‘ì„±
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void UnbindViewModel();
 	virtual void UnbindViewModel_Implementation() {}
 
-	//ViewModelÀÇ Property°¡ º¯°æµÇ¾úÀ» ¶§ È£Ãâ
-	//param PropertyName º¯°æµÈ Property ÀÌ¸§ (NAME_NoneÀÌ¸é ÀüÃ¼ °»½Å)
+	//ViewModelì˜ Propertyê°€ ë³€ê²½ë˜ì—ˆì„ ë•Œ í˜¸ì¶œ
+	//param PropertyName ë³€ê²½ëœ Property ì´ë¦„ (NAME_Noneì´ë©´ ì „ì²´ ê°±ì‹ )
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void OnViewModelPropertyChanged(FName PropertyName);
 	virtual void OnViewModelPropertyChanged_Implementation(FName PropertyName) {}
 
 private:
-	// ViewModel Property Changed Äİ¹é
+	// ViewModel Property Changed ì½œë°±
 	void HandlePropertyChanged(FName PropertyName);
 
 protected:
-	// ÇöÀç ¹ÙÀÎµùµÈ ViewModel
+	// í˜„ì¬ ë°”ì¸ë”©ëœ ViewModel
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	TObjectPtr<UViewModelBase> ViewModel;
 
-	// ViewModelÀÇ PropertyChanged µ¨¸®°ÔÀÌÆ® ÇÚµé
+	// ViewModelì˜ PropertyChanged ë¸ë¦¬ê²Œì´íŠ¸ í•¸ë“¤
 	FDelegateHandle PropertyChangedHandle;
 
 

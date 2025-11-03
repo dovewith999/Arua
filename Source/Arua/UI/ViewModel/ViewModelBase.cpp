@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/ViewModel/ViewModelBase.h"
@@ -18,6 +18,6 @@ void UViewModelBase::NotifyPropertiesChanged(const TArray<FName>& PropertyNames)
 
 void UViewModelBase::NotifyAllPropertiesChanged()
 {
-    // NAME_NoneÀº ¸ğµç ÇÁ·ÎÆÛÆ¼¸¦ ÀÇ¹Ì
+    // NAME_Noneì€ ëª¨ë“  í”„ë¡œí¼í‹°ë¥¼ ì˜ë¯¸
     OnPropertyChanged.Broadcast(NAME_None);
 }

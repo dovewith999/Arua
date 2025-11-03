@@ -1,4 +1,4 @@
-// CommonActivatableViewBase.h
+ï»¿// CommonActivatableViewBase.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,10 +7,10 @@
 
 class UViewModelBase;
 /**
- * CommonUIÀÇ Activatable Widget¿ë View º£ÀÌ½º Å¬·¡½º
- * ½ºÅÃ ±â¹İ UI (¸Ş´º, ÆË¾÷ µî)¿¡ »ç¿ë
- * ÀÛ¼ºÀÚ : ÀÓÈñ¼·
- * ÀÛ¼ºÀÏ : 25/11/03
+ * CommonUIì˜ Activatable Widgetìš© View ë² ì´ìŠ¤ í´ë˜ìŠ¤
+ * ìŠ¤íƒ ê¸°ë°˜ UI (ë©”ë‰´, íŒì—… ë“±)ì— ì‚¬ìš©
+ * ì‘ì„±ì : ì„í¬ì„­
+ * ì‘ì„±ì¼ : 25/11/03
  */
 UCLASS(Abstract)
 class ARUA_API UCommonActivatableViewBase : public UCommonActivatableWidget

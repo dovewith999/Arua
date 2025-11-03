@@ -1,4 +1,4 @@
-// CommonViewBase.h
+ï»¿// CommonViewBase.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,10 +7,10 @@
 
 class UViewModelBase;
 /**
- * CommonUI¿ë View º£ÀÌ½º Å¬·¡½º
- * CommonUIÀÇ ±â´ÉÀ» È°¿ëÇÏ´Â È­¸é UI Àü¿ë
- * ÀÛ¼ºÀÚ : ÀÓÈñ¼·
- * ÀÛ¼ºÀÏ : 25/11/03
+ * CommonUIìš© View ë² ì´ìŠ¤ í´ë˜ìŠ¤
+ * CommonUIì˜ ê¸°ëŠ¥ì„ í™œìš©í•˜ëŠ” í™”ë©´ UI ì „ìš©
+ * ì‘ì„±ì : ì„í¬ì„­
+ * ì‘ì„±ì¼ : 25/11/03
  */
 UCLASS(Abstract)
 class ARUA_API UCommonViewBase : public UCommonUserWidget
@@ -35,17 +35,17 @@ protected:
 	TObjectPtr<UViewModelBase> ViewModel;
 
 	FDelegateHandle PropertyChangedHandle;
-	// ViewModel ¹ÙÀÎµù
+	// ViewModel ë°”ì¸ë”©
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void BindViewModel();
 	virtual void BindViewModel_Implementation() {}
 
-	 // ViewModel ¾ğ¹ÙÀÎµù
+	 // ViewModel ì–¸ë°”ì¸ë”©
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void UnbindViewModel();
 	virtual void UnbindViewModel_Implementation() {}
 
-	//Property º¯°æ Ã³¸®
+	//Property ë³€ê²½ ì²˜ë¦¬
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void OnViewModelPropertyChanged(FName PropertyName);
 	virtual void OnViewModelPropertyChanged_Implementation(FName PropertyName) {}
