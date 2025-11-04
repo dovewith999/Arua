@@ -27,6 +27,7 @@ public:
 
 	FORCEINLINE void TakeDamage(float InDamage) { Hp = FMath::Clamp(Hp - InDamage, 0, MaxHp); }
 	FORCEINLINE void SetHp(float InNewHp) { Hp = InNewHp; }
+	FORCEINLINE void SetMaxHp(float InMaxHp) { MaxHp = InMaxHp; }
 
 private:
 	UPROPERTY()

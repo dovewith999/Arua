@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Animation/ARCharacterAnimInstance.h"
@@ -34,5 +34,4 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 		bIsWalk = Cast<AARCharacterPlayer>(Owner)->GetWalkState();
 		bIsRun = Cast<AARCharacterPlayer>(Owner)->GetRunState();
 	}
-
 }

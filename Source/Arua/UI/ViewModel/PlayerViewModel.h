@@ -39,6 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMaxHp(float NewMaxHp)
 	{
+		Model->SetMaxHp(NewMaxHp);
 		NotifyPropertyChanged(FName(TEXT("MaxHp")));
 	}
 
