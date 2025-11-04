@@ -12,10 +12,10 @@
 UCLASS()
 class ARUA_API UGA_LockOn : public UGameplayAbility
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UGA_LockOn();
+    UGA_LockOn();
 
 protected:
     virtual void ActivateAbility(
@@ -25,28 +25,17 @@ protected:
         const FGameplayEventData* TriggerEventData
     ) override;
 
-    virtual void InputReleased(
-        const FGameplayAbilitySpecHandle Handle,
-        const FGameplayAbilityActorInfo* ActorInfo,
-        const FGameplayAbilityActivationInfo ActivationInfo
-    ) override;
-
-    virtual void CancelAbility(
+    virtual void EndAbility(
         const FGameplayAbilitySpecHandle Handle,
         const FGameplayAbilityActorInfo* ActorInfo,
         const FGameplayAbilityActivationInfo ActivationInfo,
-        bool bReplicateCancelAbility
+        bool bReplicateEndAbility,
+        bool bWasCancelled
     ) override;
 
 private:
     // Lock-On 타겟 찾기
     AActor* FindLockOnTarget();
-
-    // Lock-On 시작
-    void StartLockOn(AActor* Target);
-
-    // Lock-On 종료
-    void EndLockOn();
 
     UPROPERTY(EditDefaultsOnly, Category = "LockOn")
     float LockOnRange = 1500.0f;
@@ -60,9 +49,4 @@ private:
     // 현재 Lock-On 중인 타겟
     UPROPERTY()
     TObjectPtr<AActor> CurrentTarget;
-
-    // Lock-On 상태를 나타내는 GameplayTag (선택사항)
-    FGameplayTag LockOnStateTag;
-
-	
 };

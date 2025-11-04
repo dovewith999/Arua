@@ -33,5 +33,17 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 		bIsIdle = WalkSpeed < MovingThreshould;
 		bIsWalk = Cast<AARCharacterPlayer>(Owner)->GetWalkState();
 		bIsRun = Cast<AARCharacterPlayer>(Owner)->GetRunState();
+
+		// 이동 방향
+		FVector VelocityDirection = Velocity.GetSafeNormal();
+
+		// 캐릭터의 Forward 벡터
+		FVector Forward = Owner->GetActorForwardVector();
+
+		// 각도 계산 (-180 ~ 180)
+		Angle = FMath::RadiansToDegrees(FMath::Atan2(
+			FVector::CrossProduct(Forward, VelocityDirection).Z,
+			FVector::DotProduct(Forward, VelocityDirection)
+		));
 	}
 }
