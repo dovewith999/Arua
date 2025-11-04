@@ -24,7 +24,6 @@ public:
 
 protected:
     //Property가 변경되었음을 알림
-
     UFUNCTION(BlueprintCallable, Category = "ViewModel")
     void NotifyPropertyChanged(FName PropertyName);
 

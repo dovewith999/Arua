@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Test/CommonUIPlayerController.h"
@@ -9,11 +9,11 @@ void ACommonUIPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 	
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsOfClassWithTag(this, ACameraActor::StaticClass(), FName("Default"), FoundCameras);
+	//TArray<AActor*> FoundCameras;
+	//UGameplayStatics::GetAllActorsOfClassWithTag(this, ACameraActor::StaticClass(), FName("Default"), FoundCameras);
 
-	if (!FoundCameras.IsEmpty())
-	{
-		SetViewTarget(FoundCameras[0]);
-	}
+	//if (!FoundCameras.IsEmpty())
+	//{
+	//	SetViewTarget(FoundCameras[0]);
+	//}
 }
