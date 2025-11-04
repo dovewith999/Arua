@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/ViewModel/ViewModelBase.h"
-#include "PlayerData.h" // Model 참조
+#include "UI/Model/PlayerData.h" // Model 참조
 #include "PlayerViewModel.generated.h"
 
 /**

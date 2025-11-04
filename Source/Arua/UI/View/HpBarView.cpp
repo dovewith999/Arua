@@ -3,7 +3,7 @@
 
 #include "HpBarView.h"
 #include "Components/ProgressBar.h"
-#include "UI/Test/PlayerViewModel.h"
+#include "UI/ViewModel/PlayerViewModel.h"
 
 void UHpBarView::NativeConstruct()
 {
