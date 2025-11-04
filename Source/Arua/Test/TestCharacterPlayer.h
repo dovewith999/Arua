@@ -29,4 +29,9 @@ protected:
 private:
 	UPROPERTY();
 	TObjectPtr<UAbilitySystemComponent> ASC;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> LockOnAction;
+
 };
