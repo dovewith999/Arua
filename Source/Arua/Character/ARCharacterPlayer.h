@@ -26,6 +26,8 @@ public:
 
 	FORCEINLINE bool GetRunState() { return bIsRunning; }
 
+	FORCEINLINE bool GetWalkState() { return bIsWalking; }
+
 	// 카메라 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -54,9 +56,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsRunning : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	uint8 bIsWalking : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	uint8 bIsRolling : 1;
+
 	void Move(const FInputActionValue& Value);
+	void NotMove(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void RunTriggered(const FInputActionValue& Value);
 	void RunComplete(const FInputActionValue& Value);
 	void Roll(const FInputActionValue& Value);
+	void RollCompleted();
+
+	// 애니메이션 섹션
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Animation)
+	TObjectPtr<class UAnimMontage> RollActionMontage;
+
+	FTimerHandle RollAnimTimer;
 };

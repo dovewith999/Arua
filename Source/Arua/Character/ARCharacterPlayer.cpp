@@ -8,7 +8,8 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "Animation/AnimMontage.h"
+#include "TimerManager.h"
 AARCharacterPlayer::AARCharacterPlayer()
 {
 	bUseControllerRotationPitch = false;
@@ -67,11 +68,12 @@ AARCharacterPlayer::AARCharacterPlayer()
 		RunAction = InputActionRunRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRollRef(TEXT(""));
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRollRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Roll.IA_Roll'"));
 	if (nullptr != InputActionRollRef.Object)
 	{
 		RollAction = InputActionRollRef.Object;
 	}
+
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -83,6 +85,9 @@ void AARCharacterPlayer::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext,0);
 	}
+	bIsRunning = false;
+	bIsWalking = false;
+	bIsRolling = false;
 }
 
 void AARCharacterPlayer::SetDead()
@@ -95,14 +100,19 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::Move);
+	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::NotMove);
 	EnhancedInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::Look);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
-	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::Roll);
+	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
 }
 
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
+	if (bIsRolling)
+		return;
+
+	bIsWalking = true;
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -116,9 +126,16 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 
 }
 
+void AARCharacterPlayer::NotMove(const FInputActionValue& Value)
+{
+	bIsWalking = false;
+}
+
 void AARCharacterPlayer::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
+
+	
 
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
@@ -138,5 +155,25 @@ void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 
 void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 {
+	if (bIsRolling)
+		return;
 
+	bIsRolling = true;
+
+	PlayAnimMontage(RollActionMontage);
+	LaunchCharacter(GetActorForwardVector() * 2500.0f , true, true);
+
+	GetWorld()->GetTimerManager().SetTimer(
+		RollAnimTimer,
+		this,
+		&AARCharacterPlayer::RollCompleted ,
+		RollActionMontage->GetPlayLength(),
+		false
+	);
+
+}
+
+void AARCharacterPlayer::RollCompleted()
+{
+	bIsRolling = false;
 }

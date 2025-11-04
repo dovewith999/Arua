@@ -31,6 +31,7 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 		Velocity = Movement->Velocity;
 		WalkSpeed = Velocity.Size2D();
 		bIsIdle = WalkSpeed < MovingThreshould;
+		bIsWalk = Cast<AARCharacterPlayer>(Owner)->GetWalkState();
 		bIsRun = Cast<AARCharacterPlayer>(Owner)->GetRunState();
 	}
 
