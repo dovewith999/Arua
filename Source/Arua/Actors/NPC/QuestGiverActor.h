@@ -26,17 +26,19 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// 상호작용 함수
-	void SetInteract();
-
-	// 상호작용 종료 함수
-	void SetUnInteract();
-
 	// UI 상호작용 모드 설정 함수 (입력 등)
 	void ApplyUIInteractionMode();
 
 	// 게임 모드 설정 함수 (입력 등)
 	void RestoreGameplayMode();
+
+	// 퀘스트 선택 함수
+	UFUNCTION()
+	void OnQuestSelected(FName SelectedQuestID);
+
+	// 퀘스트 선택 취소 함수
+	UFUNCTION()
+	void OnQuestDeselected();
 
 	// 이 NPC가 제공하는 퀘스트 리스트 Getter
 	TArray<FQuestData> GetProvidedQuests() const;
@@ -70,6 +72,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
 	TArray<FName> ProvidedQuestIDs;
 
+	// 퀘스트 선택 위젯 클래스
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
+	TSubclassOf<class UQuestSelectWidget> QuestSelectWidgetClass;
+
 private:
 	// 상호작용 상태 플래그
 	UPROPERTY()
@@ -83,14 +89,19 @@ private:
 	UPROPERTY()
 	APlayerController* PC = nullptr;
 
-	// 다이얼로그 위젯 인스턴스
-	UPROPERTY()
-	TObjectPtr<class UDialogWidget> DialogWidgetInstance = nullptr;
-
 	// 기존 뷰 타겟
 	UPROPERTY()
 	AActor* OriginalViewTarget;
 
 	// 카메라 전환 타이머 핸들
 	FTimerHandle ViewTargetBlendTimer;
+
+private:
+	// 다이얼로그 위젯 인스턴스
+	UPROPERTY()
+	TObjectPtr<class UDialogWidget> DialogWidgetInstance = nullptr;
+
+	// 퀘스트 선택 위젯 인스턴스
+	UPROPERTY()
+	TObjectPtr<class UQuestSelectWidget> QuestSelectWidgetInstance = nullptr;
 };
