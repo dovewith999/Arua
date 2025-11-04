@@ -28,21 +28,6 @@ FReply UDialogWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
-FReply UDialogWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-	// 키 입력 이벤트 확인
-	const FKey PressedKey = InKeyEvent.GetKey();
-
-	// 키 입력 이벤트 델리게이트 브로드캐스트
-	if (PressedKey == EKeys::Escape || PressedKey == EKeys::Q)
-	{
-		OnRequestInput.Broadcast();
-		return FReply::Handled();
-	}
-
-	return Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
-}
-
 FReply UDialogWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	// 마우스 클릭 시 키보드 포커스를 다시 이 위젯으로 설정

@@ -14,6 +14,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "UI/Dialog/DialogWidget.h"
+#include "UI/Quest/QuestSelectWidget.h"
 
 AQuestGiverActor::AQuestGiverActor()
 {
@@ -56,17 +57,37 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 		if (DialogWidgetInstance)
 		{
 			// 다이얼로그 위젯 그리기
-			DialogWidgetInstance->AddToViewport(10);
+			DialogWidgetInstance->AddToViewport();
 
 			// 다이얼로그 키 입력 이벤트와 상호작용 종료 함수 바인딩
 			DialogWidgetInstance->OnRequestInput.AddDynamic(this, &AQuestGiverActor::UnInteract);
 		}
 	}
 
-	// #4: UI 상호작용 모드 설정 (입력 등)
+	// #4: 퀘스트 선택 위젯 생성 및 표시
+	if (QuestSelectWidgetClass && !QuestSelectWidgetInstance)
+	{
+		QuestSelectWidgetInstance = CreateWidget<UQuestSelectWidget>(PC, QuestSelectWidgetClass);
+		if (QuestSelectWidgetInstance)
+		{
+			// 퀘스트 리스트 초기화
+			QuestSelectWidgetInstance->InitQuestList(ProvidedQuestIDs);
+			
+			// 퀘스트 선택 위젯 그리기
+			QuestSelectWidgetInstance->AddToViewport();
+
+			// 퀘스트 선택 위젯의 퀘스트 선택 및 취소 함수 바인딩
+			QuestSelectWidgetInstance->OnQuestSelected.AddDynamic(
+				this, &AQuestGiverActor::OnQuestSelected);
+			QuestSelectWidgetInstance->OnQuestDeselected.AddDynamic(
+				this, &AQuestGiverActor::OnQuestDeselected);
+		}
+	}
+
+	// #5: UI 상호작용 모드 설정 (입력 등)
 	ApplyUIInteractionMode();
 
-	// #5: 상호작용 상태 플래그 활성화
+	// #6: 상호작용 상태 플래그 활성화
 	GetWorld()->GetTimerManager().SetTimer(ViewTargetBlendTimer,
 		FTimerDelegate::CreateWeakLambda(this, [this]()
 			{
@@ -91,10 +112,17 @@ void AQuestGiverActor::UnInteract()
 		DialogWidgetInstance = nullptr;
 	}
 
-	// #3: 게임 모드 설정 (입력 등)
+	// #3: 퀘스트 선택 위젯 정리
+	if (QuestSelectWidgetInstance)
+	{
+		QuestSelectWidgetInstance->RemoveFromParent();
+		QuestSelectWidgetInstance = nullptr;
+	}
+
+	// #4: 게임 모드 설정 (입력 등)
 	RestoreGameplayMode();
 
-	// #4: 상태 초기화
+	// #5: 상태 초기화
 	GetWorld()->GetTimerManager().SetTimer(ViewTargetBlendTimer,
 		FTimerDelegate::CreateWeakLambda(this, [this]()
 			{
@@ -162,6 +190,7 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 {
 	if (!InteractorPawn || !PC) return;
 
+	// 상호작용 플레이어 메시 비활성화
 	USkeletalMeshComponent* Mesh = InteractorPawn->FindComponentByClass<USkeletalMeshComponent>();
 	if (Mesh)
 	{
@@ -172,11 +201,14 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 	PC->bShowMouseCursor = true;
 	PC->SetIgnoreLookInput(true);
 	PC->SetIgnoreMoveInput(true);
+	PC->bEnableClickEvents = true;
+	PC->bEnableMouseOverEvents = true;
 
-	// 입력 모드 dUI Only로 설정 및 다이얼로그 위젯으로 포커싱
-	FInputModeUIOnly Mode;
-	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	// 입력 모드 UI Only로 설정 및 다이얼로그 위젯으로 포커싱
+	FInputModeGameAndUI Mode;
 	Mode.SetWidgetToFocus(DialogWidgetInstance ? DialogWidgetInstance->TakeWidget() : TSharedPtr<SWidget>());
+	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	Mode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(Mode);
 }
 
@@ -184,6 +216,7 @@ void AQuestGiverActor::RestoreGameplayMode()
 {
 	if (!InteractorPawn || !PC) return;
 
+	// 상호작용 플레이어 메시 활성화
 	USkeletalMeshComponent* Mesh = InteractorPawn->FindComponentByClass<USkeletalMeshComponent>();
 	if (Mesh)
 	{
@@ -194,8 +227,21 @@ void AQuestGiverActor::RestoreGameplayMode()
 	PC->bShowMouseCursor = false;
 	PC->SetIgnoreLookInput(false);
 	PC->SetIgnoreMoveInput(false);
+	PC->bEnableClickEvents = false;
+	PC->bEnableMouseOverEvents = false;
 
 	// 입력 모드 게임 모드로 복귀
 	FInputModeGameOnly Mode;
 	PC->SetInputMode(Mode);
+}
+
+void AQuestGiverActor::OnQuestSelected(FName SelectedQuestID)
+{
+	FString Msg = FString::Printf(TEXT("Quest Accept: %s"), *SelectedQuestID.ToString());
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, Msg);
+}
+
+void AQuestGiverActor::OnQuestDeselected()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Deselected"));
 }
