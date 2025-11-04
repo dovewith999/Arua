@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Model/ModelBase.h"
 
-void UModelBase::NotifyModelDataChanged()
+void UModelBase::NotifyModelDataChanged(const FName& InPropertyName)
 {
-	OnModelDataChanged.Broadcast();
+	OnModelDataChanged.Broadcast(InPropertyName);
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,14 +6,14 @@
 #include "UObject/NoExportTypes.h"
 #include "ModelBase.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnModelDataChanged);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnModelDataChanged, const FName&);
 
 
 /**
- * °ÔÀÓ ·ÎÁ÷°ú µ¥ÀÌÅÍ¸¦ ´ã´çÇÏ´Â ¼ø¼öÇÑ µ¥ÀÌÅÍ ¸ğµ¨
- * ViewModel°ú´Â µ¶¸³ÀûÀ¸·Î µ¿ÀÛ
- * ÀÛ¼ºÀÚ : ÀÓÈñ¼·
- * ÀÛ¼ºÀÏ : 25/11/03
+ * ê²Œì„ ë¡œì§ê³¼ ë°ì´í„°ë¥¼ ë‹´ë‹¹í•˜ëŠ” ìˆœìˆ˜í•œ ë°ì´í„° ëª¨ë¸
+ * ViewModelê³¼ëŠ” ë…ë¦½ì ìœ¼ë¡œ ë™ì‘
+ * ì‘ì„±ì : ì„í¬ì„­
+ * ì‘ì„±ì¼ : 25/11/03
  */
 UCLASS(Blueprintable, BlueprintType)
 class ARUA_API UModelBase : public UObject
@@ -25,5 +25,5 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Model")
-	void NotifyModelDataChanged();
+	void NotifyModelDataChanged(const FName& InPropertyName);
 };

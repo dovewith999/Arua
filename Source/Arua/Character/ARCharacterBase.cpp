@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/ARCharacterBase.h"
@@ -25,26 +25,25 @@ void AARCharacterBase::SetDead()
 		EMovementMode::MOVE_None
 	);
 
-	// Á×´Â ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý.
+	// ì£½ëŠ” ì• ë‹ˆë©”ì´ì…˜ ìž¬ìƒ.
 	PlayDeadAnimation();
 
-	// ÄÝ¸®Àü ²ô±â.
+	// ì½œë¦¬ì „ ë„ê¸°.
 	SetActorEnableCollision(false);
-
 }
 
 void AARCharacterBase::PlayDeadAnimation()
 {
-	// ¸ùÅ¸ÁÖ Àç»ý.
+	// ëª½íƒ€ì£¼ ìž¬ìƒ.
 	UAnimInstance* AnimInstance
 		= GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 	{
-		// ÀÌ¹Ì Àç»ý ÁßÀÎ ¸ùÅ¸ÁÖ°¡ ÀÖÀ» ¼ö ÀÖÀ¸´Ï ¸ðµÎ Á¾·á.
+		// ì´ë¯¸ ìž¬ìƒ ì¤‘ì¸ ëª½íƒ€ì£¼ê°€ ìžˆì„ ìˆ˜ ìžˆìœ¼ë‹ˆ ëª¨ë‘ ì¢…ë£Œ.
 		AnimInstance->StopAllMontages(0.0f);
 
-		// Àç»ý ¼Óµµ.
-		/* ³ªÁß¿¡ DeadMontage »ý¼ºÀÚ¿¡¼­ ÃÊ±âÈ­ÇÏ°í »ç¿ëÇÏ½Ã¸é µÉ °Í °°½À´Ï´Ù.
+		// ìž¬ìƒ ì†ë„.
+		/* ë‚˜ì¤‘ì— DeadMontage ìƒì„±ìžì—ì„œ ì´ˆê¸°í™”í•˜ê³  ì‚¬ìš©í•˜ì‹œë©´ ë  ê²ƒ ê°™ìŠµë‹ˆë‹¤.
 		const float PlayRate = 1.0f;
 		AnimInstance->Montage_Play(
 			DeadMontage,

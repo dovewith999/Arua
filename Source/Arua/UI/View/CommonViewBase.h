@@ -31,16 +31,12 @@ protected:
 	// End UUserWidget Interface
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "View")
-	TObjectPtr<UViewModelBase> ViewModel;
-
-	FDelegateHandle PropertyChangedHandle;
 	// ViewModel 바인딩
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void BindViewModel();
 	virtual void BindViewModel_Implementation() {}
 
-	 // ViewModel 언바인딩
+	// ViewModel 언바인딩
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void UnbindViewModel();
 	virtual void UnbindViewModel_Implementation() {}
@@ -49,6 +45,12 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "View")
 	void OnViewModelPropertyChanged(FName PropertyName);
 	virtual void OnViewModelPropertyChanged_Implementation(FName PropertyName) {}
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	TObjectPtr<UViewModelBase> ViewModel;
+
+	FDelegateHandle PropertyChangedHandle;
 
 private:
 	void HandlePropertyChanged(FName PropertyName);

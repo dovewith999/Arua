@@ -61,6 +61,4 @@ protected:
 
 	// ViewModel의 PropertyChanged 델리게이트 핸들
 	FDelegateHandle PropertyChangedHandle;
-
-
 };
