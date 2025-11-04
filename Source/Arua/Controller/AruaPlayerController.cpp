@@ -23,6 +23,7 @@ void AAruaPlayerController::BeginPlay()
 	if (HUD = Cast<UPlayerHUDView>(CreateWidget(GetWorld(), HUDClass)))
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
+		PlayerData->Initialize();
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);

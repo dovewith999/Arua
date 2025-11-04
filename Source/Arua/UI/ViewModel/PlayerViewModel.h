@@ -45,7 +45,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(float InDamage)
 	{
-		// Todo : Hp 빼는 코드
 		Model->TakeDamage(InDamage);
 		NotifyPropertyChanged(FName(TEXT("Hp")));
 	}
