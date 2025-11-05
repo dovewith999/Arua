@@ -4,16 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AbilitySystemInterface.h"
 #include "ARCharacterBase.generated.h"
 
 UCLASS()
-class ARUA_API AARCharacterBase : public ACharacter
+class ARUA_API AARCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AARCharacterBase();
+
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	// 컴포넌트 초기화가 끝나면 호출되는 이벤트 함수. 
 	virtual void PostInitializeComponents() override;
@@ -25,5 +28,9 @@ protected:
 
 	void PlayDeadAnimation();
 
+	// ASC
+protected:
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 };

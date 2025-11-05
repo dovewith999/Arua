@@ -28,6 +28,8 @@ public:
 
 	FORCEINLINE bool GetWalkState() { return bIsWalking; }
 
+	virtual void PossessedBy(AController* NewController) override;
+
 	// 카메라 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -81,4 +83,9 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Weapon;
+
+	// ASC 어빌리티 섹션
+protected:
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
 };

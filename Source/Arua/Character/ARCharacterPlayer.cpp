@@ -10,6 +10,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimMontage.h"
 #include "TimerManager.h"
+#include "Player/ARPlayerState.h"
+#include "AbilitySystemComponent.h"
+
+
 AARCharacterPlayer::AARCharacterPlayer()
 {
 	bUseControllerRotationPitch = false;
@@ -117,6 +121,26 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
+}
+
+void AARCharacterPlayer::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	AARPlayerState* PS = GetPlayerState<AARPlayerState>();
+	if (PS)
+	{
+		ASC = PS->GetAbilitySystemComponent();
+		ASC->InitAbilityActorInfo(PS, this);
+	
+		for (const auto& StartAbility : StartAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartAbility);
+			ASC->GiveAbility(StartSpec);
+		}
+	}
+
+
 }
 
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
