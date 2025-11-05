@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,12 +18,12 @@ public:
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	// ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­°¡ ³¡³ª¸é È£ÃâµÇ´Â ÀÌº¥Æ® ÇÔ¼ö. 
+	// ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”ê°€ ëë‚˜ë©´ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸ í•¨ìˆ˜. 
 	virtual void PostInitializeComponents() override;
 
 protected:
-	// Á×À½ ¼³Á¤ ÇÔ¼ö.
-	// Á×À½ »óÅÂ ¼³Á¤
+	// ì£½ìŒ ì„¤ì • í•¨ìˆ˜.
+	// ì£½ìŒ ìƒíƒœ ì„¤ì •
 	virtual void SetDead();
 
 	void PlayDeadAnimation();

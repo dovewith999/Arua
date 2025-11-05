@@ -49,9 +49,8 @@ AARCharacterPlayer::AARCharacterPlayer()
 	Camera->bUsePawnControlRotation = false;
 
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
-	Weapon->AttachToComponent(
+	Weapon->SetupAttachment(
 		GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		FName("hand_rSocket")
 	);
 
@@ -145,8 +144,8 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
-	if (bIsRolling)
-		return;
+	//if (bIsRolling)
+	//	return;
 
 	bIsWalking = true;
 	FVector2D MovementVector = Value.Get<FVector2D>();

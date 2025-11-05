@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,7 +23,7 @@ protected:
 	virtual void NativeUpdateAnimation(float DeltaTimes) override;
 
 
-	// ¾Ö´Ô ÀÎ½ºÅÏ½º¸¦ ¼ÒÀ¯ÇÏ´Â °´Ã¼ÀÇ Á¤º¸¸¦ ´ã´Â º¯¼ö.
+	// ì• ë‹˜ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì†Œìœ í•˜ëŠ” ê°ì²´ì˜ ì •ë³´ë¥¼ ë‹´ëŠ” ë³€ìˆ˜.
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category= Character)
 	TObjectPtr<class ACharacter> Owner;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,7 +30,7 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
-	// Ä«¸Ş¶ó ¼½¼Ç
+	// ì¹´ë©”ë¼ ì„¹ì…˜
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> SpringArm;
@@ -38,7 +38,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camear, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> Camera;
 
-	// ÀÔ·Â °ü·Ã ¼½¼Ç
+	// ì…ë ¥ ê´€ë ¨ ì„¹ì…˜
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category =Input, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<class UInputMappingContext> DefaultMappingContext;
@@ -72,19 +72,19 @@ protected:
 	void Roll(const FInputActionValue& Value);
 	void RollCompleted();
 
-	// ¾Ö´Ï¸ŞÀÌ¼Ç ¼½¼Ç
+	// ì• ë‹ˆë©”ì´ì…˜ ì„¹ì…˜
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Animation)
 	TObjectPtr<class UAnimMontage> RollActionMontage;
 
 	FTimerHandle RollAnimTimer;
 
-	// ¹«±â ¼½¼Ç
+	// ë¬´ê¸° ì„¹ì…˜
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Weapon;
 
-	// ASC ¾îºô¸®Æ¼ ¼½¼Ç
+	// ASC ì–´ë¹Œë¦¬í‹° ì„¹ì…˜
 protected:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
