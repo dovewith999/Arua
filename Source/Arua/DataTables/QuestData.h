@@ -27,6 +27,10 @@ struct FQuestData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Title;
 
+	// 퀘스트 목표: 퀘스트 목표
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Objective;
+
 	// 퀘스트 설명: 퀘스트에 대한 상세 설명
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
 	FText Description;
