@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Tag/AruaGameplayTags.h"
+#include "Test/TestCharacterPlayer.h"
+#include "Character/AbilityTask/AbilityTask_LockOn.h"
 
 UGA_LockOn::UGA_LockOn()
 {
@@ -31,18 +33,39 @@ void UGA_LockOn::ActivateAbility(
 	}
 
 	//// 타겟 찾기
-	//AActor* Target = FindLockOnTarget();
+	AActor* Target = FindLockOnTarget();
 
-	//if (Target)
-	//{
-	//	CurrentTarget = Target;
-	//	UE_LOG(LogTemp, Log, TEXT("Lock-On Started: %s"), *Target->GetName());
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("Lock-On: No target found"));
-	//	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-	//}
+	if (Target)
+	{
+		CurrentTarget = Target;
+		// FName을 FString으로 변환하고 포맷팅
+		FString DebugMessage = FString::Printf(
+			TEXT("Lock-On Started : %s"),
+			*(Target->GetName())
+		);
+
+		// 화면 출력
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			3.0f,
+			FColor::Green,
+			DebugMessage
+		);
+
+		// Task 시작 - 타겟 바라보기
+		UAbilityTask_LockOn* LockOnTask = UAbilityTask_LockOn::CreateLockOnTask(
+			this,           // OwningAbility
+			CurrentTarget,  // TargetActor
+			0.f          // RotationSpeed (0 = 즉시 회전)
+		);
+
+		LockOnTask->ReadyForActivation();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Target Not Found"));
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+	}
 }
 
 void UGA_LockOn::EndAbility(
@@ -67,7 +90,9 @@ AActor* UGA_LockOn::FindLockOnTarget()
 {
 	ACharacter* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	if (!Character)
+	{
 		return nullptr;
+	}
 
 	FVector CharacterLocation = Character->GetActorLocation();
 	FVector ForwardVector = Character->GetActorForwardVector();

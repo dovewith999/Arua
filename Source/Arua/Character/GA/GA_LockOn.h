@@ -7,7 +7,11 @@
 #include "GA_LockOn.generated.h"
 
 /**
- * 
+ * LockOn 기능을 어빌리티화 한 클래스입니다.
+ * 해당 기능 활성화 시 Owner에게 Player_State_LockOn을 부여합니다.
+ * 이는 추후 다른 액터에도 필요하면 수정하겠습니다.
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/04
  */
 UCLASS()
 class ARUA_API UGA_LockOn : public UGameplayAbility

@@ -57,8 +57,6 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Toggle Off")); // 화면출력
-
 		// 캐릭터가 이동 방향으로 자동 회전하도록 설정
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -75,8 +73,6 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Toggle On")); // 화면출력
-
 		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 
