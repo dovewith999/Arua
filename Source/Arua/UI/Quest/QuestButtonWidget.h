@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DataTables/QuestData.h"
 #include "QuestButtonWidget.generated.h"
 
 // 퀘스트 버튼 클릭 델리게이트
@@ -15,7 +16,7 @@ class ARUA_API UQuestButtonWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void Init(FName InQuestID);
+	void Init(const FQuestData& InQuestData);
 
 	// 버튼 클릭 함수
 	UFUNCTION()
