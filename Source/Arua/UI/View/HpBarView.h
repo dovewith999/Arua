@@ -7,7 +7,9 @@
 #include "HpBarView.generated.h"
 
 /**
- * 
+ * HUD에 띄울 HpBar Widget이다.
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/04
  */
 UCLASS()
 class ARUA_API UHpBarView : public UViewBase

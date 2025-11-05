@@ -7,7 +7,7 @@
 #include "PlayerHUDView.generated.h"
 
 /**
- * 플레이어의 HUD 클래스
+ * 플레이어의 HUD 클래스이다.
  * 작성자 : 임희섭
  * 작성일 : 25/11/04
  */

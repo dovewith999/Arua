@@ -3,3 +3,8 @@
 
 #include "PlayerData.h"
 
+void UPlayerData::Initialize()
+{
+	MaxHp = 100;
+	Hp = MaxHp;
+}

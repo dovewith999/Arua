@@ -39,13 +39,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMaxHp(float NewMaxHp)
 	{
+		Model->SetMaxHp(NewMaxHp);
 		NotifyPropertyChanged(FName(TEXT("MaxHp")));
 	}
 
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(float InDamage)
 	{
-		// Todo : Hp 빼는 코드
 		Model->TakeDamage(InDamage);
 		NotifyPropertyChanged(FName(TEXT("Hp")));
 	}
