@@ -29,11 +29,8 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	// Started: 마우스 휠 버튼을 누를 때
-	void LockOnPressed(const FInputActionValue& Value);
-
-	// Completed: 마우스 휠 버튼을 뗄 때
-	void LockOnReleased(const FInputActionValue& Value);
+	// LockOn은 토글 방식으로
+	void LockOnToggle(const FInputActionValue& Value);
 
 private:
 	UPROPERTY();

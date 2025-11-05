@@ -27,8 +27,7 @@ void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
-	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::LockOnPressed);
-	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Completed, this, &ATestCharacterPlayer::LockOnReleased);
+	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::LockOnToggle);
 }
 
 void ATestCharacterPlayer::PostInitializeComponents()
@@ -49,45 +48,46 @@ void ATestCharacterPlayer::BeginPlay()
 	}
 }
 
-void ATestCharacterPlayer::LockOnPressed(const FInputActionValue& Value)
+void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Click LockOn"));
-
-	// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-
-	// 컨트롤러의 Yaw 회전을 캐릭터에 적용 (카메라 방향을 향하도록)
-	bUseControllerRotationYaw = true;
-
-	if (!ASC)
-	{
-		return;
-	}
-
 	// Tag로 어빌리티를 찾아서 활성화
 	// InputTag나 AbilityTag를 사용할 수 있음
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
-	ASC->TryActivateAbilitiesByTag(TagContainer);
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("TryAbilityByTag"));
-}
-
-void ATestCharacterPlayer::LockOnReleased(const FInputActionValue& Value)
-{
-	// 캐릭터가 이동 방향으로 자동 회전gk도록 설정
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	// 컨트롤러의 Yaw 회전을 캐릭터에 적용하도록 (카메라 방향을 향하지 않도록)
-	bUseControllerRotationYaw = false;
-
-	if (!ASC)
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
-		return;
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Toggle Off")); // 화면출력
+
+		// 캐릭터가 이동 방향으로 자동 회전하도록 설정
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+
+		// 컨트롤러의 Yaw 회전을 캐릭터에 적용하도록 (카메라 방향을 향하지 않도록)
+		bUseControllerRotationYaw = false;
+
+		if (!ASC)
+		{
+			return;
+		}
+
+		ASC->CancelAbilities(&TagContainer);
 	}
 
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Toggle On")); // 화면출력
 
-	ASC->CancelAbilities(&TagContainer);
+		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+
+		// 컨트롤러의 Yaw 회전을 캐릭터에 적용 (카메라 방향을 향하도록)
+		bUseControllerRotationYaw = true;
+
+		if (!ASC)
+		{
+			return;
+		}
+
+		ASC->TryActivateAbilitiesByTag(TagContainer);
+	}
 }
