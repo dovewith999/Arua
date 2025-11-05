@@ -13,7 +13,7 @@
  * 작성일 : 25/11/04
  */
 UCLASS()
-class ARUA_API ATestCharacterPlayer : public AARCharacterPlayer, public IAbilitySystemInterface
+class ARUA_API ATestCharacterPlayer : public AARCharacterPlayer
 {
 	GENERATED_BODY()
 
@@ -27,6 +27,7 @@ public:
 public:
 	void FinishLockOn();
 
+	FORCEINLINE UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 
 public:
 	FORCEINLINE void SetTarget(AActor* InTarget) { Target = InTarget; }
@@ -41,10 +42,9 @@ protected:
 	// LockOn은 토글 방식으로
 	void LockOnToggle(const FInputActionValue& Value);
 
-private:
-	UPROPERTY();
-	TObjectPtr<UAbilitySystemComponent> ASC;
+	virtual void Roll(const FInputActionValue& Value) override;
 
+private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> LockOnAction;
 

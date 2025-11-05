@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "View")
 	FORCEINLINE UViewModelBase* GetViewModel() const { return ViewModel; }
 
+public:
+	FORCEINLINE void SetOwningActor(AActor* NewOwner) { OwningActor = NewOwner; }
+
 protected:
 	// Begin UserWidget Interface
 	virtual void NativeConstruct() override;
@@ -54,7 +57,12 @@ private:
 	// ViewModel Property Changed 콜백
 	void HandlePropertyChanged(FName PropertyName);
 
+
 protected:
+	// UI Owner
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Actor)
+	TObjectPtr<AActor> OwningActor;
+
 	// 현재 바인딩된 ViewModel
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	TObjectPtr<UViewModelBase> ViewModel;

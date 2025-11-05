@@ -18,7 +18,7 @@ public:
 	AARBoss();
 	
 	//추후에 interface로 리팩토링 예정
-	void Attack_FireBreath_Swipe();
+	void AttackFireBreathSwipe();
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
