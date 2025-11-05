@@ -27,7 +27,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 		GetMesh()->SetSkeletalMesh(CharacterMesh.Object);
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Animation/Player/ABP_ARCharacter.ABP_ARCharacter_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Animation/Player/ABP_ARSwordCharacter.ABP_ARSwordCharacter_C"));
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
@@ -43,6 +43,13 @@ AARCharacterPlayer::AARCharacterPlayer()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera -> SetupAttachment(SpringArm,USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
+	Weapon->AttachToComponent(
+		GetMesh(),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		FName("hand_rSocket")
+	);
 
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (nullptr != InputMappingContextRef.Object)
@@ -74,6 +81,11 @@ AARCharacterPlayer::AARCharacterPlayer()
 		RollAction = InputActionRollRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponRef(TEXT("/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01"));
+	if (nullptr != WeaponRef.Object)
+	{
+		Weapon->SetStaticMesh(WeaponRef.Object);
+	}
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -161,7 +173,6 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 	bIsRolling = true;
 
 	PlayAnimMontage(RollActionMontage);
-	LaunchCharacter(GetActorForwardVector() * 2500.0f , true, true);
 
 	GetWorld()->GetTimerManager().SetTimer(
 		RollAnimTimer,
