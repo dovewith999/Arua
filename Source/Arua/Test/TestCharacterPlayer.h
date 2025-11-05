@@ -8,7 +8,9 @@
 #include "TestCharacterPlayer.generated.h"
 
 /**
- * 
+ * LockOn 기능 등 GAS 기반 기능을 테스트하기 위한 캐릭터 클래스입니다.
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/04
  */
 UCLASS()
 class ARUA_API ATestCharacterPlayer : public AARCharacterPlayer, public IAbilitySystemInterface
@@ -22,9 +24,16 @@ public:
 	// Inherited via IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+public:
+	void FinishLockOn();
+
+
+public:
+	FORCEINLINE void SetTarget(AActor* InTarget) { Target = InTarget; }
+	FORCEINLINE const AActor* GetTarget() const { return Target; }
 
 protected:
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
@@ -41,5 +50,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class UGameplayAbility>> StartingAbilities;
+
+private:
+	UPROPERTY()
+	TObjectPtr<AActor> Target;
 
 };

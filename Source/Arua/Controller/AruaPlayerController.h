@@ -9,7 +9,9 @@
 class UPlayerViewModel;
 class UPlayerHUDView;
 /**
- * 
+ * Player에게 빙의할 Controller 클래스 입니다.
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/05
  */
 UCLASS()
 class ARUA_API AAruaPlayerController : public APlayerController

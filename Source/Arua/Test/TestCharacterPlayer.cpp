@@ -21,6 +21,12 @@ UAbilitySystemComponent* ATestCharacterPlayer::GetAbilitySystemComponent() const
 	return ASC;
 }
 
+void ATestCharacterPlayer::FinishLockOn()
+{
+	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
 void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -57,13 +63,7 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Toggle Off")); // 화면출력
-
-		// 캐릭터가 이동 방향으로 자동 회전하도록 설정
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-
-		// 컨트롤러의 Yaw 회전을 캐릭터에 적용하도록 (카메라 방향을 향하지 않도록)
-		bUseControllerRotationYaw = false;
+		FinishLockOn();
 
 		if (!ASC)
 		{
@@ -75,13 +75,8 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Toggle On")); // 화면출력
-
 		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
 		GetCharacterMovement()->bOrientRotationToMovement = false;
-
-		// 컨트롤러의 Yaw 회전을 캐릭터에 적용 (카메라 방향을 향하도록)
-		bUseControllerRotationYaw = true;
 
 		if (!ASC)
 		{
