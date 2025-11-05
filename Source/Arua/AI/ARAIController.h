@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "AUAIController.generated.h"
+#include "ARAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API AAUAIController : public AAIController
+class ARUA_API AARAIController : public AAIController
 {
 	GENERATED_BODY()
 	
 public:
-	AAUAIController();
+	AARAIController();
 
 	virtual void OnPossess(APawn* InPawn) override;
 	void RunAI();
