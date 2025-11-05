@@ -7,6 +7,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/Quest/QuestComponent.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
@@ -15,6 +16,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Dialog/DialogWidget.h"
 #include "UI/Quest/QuestSelectWidget.h"
+
+static const FString QuestDataContext(TEXT("QuestGiver_OnAccept"));
 
 AQuestGiverActor::AQuestGiverActor()
 {
@@ -72,9 +75,12 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 		{
 			// 퀘스트 리스트 초기화
 			QuestSelectWidgetInstance->InitQuestList(ProvidedQuestIDs, QuestDataTables);
-			
+
 			// 퀘스트 선택 위젯 그리기
 			QuestSelectWidgetInstance->AddToViewport();
+
+			// 퀘스트 수락 바인딩
+			QuestSelectWidgetInstance->OnQuestAccepted.AddDynamic(this, &AQuestGiverActor::HandleQuestAccepted);
 		}
 	}
 
@@ -128,6 +134,25 @@ void AQuestGiverActor::UnInteract()
 		ViewTargetBlendTime,
 		false
 	);
+}
+
+void AQuestGiverActor::HandleQuestAccepted(FName QuestID)
+{
+	if (!InteractorPawn) return;
+
+	// 플레이어의 퀘스트 컴포넌트에 퀘스트 데이터 전달(등록)
+	if (FQuestData* Row = QuestDataTables->FindRow<FQuestData>(QuestID, QuestDataContext))
+	{
+		// 플레이어의 퀘스트 컴포넌트 찾기
+		if (UQuestComponent* QuestComponent = InteractorPawn->FindComponentByClass<UQuestComponent>())
+		{
+			// 퀘스트 데이터 전달(등록)
+			QuestComponent->AcceptQuest(*Row);
+		}
+	}
+
+	// 이 NPC에서 제공하는 퀘스트 리스트에서 수락한 퀘스트 제거
+	ProvidedQuestIDs.Remove(QuestID);
 }
 
 void AQuestGiverActor::BeginPlay()
@@ -228,3 +253,4 @@ void AQuestGiverActor::RestoreGameplayMode()
 	FInputModeGameOnly Mode;
 	PC->SetInputMode(Mode);
 }
+

@@ -41,18 +41,15 @@ void UQuestAcceptWidget::SetQuestInfo(const FQuestData& InQuestData)
 
 void UQuestAcceptWidget::HandleAccept()
 {
-	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Red, TEXT("HandleAccept"));
-	
 	// 위젯 숨기기
 	this->SetVisibility(ESlateVisibility::Collapsed);
 
-	// TODO 김준형: 퀘스트 컴포넌트 등록, 보상 처리 등 추가
+	// 퀘스트 수락 브로드캐스트(위젯 제거/퀘스트 등록을 위해)
+	OnQuestAccept.Broadcast(CurrentQuestData.QuestID);
 }
 
 void UQuestAcceptWidget::HandleClose()
 {
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Blue, TEXT("HandleClose"));
-	
 	// 위젯 숨기기
 	this->SetVisibility(ESlateVisibility::Collapsed);
 }

@@ -10,7 +10,7 @@
 #include "Engine/DataTable.h"
 #include "DataTables/QuestData.h"
 
-static const FString Context(TEXT("Quest Data Context"));
+static const FString QuestDataContext(TEXT("Quest Data Context"));
 
 void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDataTable* InQuestDataTable)
 {
@@ -23,7 +23,7 @@ void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDat
 	for (int i = QuestIDs.Num() - 1; i >= 0; --i)
 	{
 		// 퀘스트 ID에 맞는 퀘스트 데이터 테이블 가져오기
-		FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(QuestIDs[i], Context);
+		FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(QuestIDs[i], QuestDataContext);
 		if (!QuestData) continue;
 
 		// 퀘스트 버튼 위젯 생성
@@ -36,6 +36,9 @@ void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDat
 
 		// 패널에 추가
 		QuestButtonContainer->AddChildToVerticalBox(QuestButton);
+
+		// 선택 가능한 퀘스트 버튼(퀘스트 목록)에 추가
+		ButtonMap.Add(QuestData->QuestID, QuestButton);
 	}
 }
 
@@ -44,7 +47,7 @@ void UQuestSelectWidget::HandleQuestButtonClicked(FName InQuestID)
 	if (!QuestDataTable || !QuestAcceptWidgetClass || !QuestAcceptContainer) return;
 
 	// 퀘스트 ID를 통해 해당 퀘스트 데이터 가져오기
-	FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(InQuestID, Context);
+	FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(InQuestID, QuestDataContext);
 	if (!QuestData) return;
 
 	// 퀘스트 수락 위젯 생성
@@ -60,4 +63,23 @@ void UQuestSelectWidget::HandleQuestButtonClicked(FName InQuestID)
 	// 퀘스트 수락 위젯 초기화 및 가시화
 	QuestAcceptWidgetInstance->SetQuestInfo(*QuestData);
 	QuestAcceptWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
+	// 수락창 자체에서 퀘스트 위젯을 관리하지만, 수락한 퀘스트의 목록 제거는 여기서 처리
+	QuestAcceptWidgetInstance->OnQuestAccept.AddDynamic(this, &UQuestSelectWidget::HandleOnQuestAccepted);
+}
+
+void UQuestSelectWidget::HandleOnQuestAccepted(FName QuestID)
+{
+	// 버튼 제거
+	if (UQuestButtonWidget** Found = ButtonMap.Find(QuestID))
+	{
+		if (UQuestButtonWidget* Btn = *Found)
+		{
+			QuestButtonContainer->RemoveChild(Btn);
+			ButtonMap.Remove(QuestID);
+		}
+	}
+
+	// 퀘스트 수락 브로드캐스트
+	OnQuestAccepted.Broadcast(QuestID);
 }

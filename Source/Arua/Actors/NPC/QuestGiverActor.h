@@ -23,6 +23,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UnInteract();
 
+	// 퀘스트 수락 콜백 함수
+	UFUNCTION()
+	void HandleQuestAccepted(FName QuestID);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -49,23 +53,23 @@ protected:
 	float ViewTargetBlendTime = 0.25f;
 
 	// 다이얼로그 위젯 클래스
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest | UI")
 	TSubclassOf<class UDialogWidget> DialogWidgetClass;
 
 	// NPC 위젯 컴포넌트 (NPC 이름, 퀘스트 여부 등)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest | UI")
 	TObjectPtr<class UWidgetComponent> NPCWidgetComponent;
 
 	// 퀘스트 데이터 테이블
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UDataTable> QuestDataTables;
 
 	// 이 NPC가 제공할 QuestID 리스트 (없으면 DataTable의 전체를 사용)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TArray<FName> ProvidedQuestIDs;
 
 	// 퀘스트 선택 위젯 클래스
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quest")
 	TSubclassOf<class UQuestSelectWidget> QuestSelectWidgetClass;
 
 private:
