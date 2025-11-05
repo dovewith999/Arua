@@ -5,10 +5,10 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 
-void UQuestButtonWidget::Init(FName InQuestID)
+void UQuestButtonWidget::Init(const FQuestData& InQuestData)
 {
 	// 퀘스트 ID 초기화
-	QuestID = InQuestID;
+	QuestID = InQuestData.QuestID;
 
 	if (!QuestButton || !QuestNameText)
 	{
@@ -20,7 +20,7 @@ void UQuestButtonWidget::Init(FName InQuestID)
 	QuestButton->OnClicked.AddDynamic(this, &UQuestButtonWidget::HandleOnClicked);
 
 	// 퀘스트 타이틀 텍스트 설정
-	QuestNameText->SetText(FText::FromName(QuestID));
+	QuestNameText->SetText(InQuestData.Title);
 }
 
 void UQuestButtonWidget::HandleOnClicked()
