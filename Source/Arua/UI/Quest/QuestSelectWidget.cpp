@@ -10,7 +10,7 @@
 #include "Engine/DataTable.h"
 #include "DataTables/QuestData.h"
 
-static const FString Context(TEXT("Quest Data Context"));
+static const FString QuestDataContext(TEXT("Quest Data Context"));
 
 void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDataTable* InQuestDataTable)
 {
@@ -23,7 +23,7 @@ void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDat
 	for (int i = QuestIDs.Num() - 1; i >= 0; --i)
 	{
 		// 퀘스트 ID에 맞는 퀘스트 데이터 테이블 가져오기
-		FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(QuestIDs[i], Context);
+		FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(QuestIDs[i], QuestDataContext);
 		if (!QuestData) continue;
 
 		// 퀘스트 버튼 위젯 생성
@@ -44,7 +44,7 @@ void UQuestSelectWidget::HandleQuestButtonClicked(FName InQuestID)
 	if (!QuestDataTable || !QuestAcceptWidgetClass || !QuestAcceptContainer) return;
 
 	// 퀘스트 ID를 통해 해당 퀘스트 데이터 가져오기
-	FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(InQuestID, Context);
+	FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(InQuestID, QuestDataContext);
 	if (!QuestData) return;
 
 	// 퀘스트 수락 위젯 생성
