@@ -27,7 +27,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 
 
-	AIPawn->Attack_FireBreath_Swipe();
+	AIPawn->AttackFireBreathSwipe();
 
 	return EBTNodeResult::Succeeded;
 

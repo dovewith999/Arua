@@ -37,7 +37,7 @@ AARBoss::AARBoss()
 
 }
 
-void AARBoss::Attack_FireBreath_Swipe()
+void AARBoss::AttackFireBreathSwipe()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
