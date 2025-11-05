@@ -86,6 +86,9 @@ protected:
 
 	// ASC 어빌리티 섹션
 protected:
-	UPROPERTY(EditAnywhere, Category = GAS)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
+
+protected:
+	void SetupGASInputComponent();
 };

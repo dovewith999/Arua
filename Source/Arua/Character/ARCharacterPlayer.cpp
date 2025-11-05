@@ -120,6 +120,11 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
+
+	if (IsValid(ASC) && IsValid(PlayerInputComponent))
+	{
+
+	}
 }
 
 void AARCharacterPlayer::PossessedBy(AController* NewController)
@@ -137,6 +142,7 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 			FGameplayAbilitySpec StartSpec(StartAbility);
 			ASC->GiveAbility(StartSpec);
 		}
+
 	}
 
 
@@ -210,3 +216,13 @@ void AARCharacterPlayer::RollCompleted()
 {
 	bIsRolling = false;
 }
+
+void AARCharacterPlayer::SetupGASInputComponent()
+{
+	if (IsValid(ASC) && IsValid(InputComponent))
+	{
+		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+
+	}
+}
+
