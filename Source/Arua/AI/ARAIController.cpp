@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/AUAIController.h"
+#include "AI/ARAIController.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "AI/AUAI.h"
+#include "AI/ARAI.h"
 #include "Kismet/GameplayStatics.h"
 
-AAUAIController::AAUAIController()
+AARAIController::AARAIController()
 {
 	//사용할 BlackBoard
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef
@@ -29,13 +29,13 @@ AAUAIController::AAUAIController()
 
 }
 
-void AAUAIController::RunAI()
+void AARAIController::RunAI()
 {
 	// 블랙보드 컴포넌트 받아오기.
-	UBlackboardComponent* BBComp = Blackboard.Get();
+	UBlackboardComponent* BB = Blackboard.Get();
 
 	// 블랙보드 사용 설정.
-	if (UseBlackboard(BBAsset, BBComp))
+	if (UseBlackboard(BBAsset, BB))
 	{
 		// 보스의 초기 위치 저장
 		APawn* MyPawn = GetPawn();
@@ -63,19 +63,19 @@ void AAUAIController::RunAI()
 
 }
 
-void AAUAIController::StopAI()
+void AARAIController::StopAI()
 {
 	// 실행 중인 BT 컴포넌트 받아오기.
-	UBehaviorTreeComponent* BTComp
+	UBehaviorTreeComponent* BT
 		= Cast<UBehaviorTreeComponent>(BrainComponent);
 
-	if (BTComp)
+	if (BT)
 	{
-		BTComp->StopTree();
+		BT->StopTree();
 	}
 }
 
-void AAUAIController::OnPossess(APawn* InPawn)
+void AARAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 

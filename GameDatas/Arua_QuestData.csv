@@ -1,5 +1,7 @@
-QuestID,Title,Description,Type,ObjectiveCount,ObjectiveCount,RewardAmount
-Q_KillRedDragon,Slay the Red Dragon,The Red Dragon devastated the village. Kill the Red Dragon.,Kill,1,RedDragon,100
-Q_CollectBlueDragonScales,Collect Blue Dragon Scales,Gather 3 Blue Dragon Scales from the Lake.,Collect,3,BlueDragon,300
-Q_KillGreenDragon,Slay the Green Dragon,The Green Dragon devastated the village. Kill the Green Dragon.,Kill,1,GreenDragon,500
-Q_CollectGoldDragonScales,Collect Blue Gold Scales,Gather 5 Gold Dragon Scales from the Forest.,Collect,5,GoldDragon,1000
+﻿Name,QuestID,Title,Objective,Description,Type,ObjectiveCount,ObjectiveTarget,RewardGold
+Q_KillRedDragon,Q_KillRedDragon,황폐화된 마을,레드 드래곤 토벌,"레드 드래곤이 마을을 황폐화 시키고 있습니다.
+레드 드래곤을 토벌하여 마을의 안전을 지켜주세요!!",Kill,1,RedDragon,100
+Q_CollectBlueDragonScales,Q_CollectBlueDragonScales,비늘 수집 1,블루 드래곤의 비늘 수집,블루 드래곤의 비늘 3개를 모아와주세요!!,Collect,3,BlueDragon,300
+Q_KillGreenDragon,Q_KillGreenDragon,마을 습격,그린 드래곤 토벌,"그린 드래곤이 마을을 습격했습니다.
+그린 드래곤을 토벌하여 마을의 안전을 지켜주세요!!",Kill,1,GreenDragon,500
+Q_CollectGoldDragonScales,Q_CollectGoldDragonScales,비늘 수집 2,골드 드래곤의 비늘 수집,골드 드래곤의 비늘 3개를 모아와주세요!!,Collect,5,GoldDragon,1000

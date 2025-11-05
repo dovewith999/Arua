@@ -50,4 +50,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsWalk : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	float Angle;
 };

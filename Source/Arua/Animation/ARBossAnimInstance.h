@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "AUAnimInstance.generated.h"
+#include "ARBossAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API UAUAnimInstance : public UAnimInstance
+class ARUA_API UARBossAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
+public:
+	//UARBossAnimInstance();
+
+
 };

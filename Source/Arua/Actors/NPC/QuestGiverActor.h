@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,93 +15,85 @@ class ARUA_API AQuestGiverActor : public AActor
 public:
 	AQuestGiverActor();
 
-	// »óÈ£ÀÛ¿ë ½ÃÀÛ ÇÔ¼ö (Ä«¸Ş¶ó ÀüÈ¯)
+	// ìƒí˜¸ì‘ìš© ì‹œì‘ í•¨ìˆ˜ (ì¹´ë©”ë¼ ì „í™˜)
 	UFUNCTION(BlueprintCallable)
 	void Interact(APawn* InInteractor);
 
-	// »óÈ£ÀÛ¿ë Á¾·á ÇÔ¼ö (Ä«¸Ş¶ó ÀüÈ¯)
+	// ìƒí˜¸ì‘ìš© ì¢…ë£Œ í•¨ìˆ˜ (ì¹´ë©”ë¼ ì „í™˜)
 	UFUNCTION(BlueprintCallable)
 	void UnInteract();
 
 protected:
 	virtual void BeginPlay() override;
 
-	// UI »óÈ£ÀÛ¿ë ¸ğµå ¼³Á¤ ÇÔ¼ö (ÀÔ·Â µî)
+	// UI ìƒí˜¸ì‘ìš© ëª¨ë“œ ì„¤ì • í•¨ìˆ˜ (ì…ë ¥ ë“±)
 	void ApplyUIInteractionMode();
 
-	// °ÔÀÓ ¸ğµå ¼³Á¤ ÇÔ¼ö (ÀÔ·Â µî)
+	// ê²Œì„ ëª¨ë“œ ì„¤ì • í•¨ìˆ˜ (ì…ë ¥ ë“±)
 	void RestoreGameplayMode();
 
-	// Äù½ºÆ® ¼±ÅÃ ÇÔ¼ö
-	UFUNCTION()
-	void OnQuestSelected(FName SelectedQuestID);
-
-	// Äù½ºÆ® ¼±ÅÃ Ãë¼Ò ÇÔ¼ö
-	UFUNCTION()
-	void OnQuestDeselected();
-
-	// ÀÌ NPC°¡ Á¦°øÇÏ´Â Äù½ºÆ® ¸®½ºÆ® Getter
+	// ì´ NPCê°€ ì œê³µí•˜ëŠ” í€˜ìŠ¤íŠ¸ ë¦¬ìŠ¤íŠ¸ Getter
 	TArray<FQuestData> GetProvidedQuests() const;
 
 protected:
-	// »óÈ£ÀÛ¿ë Äİ¸®Àü
+	// ìƒí˜¸ì‘ìš© ì½œë¦¬ì „
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> InteractionVolume;
 
-	// UI Ä«¸Ş¶ó
+	// UI ì¹´ë©”ë¼
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> UICameraActor;
 
-	// Ä«¸Ş¶ó ÀüÈ¯ ºí·£µù ½Ã°£
+	// ì¹´ë©”ë¼ ì „í™˜ ë¸”ëœë”© ì‹œê°„
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float ViewTargetBlendTime = 0.25f;
 
-	// ´ÙÀÌ¾ó·Î±× À§Á¬ Å¬·¡½º
+	// ë‹¤ì´ì–¼ë¡œê·¸ ìœ„ì ¯ í´ë˜ìŠ¤
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UDialogWidget> DialogWidgetClass;
 
-	// NPC À§Á¬ ÄÄÆ÷³ÍÆ® (NPC ÀÌ¸§, Äù½ºÆ® ¿©ºÎ µî)
+	// NPC ìœ„ì ¯ ì»´í¬ë„ŒíŠ¸ (NPC ì´ë¦„, í€˜ìŠ¤íŠ¸ ì—¬ë¶€ ë“±)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<class UWidgetComponent> NPCWidgetComponent;
 
-	// Äù½ºÆ® µ¥ÀÌÅÍ Å×ÀÌºí
+	// í€˜ìŠ¤íŠ¸ ë°ì´í„° í…Œì´ë¸”
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
 	TObjectPtr<class UDataTable> QuestDataTables;
 
-	// ÀÌ NPC°¡ Á¦°øÇÒ QuestID ¸®½ºÆ® (¾øÀ¸¸é DataTableÀÇ ÀüÃ¼¸¦ »ç¿ë)
+	// ì´ NPCê°€ ì œê³µí•  QuestID ë¦¬ìŠ¤íŠ¸ (ì—†ìœ¼ë©´ DataTableì˜ ì „ì²´ë¥¼ ì‚¬ìš©)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
 	TArray<FName> ProvidedQuestIDs;
 
-	// Äù½ºÆ® ¼±ÅÃ À§Á¬ Å¬·¡½º
+	// í€˜ìŠ¤íŠ¸ ì„ íƒ ìœ„ì ¯ í´ë˜ìŠ¤
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quests")
 	TSubclassOf<class UQuestSelectWidget> QuestSelectWidgetClass;
 
 private:
-	// »óÈ£ÀÛ¿ë »óÅÂ ÇÃ·¡±×
+	// ìƒí˜¸ì‘ìš© ìƒíƒœ í”Œë˜ê·¸
 	UPROPERTY()
 	bool bInteracting = false;
 
-	// »óÈ£ÀÛ¿ë ÇÃ·¹ÀÌ¾î
+	// ìƒí˜¸ì‘ìš© í”Œë ˆì´ì–´
 	UPROPERTY()
 	APawn* InteractorPawn = nullptr;
 
-	// »óÈ£ÀÛ¿ë ÄÁÆ®·Ñ·¯
+	// ìƒí˜¸ì‘ìš© ì»¨íŠ¸ë¡¤ëŸ¬
 	UPROPERTY()
 	APlayerController* PC = nullptr;
 
-	// ±âÁ¸ ºä Å¸°Ù
+	// ê¸°ì¡´ ë·° íƒ€ê²Ÿ
 	UPROPERTY()
 	AActor* OriginalViewTarget;
 
-	// Ä«¸Ş¶ó ÀüÈ¯ Å¸ÀÌ¸Ó ÇÚµé
+	// ì¹´ë©”ë¼ ì „í™˜ íƒ€ì´ë¨¸ í•¸ë“¤
 	FTimerHandle ViewTargetBlendTimer;
 
 private:
-	// ´ÙÀÌ¾ó·Î±× À§Á¬ ÀÎ½ºÅÏ½º
+	// ë‹¤ì´ì–¼ë¡œê·¸ ìœ„ì ¯ ì¸ìŠ¤í„´ìŠ¤
 	UPROPERTY()
 	TObjectPtr<class UDialogWidget> DialogWidgetInstance = nullptr;
 
-	// Äù½ºÆ® ¼±ÅÃ À§Á¬ ÀÎ½ºÅÏ½º
+	// í€˜ìŠ¤íŠ¸ ì„ íƒ ìœ„ì ¯ ì¸ìŠ¤í„´ìŠ¤
 	UPROPERTY()
 	TObjectPtr<class UQuestSelectWidget> QuestSelectWidgetInstance = nullptr;
 };
