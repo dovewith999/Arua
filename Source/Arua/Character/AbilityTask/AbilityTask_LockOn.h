@@ -6,8 +6,12 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "AbilityTask_LockOn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockOnTargetLostDelegate);
+
 /**
- * AbilityTask: Owner가 Target을 계속 바라보도록 회전
+ * LockOn 상태에서 Owner가 Target을 계속 바라보도록 회전시키기 위한 Task
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/05
  */
 UCLASS()
 class ARUA_API UAbilityTask_LockOn : public UAbilityTask
@@ -26,6 +30,8 @@ public:
 
 	virtual void Activate() override;
 	virtual void TickTask(float DeltaTime) override;
+
+	FLockOnTargetLostDelegate OnLostTarget;
 
 private:
 	UPROPERTY()

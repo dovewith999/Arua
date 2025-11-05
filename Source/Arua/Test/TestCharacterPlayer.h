@@ -24,6 +24,9 @@ public:
 	// Inherited via IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+public:
+	void FinishLockOn();
+
 
 public:
 	FORCEINLINE void SetTarget(AActor* InTarget) { Target = InTarget; }

@@ -41,6 +41,11 @@ private:
     // Lock-On 타겟 찾기
     AActor* FindLockOnTarget();
 
+    // 타겟 잃어버렸을 때 처리
+    UFUNCTION()
+    void LostTarget();
+
+private:
     UPROPERTY(EditDefaultsOnly, Category = "LockOn")
     float LockOnRange = 1500.0f;
 

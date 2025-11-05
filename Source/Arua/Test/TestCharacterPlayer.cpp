@@ -21,6 +21,12 @@ UAbilitySystemComponent* ATestCharacterPlayer::GetAbilitySystemComponent() const
 	return ASC;
 }
 
+void ATestCharacterPlayer::FinishLockOn()
+{
+	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
 void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -57,8 +63,7 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
-		// 캐릭터가 이동 방향으로 자동 회전하도록 설정
-		GetCharacterMovement()->bOrientRotationToMovement = true;
+		FinishLockOn();
 
 		if (!ASC)
 		{

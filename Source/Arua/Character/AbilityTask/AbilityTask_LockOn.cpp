@@ -46,6 +46,15 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 	FVector ToTarget = Target->GetActorLocation() - OwnerActor->GetActorLocation();
 	ToTarget.Z = 0.0f; // 수평 회전만 (Yaw)
 
+	// 거리가 멀어지면 Task 종료 및 LockOn 상태 비활성화
+	// Todo : 거리 수치는 나중에 데이터 테이블 작성해서 받아오도록 하기
+	if (ToTarget.Length() > 1500.0f)
+	{
+		OnLostTarget.Broadcast();
+		EndTask();
+		return;
+	}
+
 	if (ToTarget.IsNearlyZero())
 		return;
 
