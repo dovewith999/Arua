@@ -13,7 +13,7 @@
  * 작성일 : 25/11/04
  */
 UCLASS()
-class ARUA_API ATestCharacterPlayer : public AARCharacterPlayer, public IAbilitySystemInterface
+class ARUA_API ATestCharacterPlayer : public AARCharacterPlayer
 {
 	GENERATED_BODY()
 
@@ -42,9 +42,6 @@ protected:
 	void LockOnToggle(const FInputActionValue& Value);
 
 private:
-	UPROPERTY();
-	TObjectPtr<UAbilitySystemComponent> ASC;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> LockOnAction;
 
