@@ -17,7 +17,7 @@
 #include "UI/Dialog/DialogWidget.h"
 #include "UI/Quest/QuestSelectWidget.h"
 
-static const FString QuestDataContext(TEXT("QuestGiver_OnAccept"));
+static const FString QuestGiverActorContext(TEXT("QuestGiver_OnAccept"));
 
 AQuestGiverActor::AQuestGiverActor()
 {
@@ -141,7 +141,7 @@ void AQuestGiverActor::HandleQuestAccepted(FName QuestID)
 	if (!InteractorPawn) return;
 
 	// 플레이어의 퀘스트 컴포넌트에 퀘스트 데이터 전달(등록)
-	if (FQuestData* Row = QuestDataTables->FindRow<FQuestData>(QuestID, QuestDataContext))
+	if (FQuestData* Row = QuestDataTables->FindRow<FQuestData>(QuestID, QuestGiverActorContext))
 	{
 		// 플레이어의 퀘스트 컴포넌트 찾기
 		if (UQuestComponent* QuestComponent = InteractorPawn->FindComponentByClass<UQuestComponent>())
