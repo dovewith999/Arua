@@ -76,4 +76,9 @@ protected:
 	TObjectPtr<class UAnimMontage> RollActionMontage;
 
 	FTimerHandle RollAnimTimer;
+
+	// 무기 섹션
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Weapon;
 };
