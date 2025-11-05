@@ -160,25 +160,34 @@ AActor* UGA_LockOn::FindLockOnTarget()
 	{
 		if (BestTarget == nullptr)
 		{
+			BestScore = FVector::Dist(CharacterLocation, Actor->GetActorLocation());
 			BestTarget = Actor;
 			continue;
 		}
 
-		FVector ToTarget = (Actor->GetActorLocation() - CharacterLocation).GetSafeNormal();
-		float DotProduct = FVector::DotProduct(ForwardVector, ToTarget);
-		float Angle = FMath::RadiansToDegrees(FMath::Acos(DotProduct));
-
-		if (Angle <= LockOnAngle)
+		float Distance = FVector::Dist(CharacterLocation, Actor->GetActorLocation());
+		if (BestScore > Distance)
 		{
-			float Distance = FVector::Dist(CharacterLocation, Actor->GetActorLocation());
-			float Score = (1.0f - (Angle / LockOnAngle)) * (1.0f - (Distance / LockOnRange));
-
-			if (Score > BestScore)
-			{
-				BestScore = Score;
-				BestTarget = Actor;
-			}
+			BestScore = Distance;
+			BestTarget = Actor;
+			continue;
 		}
+
+		//FVector ToTarget = (Actor->GetActorLocation() - CharacterLocation).GetSafeNormal();
+		//float DotProduct = FVector::DotProduct(ForwardVector, ToTarget);
+		//float Angle = FMath::RadiansToDegrees(FMath::Acos(DotProduct));
+
+		//if (Angle <= LockOnAngle)
+		//{
+		//	float Distance = FVector::Dist(CharacterLocation, Actor->GetActorLocation());
+		//	float Score = (1.0f - (Angle / LockOnAngle)) * (1.0f - (Distance / LockOnRange));
+
+		//	if (Score > BestScore)
+		//	{
+		//		BestScore = Score;
+		//		BestTarget = Actor;
+		//	}
+		//}
 	}
 
 	return BestTarget;
