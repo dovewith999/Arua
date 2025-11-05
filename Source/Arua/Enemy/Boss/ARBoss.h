@@ -16,7 +16,12 @@ class ARUA_API AARBoss : public AARCharacterBase
 	
 public:
 	AARBoss();
-
 	
+	//추후에 interface로 리팩토링 예정
+	void Attack_FireBreath_Swipe();
+	
+protected:
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> Montage_Attack_FireBreath_Swipe;
 
 };
