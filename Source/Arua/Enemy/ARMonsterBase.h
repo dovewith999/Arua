@@ -20,6 +20,9 @@ class ARUA_API AARMonsterBase : public AARCharacterBase
 public:
 	AARMonsterBase();
 
+public:
+	void SetTargetLockWidget(bool InShow);
+
 protected:
 	virtual void BeginPlay() override;
 

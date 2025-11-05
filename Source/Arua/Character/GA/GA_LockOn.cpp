@@ -7,6 +7,7 @@
 #include "Tag/AruaGameplayTags.h"
 #include "Test/TestCharacterPlayer.h"
 #include "Character/AbilityTask/AbilityTask_LockOn.h"
+#include "Enemy/ARMonsterBase.h"
 
 UGA_LockOn::UGA_LockOn()
 {
@@ -52,6 +53,11 @@ void UGA_LockOn::ActivateAbility(
 			DebugMessage
 		);
 
+		if (AARMonsterBase* TargetMonster = Cast<AARMonsterBase>(CurrentTarget))
+		{
+			TargetMonster->SetTargetLockWidget(false);
+		}
+
 		// Task 시작 - 타겟 바라보기
 		UAbilityTask_LockOn* LockOnTask = UAbilityTask_LockOn::CreateLockOnTask(
 			this,           // OwningAbility
@@ -59,11 +65,11 @@ void UGA_LockOn::ActivateAbility(
 			10.f          // RotationSpeed (0 = 즉시 회전)
 		);
 
-
 		LockOnTask->OnLostTarget.AddDynamic(this, &UGA_LockOn::LostTarget);
 
 		LockOnTask->ReadyForActivation();
 	}
+
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Target Not Found"));
@@ -83,13 +89,16 @@ void UGA_LockOn::EndAbility(
 	{
 		UE_LOG(LogTemp, Log, TEXT("Lock-On Ended: %s"), *CurrentTarget->GetName());
 
+		if (AARMonsterBase* TargetMonster = Cast<AARMonsterBase>(CurrentTarget))
+		{
+			TargetMonster->SetTargetLockWidget(true);
+		}
+
 		CurrentTarget = nullptr;
 	}
 
 	// 부모 호출 (ActivationOwnedTags 자동 제거)
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Lock-On Ended"));
 
 	ACharacter* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	if (!Character)

@@ -3,6 +3,7 @@
 
 #include "Enemy/ARMonsterBase.h"
 #include "UI/WidgetComponent/ARWidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -11,8 +12,9 @@ AARMonsterBase::AARMonsterBase()
 	TargetLock->SetupAttachment(GetMesh());
 
 	// 위치 조정
-	TargetLock->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
-
+	float CenterPosition = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	TargetLock->SetRelativeLocation(FVector(0.f, 0.f, CenterPosition));
+	
 	// 어떤 Widget BP를 사용해 그릴지
 	static ConstructorHelpers::FClassFinder<UUserWidget> TargetLockViewRef(TEXT("/Game/Personal/LIM_H_S/UI/WBP_TargetLock.WBP_TargetLock_C"));
 	if (TargetLockViewRef.Succeeded())
@@ -26,7 +28,14 @@ AARMonsterBase::AARMonsterBase()
 		// 그릴 크기 지정
 		TargetLock->SetDrawSize(FVector2D(100.f, 100.f));
 		TargetLock->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		TargetLock->bHiddenInGame = true;
 	}
+}
+
+void AARMonsterBase::SetTargetLockWidget(bool InShow)
+{
+	TargetLock->bHiddenInGame = InShow;
 }
 
 void AARMonsterBase::BeginPlay()
