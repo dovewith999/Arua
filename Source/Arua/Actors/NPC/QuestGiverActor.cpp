@@ -71,16 +71,10 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 		if (QuestSelectWidgetInstance)
 		{
 			// 퀘스트 리스트 초기화
-			QuestSelectWidgetInstance->InitQuestList(ProvidedQuestIDs);
+			QuestSelectWidgetInstance->InitQuestList(ProvidedQuestIDs, QuestDataTables);
 			
 			// 퀘스트 선택 위젯 그리기
 			QuestSelectWidgetInstance->AddToViewport();
-
-			// 퀘스트 선택 위젯의 퀘스트 선택 및 취소 함수 바인딩
-			QuestSelectWidgetInstance->OnQuestSelected.AddDynamic(
-				this, &AQuestGiverActor::OnQuestSelected);
-			QuestSelectWidgetInstance->OnQuestDeselected.AddDynamic(
-				this, &AQuestGiverActor::OnQuestDeselected);
 		}
 	}
 
@@ -233,15 +227,4 @@ void AQuestGiverActor::RestoreGameplayMode()
 	// 입력 모드 게임 모드로 복귀
 	FInputModeGameOnly Mode;
 	PC->SetInputMode(Mode);
-}
-
-void AQuestGiverActor::OnQuestSelected(FName SelectedQuestID)
-{
-	FString Msg = FString::Printf(TEXT("Quest Accept: %s"), *SelectedQuestID.ToString());
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, Msg);
-}
-
-void AQuestGiverActor::OnQuestDeselected()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Deselected"));
 }
