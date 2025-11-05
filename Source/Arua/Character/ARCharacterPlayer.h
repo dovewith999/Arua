@@ -69,7 +69,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void RunTriggered(const FInputActionValue& Value);
 	void RunComplete(const FInputActionValue& Value);
-	void Roll(const FInputActionValue& Value);
+	virtual void Roll(const FInputActionValue& Value);
 	void RollCompleted();
 
 	// 애니메이션 섹션

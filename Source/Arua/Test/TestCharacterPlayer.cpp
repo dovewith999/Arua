@@ -34,6 +34,7 @@ void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::LockOnToggle);
+	//EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::Roll);
 }
 
 void ATestCharacterPlayer::PostInitializeComponents()
@@ -61,15 +62,14 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
 
+	if (!ASC)
+	{
+		return;
+	}
+
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
 		FinishLockOn();
-
-		if (!ASC)
-		{
-			return;
-		}
-
 		ASC->CancelAbilities(&TagContainer);
 	}
 
@@ -77,12 +77,22 @@ void ATestCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	{
 		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		ASC->TryActivateAbilitiesByTag(TagContainer);
+	}
+}
 
-		if (!ASC)
-		{
-			return;
-		}
+void ATestCharacterPlayer::Roll(const FInputActionValue& Value)
+{
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
 
+	if (!ASC)
+	{
+		return;
+	}
+
+	if (!ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
 		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 }

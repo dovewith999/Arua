@@ -27,6 +27,8 @@ void UGA_LockOn::ActivateAbility(
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -39,19 +41,6 @@ void UGA_LockOn::ActivateAbility(
 	if (Target)
 	{
 		CurrentTarget = Target;
-		// FName을 FString으로 변환하고 포맷팅
-		FString DebugMessage = FString::Printf(
-			TEXT("Lock-On Started : %s"),
-			*(Target->GetName())
-		);
-
-		// 화면 출력
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			3.0f,
-			FColor::Green,
-			DebugMessage
-		);
 
 		if (AARMonsterBase* TargetMonster = Cast<AARMonsterBase>(CurrentTarget))
 		{
