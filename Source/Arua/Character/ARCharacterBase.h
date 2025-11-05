@@ -1,13 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AbilitySystemInterface.h"
 #include "ARCharacterBase.generated.h"
 
 UCLASS()
-class ARUA_API AARCharacterBase : public ACharacter
+class ARUA_API AARCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -15,15 +16,21 @@ public:
 	// Sets default values for this character's properties
 	AARCharacterBase();
 
-	// ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­°¡ ³¡³ª¸é È£ÃâµÇ´Â ÀÌº¥Æ® ÇÔ¼ö. 
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	// ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”ê°€ ëë‚˜ë©´ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸ í•¨ìˆ˜. 
 	virtual void PostInitializeComponents() override;
 
 protected:
-	// Á×À½ ¼³Á¤ ÇÔ¼ö.
-	// Á×À½ »óÅÂ ¼³Á¤
+	// ì£½ìŒ ì„¤ì • í•¨ìˆ˜.
+	// ì£½ìŒ ìƒíƒœ ì„¤ì •
 	virtual void SetDead();
 
 	void PlayDeadAnimation();
 
+	// ASC
+protected:
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 };
