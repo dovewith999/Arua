@@ -216,8 +216,7 @@ void AARCharacterPlayer::NotMove(const FInputActionValue& Value)
 
 void AARCharacterPlayer::Look(const FInputActionValue& Value)
 {
-
-	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	if (ASC == nullptr || ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
 		return;
 	}
