@@ -11,6 +11,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "AttributeSet/PlayerAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 ATestCharacterPlayer::ATestCharacterPlayer()
 {
@@ -28,6 +29,10 @@ void ATestCharacterPlayer::FinishLockOn()
 {
 	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	// 카메라 옵션 초기화
+	SpringArm->SocketOffset = FVector(0.f, 0.f, 0.f);
+	SpringArm->bUsePawnControlRotation = true;
 }
 
 void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

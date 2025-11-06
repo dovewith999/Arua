@@ -38,4 +38,6 @@ private:
 	TObjectPtr<AActor> Target;
 
 	float InterpSpeed;
+
+	FVector LockOnCameraOffset;
 };
