@@ -3,6 +3,7 @@
 #include "BossHpBarView.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "UI/ViewModel/BossViewModel.h"
 
 void UBossHpBarView::NativeConstruct()
 {
@@ -28,13 +29,30 @@ void UBossHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyNam
 {
 	Super::OnViewModelPropertyChanged_Implementation(PropertyName);
 
-	if (PropertyName == "Hp")
-	{
+	UBossViewModel* VM = Cast<UBossViewModel>(GetViewModel());
 
+	if (VM == nullptr)
+	{
+		return;
+	}
+
+	if (PropertyName == NAME_None)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Set None"));
+
+		HpProgressBar->SetPercent(VM->GetHpRatio());
+		NameText->SetText(FText::FromString(VM->GetName()));
+	}
+
+	if (PropertyName == "Hp" || PropertyName == "MaxHp")
+	{
+		UE_LOG(LogTemp, Log, TEXT("Set BossHpBar"));
+		HpProgressBar->SetPercent(VM->GetHpRatio());
 	}
 
 	else if (PropertyName == "Name")
 	{
-
+		UE_LOG(LogTemp, Log, TEXT("Set Name"));
+		NameText->SetText(FText::FromString(VM->GetName()));
 	}
 }

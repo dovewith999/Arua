@@ -4,6 +4,10 @@
 #include "Enemy/ARMonsterBase.h"
 #include "UI/WidgetComponent/ARWidgetComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet/MonsterAttributeSet.h"
+#include "UI/ViewModel/BossViewModel.h"
+#include "UI/Model/BossData.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -31,6 +35,9 @@ AARMonsterBase::AARMonsterBase()
 
 		TargetLock->bHiddenInGame = true;
 	}
+
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttrubuteSet"));
 }
 
 void AARMonsterBase::SetTargetLockWidget(bool InShow)
@@ -41,4 +48,12 @@ void AARMonsterBase::SetTargetLockWidget(bool InShow)
 void AARMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	VM = NewObject<UBossViewModel>();
+
+	UBossData* Model = NewObject<UBossData>();
+	Model->BindToAttributeSet(AttributeSet);
+	Model->SetName(TEXT("드래곤"));
+	
+	VM->Initialize(Model);
 }

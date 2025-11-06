@@ -20,7 +20,9 @@ public:
 	UPlayerHUDView();
 
 public:
-	void SetViewModelChildWidget(class UViewModelBase* InViewModel);
+	void SetViewModelChildWidget(class UViewModelBase* InViewModel); // 자식 위젯의 ViewModel 세팅하기 위한 함수-  25/11/06 임희섭
+	void SetBossViewModel(class UViewModelBase* InViewModel); // Boss HpBar에 현재 타겟의 ViewModel을 세팅하기 위한 함수 - 25/11/06 임희섭 
+	void TurnOffBossHpBar(); 
 
 protected:
 	// Begin UUserWidget Interface

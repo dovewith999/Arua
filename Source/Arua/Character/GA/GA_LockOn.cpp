@@ -8,6 +8,7 @@
 #include "Test/TestCharacterPlayer.h"
 #include "Character/AbilityTask/AbilityTask_LockOn.h"
 #include "Enemy/ARMonsterBase.h"
+#include "Controller/AruaPlayerController.h"
 
 UGA_LockOn::UGA_LockOn()
 {
@@ -39,15 +40,25 @@ void UGA_LockOn::ActivateAbility(
 	}
 
 	//// 타겟 찾기
-	AActor* Target = FindLockOnTarget();
-
-	if (Target)
+	if (AActor* Target = FindLockOnTarget())
 	{
 		CurrentTarget = Target;
 
 		if (AARMonsterBase* TargetMonster = Cast<AARMonsterBase>(CurrentTarget))
 		{
 			TargetMonster->SetTargetLockWidget(false);
+
+			// Todo : 보스 이름 받아서 HUD에 띄우기 테스트용 로직
+			ACharacter* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+			if (!Character)
+			{
+				return;
+			}
+
+			if (AAruaPlayerController* PlayerController = Cast<AAruaPlayerController>(Character->GetController()))
+			{
+				PlayerController->SetTargetBoss(TargetMonster);
+			}
 		}
 
 		// Task 시작 - 타겟 바라보기

@@ -11,7 +11,7 @@ UPlayerHUDView::UPlayerHUDView()
 
 void UPlayerHUDView::SetViewModelChildWidget(UViewModelBase* InViewModel)
 {
-	if (PlayerHpBar == nullptr)
+	if (PlayerHpBar == nullptr || InViewModel == nullptr)
 	{
 		return;
 	}
@@ -19,9 +19,26 @@ void UPlayerHUDView::SetViewModelChildWidget(UViewModelBase* InViewModel)
 	PlayerHpBar->SetViewModel(InViewModel);
 }
 
+void UPlayerHUDView::SetBossViewModel(UViewModelBase* InViewModel)
+{
+	if (BossHpBar == nullptr || InViewModel == nullptr)
+	{
+		return;
+	}
+
+	BossHpBar->SetViewModel(InViewModel);
+	BossHpBar->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerHUDView::TurnOffBossHpBar()
+{
+	BossHpBar->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UPlayerHUDView::NativeConstruct()
 {
 	Super::NativeConstruct();
+	TurnOffBossHpBar();
 }
 
 void UPlayerHUDView::NativeDestruct()
