@@ -32,8 +32,9 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
-		ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn);
-		PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
+		// Todo : ARCharacterPlayer로 변경해야 함
+		//ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn);
+		//PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);
