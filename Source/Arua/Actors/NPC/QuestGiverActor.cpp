@@ -99,6 +99,11 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 	);
 }
 
+void AQuestGiverActor::PlayInteraction(APawn* InInteractor)
+{
+	Interact(InInteractor);
+}
+
 void AQuestGiverActor::UnInteract()
 {
 	if (!PC || !bInteracting || !UICameraActor) return;

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DataTables/QuestData.h"
+#include "Interface/AR_NPCInteractionInterface.h"
 #include "QuestGiverActor.generated.h"
 
 UCLASS()
-class ARUA_API AQuestGiverActor : public AActor
+class ARUA_API AQuestGiverActor : public AActor, public IAR_NPCInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -18,6 +19,9 @@ public:
 	// 상호작용 시작 함수 (카메라 전환)
 	UFUNCTION(BlueprintCallable)
 	void Interact(APawn* InInteractor);
+
+	// 상호작용 시작 인터페이스
+	virtual void PlayInteraction(APawn* InInteractor) override;
 
 	// 상호작용 종료 함수 (카메라 전환)
 	UFUNCTION(BlueprintCallable)
