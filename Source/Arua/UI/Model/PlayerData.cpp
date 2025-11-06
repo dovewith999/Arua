@@ -3,6 +3,7 @@
 
 #include "PlayerData.h"
 #include "AttributeSet/PlayerAttributeSet.h"
+#include "BossData.h"
 
 void UPlayerData::BindToAttributeSet(UPlayerAttributeSet* InAttributeSet)
 {

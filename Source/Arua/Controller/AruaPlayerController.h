@@ -21,6 +21,9 @@ class ARUA_API AAruaPlayerController : public APlayerController
 public:
 	AAruaPlayerController();
 
+public:
+	void SetTargetBoss(class AARMonsterBase* InTargetMonster);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;

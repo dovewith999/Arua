@@ -8,6 +8,8 @@
 #include "AbilitySystemComponent.h"
 #include "AttributeSet/PlayerAttributeSet.h"
 #include "Test/TestCharacterPlayer.h"
+#include "Enemy/ARMonsterBase.h"
+#include "UI/ViewModel/BossViewModel.h"
 
 AAruaPlayerController::AAruaPlayerController()
 {
@@ -19,10 +21,14 @@ AAruaPlayerController::AAruaPlayerController()
 	}
 }
 
+void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
+{
+	HUD->SetBossViewModel(InTargetMonster->GetViewModel());
+}
+
 void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AAruaPlayerController::OnPossess(APawn* aPawn)

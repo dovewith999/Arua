@@ -22,6 +22,7 @@ public:
 
 public:
 	void SetTargetLockWidget(bool InShow);
+	FORCEINLINE class UBossViewModel* GetViewModel() const { return VM; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,4 +31,11 @@ private:
 	// 타겟으로 지정됐을 때 띄울 3D 위젯 - 25/11/05 임희섭
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|Target", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UARWidgetComponent> TargetLock;
+
+	// AttributeSet 생성 // 25/11/06 임희섭
+	UPROPERTY()
+	TObjectPtr<class UMonsterAttributeSet> AttributeSet;
+
+	UPROPERTY()
+	TObjectPtr<class UBossViewModel> VM;
 };

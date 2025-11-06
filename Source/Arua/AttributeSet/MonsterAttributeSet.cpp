@@ -1,5 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AttributeSet/MonsterAttributeSet.h"
 
+UMonsterAttributeSet::UMonsterAttributeSet()
+	: MaxHealth(200.f), Health(MaxHealth)
+{
+}
