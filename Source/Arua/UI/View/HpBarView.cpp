@@ -27,19 +27,10 @@ void UHpBarView::UnbindViewModel_Implementation()
 
 void UHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyName)
 {
-	HpProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HpProgressBar")));
-
 	if (UPlayerViewModel* VM = Cast<UPlayerViewModel>(GetViewModel()))
 	{
 		if (PropertyName == "Hp" || PropertyName == "MaxHp")
 		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				3.0f,
-				FColor::Red,
-				FString::Printf(TEXT("HpBar Called"))
-			);
-
 			HpProgressBar->SetPercent(VM->GetHpRatio());
 		}
 	}
