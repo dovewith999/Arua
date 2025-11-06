@@ -33,6 +33,7 @@ public:
 public:
 	FORCEINLINE void SetTarget(AActor* InTarget) { Target = InTarget; }
 	FORCEINLINE const AActor* GetTarget() const { return Target; }
+	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

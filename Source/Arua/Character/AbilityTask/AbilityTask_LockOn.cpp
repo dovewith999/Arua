@@ -1,5 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "AbilityTask_LockOn.h"
+#include "Test/TestCharacterPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 
 UAbilityTask_LockOn* UAbilityTask_LockOn::CreateLockOnTask(UGameplayAbility* OwningAbility, AActor* TargetActor, float RotationSpeed)
 {
@@ -24,6 +26,9 @@ void UAbilityTask_LockOn::Activate()
 
 	// Tick 활성화
 	bTickingTask = true;
+
+	// Todo : 값을 가져와야 함
+	LockOnCameraOffset = FVector(-400.f, 0.f, 100.f);
 }
 
 void UAbilityTask_LockOn::TickTask(float DeltaTime)
@@ -34,6 +39,8 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 	{
 		return;
 	}
+
+#pragma region 플레이어 액터 회전
 
 	AActor* OwnerActor = GetAvatarActor();
 	if (!OwnerActor || !Target)
@@ -79,4 +86,16 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 	NewRotation.Roll = CurrentRotation.Roll;
 
 	OwnerActor->SetActorRotation(NewRotation);
+#pragma endregion
+
+#pragma region 카메라 회전
+	if (ATestCharacterPlayer* Player = Cast<ATestCharacterPlayer>(OwnerActor))
+	{
+		if (USpringArmComponent* SpringArm = Player->GetSpringArm())
+		{
+			SpringArm->SocketOffset = LockOnCameraOffset;
+			SpringArm->bUsePawnControlRotation = false;
+		}
+	}
+#pragma endregion
 }
