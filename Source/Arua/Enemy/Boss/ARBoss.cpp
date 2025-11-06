@@ -23,12 +23,18 @@ AARBoss::AARBoss()
 
 	// 브레스 몽타주 에셋 지정
 
-
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> Montage_Attack_FireBreath_SwipeRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe_C"));
-	if (Montage_Attack_FireBreath_SwipeRef.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackFireBreathSwipeRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe"));
+	if (MontageAttackFireBreathSwipeRef.Succeeded())
 	{
-		Montage_Attack_FireBreath_Swipe = Montage_Attack_FireBreath_SwipeRef.Object;
+		MontageAttackFireBreathSwipe = MontageAttackFireBreathSwipeRef.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackPawLeftRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_Paw_Left.AM_Attack_Paw_Left"));
+	if (MontageAttackPawLeftRef.Succeeded())
+	{
+		MontageAttackPawLeft = MontageAttackPawLeftRef.Object;
+	}
+
 
 	AIControllerClass = AARAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -43,7 +49,18 @@ void AARBoss::AttackFireBreathSwipe()
 
 	if (AnimInstance)
 	{
-		AnimInstance->Montage_Play(Montage_Attack_FireBreath_Swipe);
+		AnimInstance->Montage_Play(MontageAttackFireBreathSwipe);
+
+	}
+}
+
+void AARBoss::AttackPawLeft()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageAttackPawLeft);
 
 	}
 }
