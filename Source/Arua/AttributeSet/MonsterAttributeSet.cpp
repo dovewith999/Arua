@@ -4,6 +4,10 @@
 #include "AttributeSet/MonsterAttributeSet.h"
 
 UMonsterAttributeSet::UMonsterAttributeSet()
-	: MaxHealth(200.f), Health(MaxHealth)
 {
+    MaxHealth.SetBaseValue(200.f);
+    MaxHealth.SetCurrentValue(200.f);
+
+    Health.SetBaseValue(200.f);
+    Health.SetCurrentValue(200.f);
 }

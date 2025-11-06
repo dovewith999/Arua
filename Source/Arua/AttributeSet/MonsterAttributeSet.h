@@ -3,29 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AttributeSet.h"
-#include "AbilitySystemComponent.h"
+#include "ARAttributeSetBase.h"
+
 #include "MonsterAttributeSet.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API UMonsterAttributeSet : public UAttributeSet
+class ARUA_API UMonsterAttributeSet : public UARAttributeSetBase
 {
 	GENERATED_BODY()
 
 public:
 	UMonsterAttributeSet();
-
-public:
-	ATTRIBUTE_ACCESSORS_BASIC(UMonsterAttributeSet, Health)
-	ATTRIBUTE_ACCESSORS_BASIC(UMonsterAttributeSet, MaxHealth)
-
-private:
-	UPROPERTY(BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-	FGameplayAttributeData MaxHealth;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-	FGameplayAttributeData Health;
 };
