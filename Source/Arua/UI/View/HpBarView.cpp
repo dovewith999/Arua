@@ -31,7 +31,7 @@ void UHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyName)
 
 	if (UPlayerViewModel* VM = Cast<UPlayerViewModel>(GetViewModel()))
 	{
-		if (PropertyName == "Hp")
+		if (PropertyName == "Hp" || PropertyName == "MaxHp")
 		{
 			GEngine->AddOnScreenDebugMessage(
 				-1,

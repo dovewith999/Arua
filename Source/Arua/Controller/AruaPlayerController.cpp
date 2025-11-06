@@ -44,7 +44,7 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 		// HUD 뷰포트에 띄우기
 		HUD->AddToViewport();
 
-		ViewModel->SetHp(100.f);
 		ViewModel->SetMaxHp(100.f);
+		ViewModel->SetHp(90.f);
 	}
 }
