@@ -33,6 +33,13 @@ void UHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyName)
 	{
 		if (PropertyName == "Hp")
 		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				3.0f,
+				FColor::Red,
+				FString::Printf(TEXT("HpBar Called"))
+			);
+
 			HpProgressBar->SetPercent(VM->GetHpRatio());
 		}
 	}

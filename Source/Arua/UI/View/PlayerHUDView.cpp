@@ -12,12 +12,6 @@ void UPlayerHUDView::SetViewModelChildWidget(UViewModelBase* InViewModel)
 {
 	if (HpBar == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			3.0f,
-			FColor::Red,
-			FString::Printf(TEXT("HpBar Is Null"))
-		);
 		return;
 	}
 

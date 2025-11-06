@@ -37,11 +37,14 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);
-
+		
 		// 뷰모델 세팅
 		HUD->SetViewModelChildWidget(ViewModel);
 
 		// HUD 뷰포트에 띄우기
 		HUD->AddToViewport();
+
+		ViewModel->SetHp(100.f);
+		ViewModel->SetMaxHp(100.f);
 	}
 }
