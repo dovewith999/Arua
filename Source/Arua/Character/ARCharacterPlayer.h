@@ -62,6 +62,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> AttackAction;
 
+	// NPC 상호작용 입력 액션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> InteractionAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsRunning : 1;
 
@@ -78,6 +82,9 @@ protected:
 	void RunComplete(const FInputActionValue& Value);
 	virtual void Roll(const FInputActionValue& Value);
 	void RollCompleted();
+
+	// NPC 상호작용 입력 콜백 함수
+	void NPCInteraction(const FInputActionValue& Value);
 
 	// 애니메이션 섹션
 protected:
@@ -111,4 +118,9 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UARComboActionData> ComboActionData;
+
+	// 퀘스트 섹션
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
+	TObjectPtr<class UQuestComponent> QuestComponent;
 };

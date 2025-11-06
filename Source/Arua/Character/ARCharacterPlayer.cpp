@@ -15,6 +15,10 @@
 #include "GA/ARGA_Attack.h"
 #include "Character/ARComboActionData.h"
 
+#include "Components/Quest/QuestComponent.h"
+#include "Interface/AR_NPCInteractionInterface.h"
+
+#include "Tag/AruaGameplayTags.h"
 
 AARCharacterPlayer::AARCharacterPlayer()
 {
@@ -55,6 +59,9 @@ AARCharacterPlayer::AARCharacterPlayer()
 		GetMesh(),
 		FName("hand_rSocket")
 	);
+
+	// 퀘스트 컴포넌트 CDO 초기화
+	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
 
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (nullptr != InputMappingContextRef.Object)
@@ -141,6 +148,7 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
+	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
 
 	SetupGASInputComponent();
@@ -174,12 +182,23 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
 	//if (bIsRolling)
-	//	return;
+	//    return;
 
 	bIsWalking = true;
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	const FRotator Rotation = Controller->GetControlRotation();
+	FRotator Rotation;
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
+		// LockOn일 때는 SprintArm의 Forward를 기준으로 이동 방향을 정하도록 설정 25/11/06 임희섭
+		Rotation = SpringArm->GetComponentRotation();
+	}
+
+	else
+	{
+		Rotation = Controller->GetControlRotation();
+	}
+
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -197,9 +216,13 @@ void AARCharacterPlayer::NotMove(const FInputActionValue& Value)
 
 void AARCharacterPlayer::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
+		return;
+	}
+
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
@@ -238,6 +261,27 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 void AARCharacterPlayer::RollCompleted()
 {
 	bIsRolling = false;
+}
+
+void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
+{
+	FHitResult HitResult;
+
+	// 카메라 위치 기준으로 선형 트레이싱을 통해 상호작용 가능 NPC 객체 감지
+	FVector Start = SpringArm->GetComponentLocation();
+	FVector End = Start + SpringArm->GetForwardVector() * 300.f;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		if (HitResult.bBlockingHit)
+		{
+			// 인터렉션 인터페이스로 캐스팅하여 NPC 상호작용 시작
+			IAR_NPCInteractionInterface* NPCInteractionInterface = Cast<IAR_NPCInteractionInterface>(HitResult.GetActor());
+			NPCInteractionInterface->PlayInteraction(this);
+		}
+	}
 }
 
 void AARCharacterPlayer::SetupGASInputComponent()
