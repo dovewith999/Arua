@@ -11,14 +11,24 @@
 #include "Enemy/ARMonsterBase.h"
 #include "UI/ViewModel/BossViewModel.h"
 
+#include "UI/Quest/QuestHUDWidget.h"
+#include "UI/Quest/QuestJournalWidget.h"
+#include "Components/Quest/QuestComponent.h"
+
 AAruaPlayerController::AAruaPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<UPlayerHUDView> PlayerHUDRef(TEXT("/Game/Personal/LIM_H_S/UI/WBP_HUD.WBP_HUD_C"));
+	//static ConstructorHelpers::FClassFinder<UPlayerHUDView> PlayerHUDRef(TEXT("/Game/Personal/LIM_H_S/UI/WBP_HUD.WBP_HUD_C"));
 
-	if (PlayerHUDRef.Succeeded())
-	{
-		HUDClass = PlayerHUDRef.Class;
-	}
+	//if (PlayerHUDRef.Succeeded())
+	//{
+	//	HUDClass = PlayerHUDRef.Class;
+	//}
+
+	//static ConstructorHelpers::FClassFinder<UQuestHUDWidget> QuestHUDWidgetRef(TEXT("/Game/Blueprints/Widgets/Player/WBP_QuestHUD.WBP_QuestHUD"));
+	//if (QuestHUDWidgetRef.Succeeded())
+	//{
+	//	QuestHUDClass = QuestHUDWidgetRef.Class;
+	//}
 }
 
 void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
@@ -29,6 +39,40 @@ void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
 void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 퀘스트 HUD 위젯 생성 및 그리기
+	if (QuestHUDClass)
+	{
+		QuestHUD = CreateWidget<UQuestHUDWidget>(this, QuestHUDClass);
+		if (QuestHUD)
+		{
+			QuestHUD->AddToViewport();
+		}
+	}
+
+	// 퀘스트 저널 위젯 생성 및 그리기
+	if (QuestJournalClass)
+	{
+		QuestJournal = CreateWidget<UQuestJournalWidget>(this, QuestJournalClass);
+		if (QuestJournal)
+		{
+			QuestJournal->AddToViewport();
+			QuestJournal->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
+	if (UQuestComponent* QuestComponent = GetPawn()->FindComponentByClass<UQuestComponent>())
+	{
+		// HUD/저널 위젯과 플레이어의 퀘스트 컴포넌트 바인딩
+		if (QuestHUD)
+		{
+			QuestHUD->BindToQuestComponent(QuestComponent);
+		}
+		if (QuestJournal)
+		{
+			//QuestJournal->BindToQuestComponent(QuestComponent);
+		}
+	}
 }
 
 void AAruaPlayerController::OnPossess(APawn* aPawn)
@@ -46,7 +90,7 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);
-		
+
 		// 뷰모델 세팅
 		HUD->SetViewModelChildWidget(ViewModel);
 
