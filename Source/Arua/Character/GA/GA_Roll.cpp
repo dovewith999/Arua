@@ -12,7 +12,10 @@ UGA_Roll::UGA_Roll()
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 
 	// 어빌리티 식별 Tag
-	AbilityTags.AddTag(AruaGamePlayTags::Ability_Roll);
+	//AbilityTags.AddTag(AruaGamePlayTags::Ability_Roll);
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
+	SetAssetTags(TagContainer);
 
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Roll);

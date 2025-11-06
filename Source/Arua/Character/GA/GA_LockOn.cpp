@@ -15,7 +15,10 @@ UGA_LockOn::UGA_LockOn()
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 
 	// 어빌리티 식별 Tag
-	AbilityTags.AddTag(AruaGamePlayTags::Ability_LockOn);
+	//AbilityTags.AddTag(AruaGamePlayTags::Ability_LockOn);
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
+	SetAssetTags(TagContainer);
 
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_LockOn);
