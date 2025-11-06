@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/ARCharacterBase.h"
+#include "Enemy/ARMonsterBase.h"
 #include "ARBoss.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API AARBoss : public AARCharacterBase
+class ARUA_API AARBoss : public AARMonsterBase
 {
 	GENERATED_BODY()
 	
@@ -19,9 +19,13 @@ public:
 	
 	//추후에 interface로 리팩토링 예정
 	void AttackFireBreathSwipe();
-	
+	void AttackPawLeft();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UAnimMontage> Montage_Attack_FireBreath_Swipe;
+	TObjectPtr<class UAnimMontage> MontageAttackFireBreathSwipe;
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageAttackPawLeft;
 
 };

@@ -26,8 +26,11 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
+	//브레스 공격
+	//AIPawn->AttackFireBreathSwipe();
 
-	AIPawn->AttackFireBreathSwipe();
+	//왼발 공격
+	AIPawn->AttackPawLeft();
 
 	return EBTNodeResult::Succeeded;
 
