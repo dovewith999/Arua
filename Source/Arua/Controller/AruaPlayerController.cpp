@@ -33,8 +33,10 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
 		// Todo : ARCharacterPlayer로 변경해야 함
-		//ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn);
-		//PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
+		if (ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn))
+		{
+			PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
+		}
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);
