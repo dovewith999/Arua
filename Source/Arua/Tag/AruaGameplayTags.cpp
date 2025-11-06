@@ -9,4 +9,8 @@ namespace AruaGamePlayTags
 	/*Ability Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Ability_LockOn, "Ability.LockOn")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Roll, "Ability.Roll")
+
+	/*Condition State Tags*/
+	// 상태 이상 관련 태그
+	UE_DEFINE_GAMEPLAY_TAG(Condition_Immunity, "Condition.Immunity")
 }

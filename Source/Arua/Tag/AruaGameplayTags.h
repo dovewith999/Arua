@@ -16,4 +16,8 @@ namespace AruaGamePlayTags
 	/*Ability Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOn)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Roll)
+
+	/*Condition State Tags*/
+	// 상태 이상 관련 태그
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Condition_Immunity) // 면역 상태, 대미지도 입지 않음 25/11/06
 }

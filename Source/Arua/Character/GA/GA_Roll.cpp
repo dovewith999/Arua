@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARCharacterPlayer.h"
 #include "Test/TestCharacterPlayer.h"
+
 UGA_Roll::UGA_Roll()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -19,6 +20,7 @@ UGA_Roll::UGA_Roll()
 
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Roll);
+	ActivationOwnedTags.AddTag(AruaGamePlayTags::Condition_Immunity);
 }
 
 void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
