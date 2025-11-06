@@ -40,5 +40,8 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|HpBar", meta = (BindWidget, AllowPrivateAccess = "true"))
-	TObjectPtr<class UHpBarView> HpBar;
+	TObjectPtr<class UHpBarView> PlayerHpBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|BossHpBar", meta = (BindWidget, AllowPrivateAccess = "true"))
+	TObjectPtr<class UBossHpBarView> BossHpBar;
 };

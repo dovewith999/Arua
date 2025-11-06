@@ -3,6 +3,7 @@
 
 #include "PlayerHUDView.h"
 #include "HpBarView.h"
+#include "BossHpBarView.h"
 
 UPlayerHUDView::UPlayerHUDView()
 {
@@ -10,12 +11,12 @@ UPlayerHUDView::UPlayerHUDView()
 
 void UPlayerHUDView::SetViewModelChildWidget(UViewModelBase* InViewModel)
 {
-	if (HpBar == nullptr)
+	if (PlayerHpBar == nullptr)
 	{
 		return;
 	}
 
-	HpBar->SetViewModel(InViewModel);
+	PlayerHpBar->SetViewModel(InViewModel);
 }
 
 void UPlayerHUDView::NativeConstruct()
