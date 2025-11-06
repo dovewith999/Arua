@@ -28,6 +28,10 @@ public:
 
 	FORCEINLINE bool GetWalkState() { return bIsWalking; }
 
+	FORCEINLINE class UARComboActionData* GetComboActionData() const { return ComboActionData; }
+
+	virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
+
 	virtual void PossessedBy(AController* NewController) override;
 
 	// 카메라 섹션
@@ -55,6 +59,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> RollAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> AttackAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsRunning : 1;
 
@@ -79,6 +86,9 @@ protected:
 
 	FTimerHandle RollAnimTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboActionMontage;
+
 	// 무기 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
@@ -86,6 +96,19 @@ protected:
 
 	// ASC 어빌리티 섹션
 protected:
-	UPROPERTY(EditAnywhere, Category = GAS)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
+	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
+
+protected:
+	void SetupGASInputComponent();
+	void GASInputPressed(int32 InputId);
+	void GASInputReleased(int32 InputId);
+
+	// 콤보 액션 데이터 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UARComboActionData> ComboActionData;
 };

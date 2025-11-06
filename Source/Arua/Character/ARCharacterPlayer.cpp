@@ -12,6 +12,8 @@
 #include "TimerManager.h"
 #include "Player/ARPlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "GA/ARGA_Attack.h"
+#include "Character/ARComboActionData.h"
 
 
 AARCharacterPlayer::AARCharacterPlayer()
@@ -78,10 +80,16 @@ AARCharacterPlayer::AARCharacterPlayer()
 		RunAction = InputActionRunRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRollRef(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Roll.IA_Roll'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRollRef(TEXT("/Game/Input/IA_Roll.IA_Roll"));
 	if (nullptr != InputActionRollRef.Object)
 	{
 		RollAction = InputActionRollRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionAttackRef(TEXT("/Game/Input/IA_Attack.IA_Attack"));
+	if (nullptr != InputActionAttackRef.Object)
+	{
+		AttackAction = InputActionAttackRef.Object;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponRef(TEXT("/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01"));
@@ -89,6 +97,19 @@ AARCharacterPlayer::AARCharacterPlayer()
 	{
 		Weapon->SetStaticMesh(WeaponRef.Object);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Game/Animation/Player/AM_SwordComboAttack.AM_SwordComboAttack"));
+	if (ComboActionMontageRef.Object)
+	{
+		ComboActionMontage = ComboActionMontageRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UARComboActionData> ComboActionDataRef(TEXT("/Script/Arua.ARComboActionData'/Game/GameData/ARA_ComboAttack.ARA_ComboAttack'"));
+	if (ComboActionDataRef.Object)
+	{
+		ComboActionData = ComboActionDataRef.Object;
+	}
+
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -120,6 +141,10 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
+	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
+
+	SetupGASInputComponent();
+
 }
 
 void AARCharacterPlayer::PossessedBy(AController* NewController)
@@ -132,11 +157,15 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 		ASC = PS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(PS, this);
 	
+		int InputId = 0;
 		for (const auto& StartAbility : StartAbilities)
 		{
 			FGameplayAbilitySpec StartSpec(StartAbility);
+			StartSpec.InputID = InputId++;
 			ASC->GiveAbility(StartSpec);
 		}
+
+		SetupGASInputComponent();
 	}
 
 
@@ -210,3 +239,45 @@ void AARCharacterPlayer::RollCompleted()
 {
 	bIsRolling = false;
 }
+
+void AARCharacterPlayer::SetupGASInputComponent()
+{
+
+	if (IsValid(ASC) && IsValid(InputComponent))
+	{
+		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
+	}
+}
+
+void AARCharacterPlayer::GASInputPressed(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = true;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(Spec->Handle);
+		}
+	}
+}
+
+void AARCharacterPlayer::GASInputReleased(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
+}
+
