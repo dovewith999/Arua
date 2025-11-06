@@ -198,6 +198,5 @@ AActor* UGA_LockOn::FindLockOnTarget()
 
 void UGA_LockOn::LostTarget()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Lost Target"));
 	K2_EndAbility();
 }

@@ -20,4 +20,9 @@ namespace AruaGamePlayTags
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Condition_Immunity) // 면역 상태, 대미지도 입지 않음 25/11/06
+
+	/*Damage Tags*/
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Multiplier)
+
 }

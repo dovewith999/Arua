@@ -52,9 +52,16 @@ void UARDamageExecutionCalculation::Execute_Implementation(const FGameplayEffect
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
         DamageStatics().AttackDef, EvaluationParameters, Attack);
 
+    // SetByCaller를 통한 추가 데미지 모디파이어 (스킬별 배율 등)
+    float DamageMultiplier = Spec.GetSetByCallerMagnitude(
+        FGameplayTag::RequestGameplayTag(FName("Data.Damage.Multiplier")), false, 1.0f);
+
+    float BaseDamage = Spec.GetSetByCallerMagnitude(
+        FGameplayTag::RequestGameplayTag(FName("Data.Damage.Base")), false, 0.0f);
+
     // 데미지 계산 
     // Todo : 추후에 공식 계산해서 넣을 예정
-    float FinalDamage = Attack;
+    float FinalDamage = (Attack + BaseDamage) * DamageMultiplier;
 
     // Health Attribute에 데미지 적용
     OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(

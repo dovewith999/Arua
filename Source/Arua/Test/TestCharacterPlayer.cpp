@@ -12,6 +12,7 @@
 #include "AttributeSet/PlayerAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 ATestCharacterPlayer::ATestCharacterPlayer()
 {
@@ -42,6 +43,7 @@ void ATestCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::LockOnToggle);
+	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::TestAttack);
 	//EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ATestCharacterPlayer::Roll);
 }
 
@@ -60,6 +62,43 @@ void ATestCharacterPlayer::BeginPlay()
 	{
 		FGameplayAbilitySpec AbilitySpec(Ability, 1, INDEX_NONE, this);
 		ASC->GiveAbility(AbilitySpec);
+	}
+}
+
+void ATestCharacterPlayer::ApplyDamageToTarget(AActor* TargetActor, float BaseDamage, float DamageMultiplier, TSubclassOf<UGameplayEffect> DamageEffectClass)
+{
+	if (!TargetActor || !DamageEffectClass)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+	if (!TargetASC)
+	{
+		return;
+	}
+
+	FGameplayEffectContextHandle EffectContext = ASC->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(
+		DamageEffectClass, 1, EffectContext);
+
+	if (SpecHandle.IsValid())
+	{
+		// SetByCaller로 데미지 값 전달
+		SpecHandle.Data->SetSetByCallerMagnitude(
+			FGameplayTag::RequestGameplayTag(FName("Data.Damage.Base")), BaseDamage);
+
+		SpecHandle.Data->SetSetByCallerMagnitude(
+			FGameplayTag::RequestGameplayTag(FName("Data.Damage.Multiplier")), DamageMultiplier);
+
+
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Damaged Call"));
+
+		ASC->ApplyGameplayEffectSpecToTarget(
+			*SpecHandle.Data.Get(), TargetASC);
 	}
 }
 
@@ -94,6 +133,7 @@ void ATestCharacterPlayer::Roll(const FInputActionValue& Value)
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
 
+
 	if (!ASC)
 	{
 		return;
@@ -103,4 +143,14 @@ void ATestCharacterPlayer::Roll(const FInputActionValue& Value)
 	{
 		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
+}
+
+void ATestCharacterPlayer::TestAttack(const FInputActionValue& Value)
+{
+	if (DamageEffect == nullptr)
+	{
+		return;
+	}
+
+	ApplyDamageToTarget(this, 0, 1.0f, DamageEffect);
 }

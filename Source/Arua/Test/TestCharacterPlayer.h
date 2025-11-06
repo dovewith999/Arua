@@ -40,11 +40,18 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
+private:
+	// Todo : 데미지 주는 함수, 테스트용
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void ApplyDamageToTarget(AActor* TargetActor, float BaseDamage, float DamageMultiplier = 1.0f, TSubclassOf<class UGameplayEffect> DamageEffectClass = nullptr);
+
 protected:
 	// LockOn은 토글 방식으로
 	void LockOnToggle(const FInputActionValue& Value);
-
 	virtual void Roll(const FInputActionValue& Value) override;
+
+	// Todo : 대미지 테스트 함수
+	void TestAttack(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -57,9 +64,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<AActor> Target;
 
-
 	// Todo : Player 클래스로 옮길 변수
 	UPROPERTY()
 	TObjectPtr<class UPlayerAttributeSet> AttributeSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameplayEffect", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UGameplayEffect> DamageEffect;
 
 };

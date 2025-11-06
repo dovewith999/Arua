@@ -13,4 +13,8 @@ namespace AruaGamePlayTags
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
 	UE_DEFINE_GAMEPLAY_TAG(Condition_Immunity, "Condition.Immunity")
+
+	/*Damage Tags*/
+	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Base, "Data.Damage.Base")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Multiplier, "Data.Damage.Multiplier")
 }
