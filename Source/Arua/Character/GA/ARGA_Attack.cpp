@@ -80,7 +80,6 @@ void UARGA_Attack::StartComboTimer()
 	ensure(CurrentComboData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
 	const float ComboEffectiveTime = CurrentComboData->EffectiveFrameCount[ComboIndex] / CurrentComboData->FrameRate[ComboIndex];
-	UE_LOG(LogTemp, Log, TEXT("%f"), ComboEffectiveTime);
 	if (ComboEffectiveTime > 0.0f)
 	{
 		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &UARGA_Attack::CheckComboInput, ComboEffectiveTime, false);
