@@ -4,10 +4,6 @@
 #include "PlayerData.h"
 #include "AttributeSet/PlayerAttributeSet.h"
 
-void UPlayerData::Initialize()
-{
-}
-
 void UPlayerData::BindToAttributeSet(UPlayerAttributeSet* InAttributeSet)
 {
 	if (AttributeSet == InAttributeSet || InAttributeSet == nullptr)

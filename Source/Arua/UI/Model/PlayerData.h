@@ -17,9 +17,6 @@ class ARUA_API UPlayerData : public UModelBase
 	GENERATED_BODY()
 
 public:
-	// Todo : 캐릭터가 만들어지면 사라질 코드, 임시 값 세팅
-	void Initialize();
-
 	UFUNCTION()
 	void BindToAttributeSet(class UPlayerAttributeSet* InAttributeSet);
 

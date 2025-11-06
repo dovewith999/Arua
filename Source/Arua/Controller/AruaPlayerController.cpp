@@ -32,7 +32,6 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
-		PlayerData->Initialize();
 		ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn);
 		PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
 
