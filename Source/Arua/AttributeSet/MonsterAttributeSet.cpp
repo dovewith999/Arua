@@ -10,4 +10,7 @@ UMonsterAttributeSet::UMonsterAttributeSet()
 
     Health.SetBaseValue(200.f);
     Health.SetCurrentValue(200.f);
+
+    Attack.SetBaseValue(10.f);
+    Attack.SetCurrentValue(10.f);
 }

@@ -21,12 +21,16 @@ public:
 public:
 	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, Health)
 	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, MaxHealth)
+	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, Attack)
 
-protected:
+public:
 	UPROPERTY(BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData Health;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData MaxHealth;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData Attack;
 
 };
