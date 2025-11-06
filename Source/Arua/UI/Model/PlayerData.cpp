@@ -13,6 +13,19 @@ void UPlayerData::BindToAttributeSet(UPlayerAttributeSet* InAttributeSet)
 	}
 
 	AttributeSet = InAttributeSet;
+
+	// ASC 가져오기 (AttributeSet의 Owner)
+	UAbilitySystemComponent* ASC = AttributeSet->GetOwningAbilitySystemComponent();
+	if (ASC)
+	{
+		// 각 Attribute를 개별적으로 바인딩
+		BindAttributeChange(ASC, UPlayerAttributeSet::GetHealthAttribute(),
+			FName("Hp"));
+		BindAttributeChange(ASC, UPlayerAttributeSet::GetMaxHealthAttribute(),
+			FName("MaxHp"));
+		BindAttributeChange(ASC, UPlayerAttributeSet::GetAttackAttribute(),
+			FName("Attack"));
+	}
 }
 
 float UPlayerData::GetHp() const

@@ -94,9 +94,6 @@ void ATestCharacterPlayer::ApplyDamageToTarget(AActor* TargetActor, float BaseDa
 		SpecHandle.Data->SetSetByCallerMagnitude(
 			FGameplayTag::RequestGameplayTag(FName("Data.Damage.Multiplier")), DamageMultiplier);
 
-
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Damaged Call"));
-
 		ASC->ApplyGameplayEffectSpecToTarget(
 			*SpecHandle.Data.Get(), TargetASC);
 	}

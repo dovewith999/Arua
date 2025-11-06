@@ -9,6 +9,17 @@ void UBossData::BindToAttributeSet(UMonsterAttributeSet* InAttributeSet)
 	}
 
 	AttributeSet = InAttributeSet;
+
+	UAbilitySystemComponent* ASC = AttributeSet->GetOwningAbilitySystemComponent();
+	if (ASC)
+	{
+		BindAttributeChange(ASC, UMonsterAttributeSet::GetHealthAttribute(),
+			FName("Hp"));
+		BindAttributeChange(ASC, UMonsterAttributeSet::GetMaxHealthAttribute(),
+			FName("MaxHp"));
+		BindAttributeChange(ASC, UMonsterAttributeSet::GetAttackAttribute(),
+			FName("Attack"));
+	}
 }
 
 float UBossData::GetHp() const
