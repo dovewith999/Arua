@@ -28,7 +28,7 @@ void UAbilityTask_LockOn::Activate()
 	bTickingTask = true;
 
 	// Todo : 값을 가져와야 함
-	LockOnCameraOffset = FVector(-400.f, 0.f, 100.f);
+	LockOnCameraOffset = FVector(-200.f, 0.f, 100.f);
 }
 
 void UAbilityTask_LockOn::TickTask(float DeltaTime)
