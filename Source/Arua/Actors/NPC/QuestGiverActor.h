@@ -27,6 +27,10 @@ public:
 	UFUNCTION()
 	void HandleQuestAccepted(FName QuestID);
 
+	// 퀘스트 보상 수령 콜백 함수
+	UFUNCTION()
+	void HandleQuestTurnIn(FName QuestID);
+
 protected:
 	virtual void BeginPlay() override;
 

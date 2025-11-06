@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Quest/QuestSelectWidget.h"
@@ -7,38 +7,76 @@
 
 #include "Components/VerticalBox.h"
 #include "Components/SizeBox.h"
+#include "Components/Quest/QuestComponent.h"
 #include "Engine/DataTable.h"
 #include "DataTables/QuestData.h"
 
 static const FString QuestSelectWidgetContext(TEXT("Quest Data Context"));
 
-void UQuestSelectWidget::InitQuestList(const TArray<FName>& QuestIDs, class UDataTable* InQuestDataTable)
+void UQuestSelectWidget::InitQuestList(APawn* InInteractor, const TArray<FName>& QuestIDs, class UDataTable* InQuestDataTable)
 {
-	if (!QuestButtonContainer || !QuestButtonWidgetClass || !InQuestDataTable) return;
+	if (!QuestButtonContainer || !QuestButtonWidgetClass || !InQuestDataTable || !InInteractor) return;
 
-	// Äù½ºÆ® µ¥ÀÌÅÍ Å×ÀÌºí ÀúÀå
+	// ìœ„ì ¯ ë°ì´í„° ì´ˆê¸°í™”
 	QuestDataTable = InQuestDataTable;
+	QuestButtonContainer->ClearChildren();
+	AcceptButtons.Empty();
+	TurnInButtons.Empty();
 
-	// ¿ª¹æÇâ(À§·Î)À¸·Î Äù½ºÆ® ¹öÆ° À§Á¬À» ½×±â À§ÇŞ ¿ª¼øÀ¸·Î ¹è¿­ ¼øÈ¸
+	// í”Œë ˆì´ì–´ì˜ í€˜ìŠ¤íŠ¸ ì»´í¬ë„ŒíŠ¸ ì €ì¥
+	UQuestComponent* QuestComp = InInteractor->FindComponentByClass<UQuestComponent>();
+	if (!QuestComp) return;
+
+	// #1: ìˆ˜ë½ ê°€ëŠ¥í•œ í€˜ìŠ¤íŠ¸ ë²„íŠ¼ ìƒì„±
+	// ì—­ë°©í–¥(ìœ„ë¡œ)ìœ¼ë¡œ í€˜ìŠ¤íŠ¸ ë²„íŠ¼ ìœ„ì ¯ì„ ìŒ“ê¸° ìœ„í–‡ ì—­ìˆœìœ¼ë¡œ ë°°ì—´ ìˆœíšŒ
 	for (int i = QuestIDs.Num() - 1; i >= 0; --i)
 	{
-		// Äù½ºÆ® ID¿¡ ¸Â´Â Äù½ºÆ® µ¥ÀÌÅÍ Å×ÀÌºí °¡Á®¿À±â
+		// í€˜ìŠ¤íŠ¸ IDì— ë§ëŠ” í€˜ìŠ¤íŠ¸ ë°ì´í„° í…Œì´ë¸” ê°€ì ¸ì˜¤ê¸°
 		FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(QuestIDs[i], QuestSelectWidgetContext);
 		if (!QuestData) continue;
 
-		// Äù½ºÆ® ¹öÆ° À§Á¬ »ı¼º
+		// í•´ë‹¹ í€˜ìŠ¤íŠ¸ê°€ ìˆ˜ë½í•˜ì§€ ì•Šì€ ìƒíƒœì¸ì§€ í™•ì¸
+		if (QuestComp->GetQuestStatusFromQuestID(QuestIDs[i]) != EQuestStatus::None) continue;
+
+		// í€˜ìŠ¤íŠ¸ ë²„íŠ¼ ìœ„ì ¯ ìƒì„±
 		UQuestButtonWidget* QuestButton = CreateWidget<UQuestButtonWidget>(GetOwningPlayer(), QuestButtonWidgetClass);
 		if (!QuestButton) continue;
 
-		// Äù½ºÆ® ¹öÆ° Å¬¸¯ µ¨¸®°ÔÀÌÆ®¿¡ Äù½ºÆ® ¹öÆ° À§Á¬ ¼±ÅÃ(Å¬¸¯) Äİ¹é ÇÔ¼ö ¹ÙÀÎµù
+		// í€˜ìŠ¤íŠ¸ ë²„íŠ¼ í´ë¦­ ë¸ë¦¬ê²Œì´íŠ¸ì— í€˜ìŠ¤íŠ¸ ë²„íŠ¼ ìœ„ì ¯ ì„ íƒ(í´ë¦­) ì½œë°± í•¨ìˆ˜ ë°”ì¸ë”©
 		QuestButton->Init(*QuestData);
 		QuestButton->OnClicked.AddDynamic(this, &UQuestSelectWidget::HandleQuestButtonClicked);
 
-		// ÆĞ³Î¿¡ Ãß°¡
+		// íŒ¨ë„ì— ì¶”ê°€
 		QuestButtonContainer->AddChildToVerticalBox(QuestButton);
 
-		// ¼±ÅÃ °¡´ÉÇÑ Äù½ºÆ® ¹öÆ°(Äù½ºÆ® ¸ñ·Ï)¿¡ Ãß°¡
-		ButtonMap.Add(QuestData->QuestID, QuestButton);
+		// ì„ íƒ ê°€ëŠ¥í•œ í€˜ìŠ¤íŠ¸ ë²„íŠ¼(í€˜ìŠ¤íŠ¸ ëª©ë¡)ì— ì¶”ê°€
+		AcceptButtons.Add(QuestData->QuestID, QuestButton);
+	}
+
+	// #2: ë³´ìƒ ìˆ˜ë ¹ ê°€ëŠ¥í•œ í€˜ìŠ¤íŠ¸ ë²„íŠ¼ ìƒì„±
+	// í˜„ì¬ ì§„í–‰ì¤‘ì¸ í€˜ìŠ¤íŠ¸ ë¦¬ìŠ¤íŠ¸ë¥¼ ìˆœíšŒí•˜ë©° ë³´ìƒ ìˆ˜ë ¹ ê°€ëŠ¥í•œ í€˜ìŠ¤íŠ¸ ê²€ìƒ‰
+	for (const TPair<FName, FActiveQuest>& Pair : QuestComp->ActiveQuests)
+	{
+		const FActiveQuest& Quest = Pair.Value;
+		if (Quest.Status != EQuestStatus::ReadyToTurnIn) continue;
+
+		// ì´ NPCê°€ ì²˜ë¦¬í•  ìˆ˜ ìˆëŠ” í€˜ìŠ¤íŠ¸ì¸ì§€ í•„í„°ë§
+		if (!QuestIDs.Contains(Quest.QuestData.QuestID)) continue;
+
+		UQuestButtonWidget* Button = CreateWidget<UQuestButtonWidget>(GetOwningPlayer(), QuestButtonWidgetClass);
+		if (!Button) continue;
+
+		// ë²„íŠ¼ í‘œì‹œ í…ìŠ¤íŠ¸ ì•ì— [ì™„ë£Œ] ì¶”ê°€
+		FQuestData Labeled = Quest.QuestData;
+		Labeled.Title = FText::FromString(TEXT("[ì™„ë£Œ] ") + Quest.QuestData.Title.ToString());
+		Button->Init(Labeled);
+
+		// í€˜ìŠ¤íŠ¸ ë²„íŠ¼ í´ë¦­ í•¨ìˆ˜ ë°”ì¸ë”©
+		Button->OnClicked.AddDynamic(this, &UQuestSelectWidget::HandleQuestButtonClicked);
+
+		// íŒ¨ë„ì— ì¶”ê°€
+		QuestButtonContainer->AddChildToVerticalBox(Button);
+		TurnInButtons.Add(Quest.QuestData.QuestID, Button);
 	}
 }
 
@@ -46,40 +84,74 @@ void UQuestSelectWidget::HandleQuestButtonClicked(FName InQuestID)
 {
 	if (!QuestDataTable || !QuestAcceptWidgetClass || !QuestAcceptContainer) return;
 
-	// Äù½ºÆ® ID¸¦ ÅëÇØ ÇØ´ç Äù½ºÆ® µ¥ÀÌÅÍ °¡Á®¿À±â
+	// í€˜ìŠ¤íŠ¸ IDë¥¼ í†µí•´ í•´ë‹¹ í€˜ìŠ¤íŠ¸ ë°ì´í„° ê°€ì ¸ì˜¤ê¸°
 	FQuestData* QuestData = QuestDataTable->FindRow<FQuestData>(InQuestID, QuestSelectWidgetContext);
 	if (!QuestData) return;
 
-	// Äù½ºÆ® ¼ö¶ô À§Á¬ »ı¼º
+	// í€˜ìŠ¤íŠ¸ ìˆ˜ë½ ìœ„ì ¯ ìƒì„±
 	if (!QuestAcceptWidgetInstance)
 	{
 		QuestAcceptWidgetInstance = CreateWidget<UQuestAcceptWidget>(GetOwningPlayer(), QuestAcceptWidgetClass);
 		if (!QuestAcceptWidgetInstance) return;
 
-		// ÄÁÅ×ÀÌ³Ê¿¡ À§Á¬ Ãß°¡
+		// ì»¨í…Œì´ë„ˆì— ìœ„ì ¯ ì¶”ê°€
 		QuestAcceptContainer->AddChild(QuestAcceptWidgetInstance);
+
+		// í€˜ìŠ¤íŠ¸ ìˆ˜ë½/ë³´ìƒ ìˆ˜ë ¹ í•¨ìˆ˜ ë°”ì¸ë”©
+		QuestAcceptWidgetInstance->OnQuestAccept.AddDynamic(this, &UQuestSelectWidget::HandleOnQuestAccepted);
+		QuestAcceptWidgetInstance->OnQuestTurnIn.AddDynamic(this, &UQuestSelectWidget::HandleOnQuestTurnIn);
 	}
 
-	// Äù½ºÆ® ¼ö¶ô À§Á¬ ÃÊ±âÈ­ ¹× °¡½ÃÈ­
-	QuestAcceptWidgetInstance->SetQuestInfo(*QuestData);
-	QuestAcceptWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+	// í•´ë‹¹ í€˜ìŠ¤íŠ¸ ì°½ì´ ì–´ë–¤ ëª¨ë“œì¸ì§€ í™•ì¸
+	const bool bIsTurnIn = TurnInButtons.Contains(InQuestID);
+	const EQuestAcceptMode Mode = bIsTurnIn ? EQuestAcceptMode::TurnIn : EQuestAcceptMode::Accept;
 
-	// ¼ö¶ôÃ¢ ÀÚÃ¼¿¡¼­ Äù½ºÆ® À§Á¬À» °ü¸®ÇÏÁö¸¸, ¼ö¶ôÇÑ Äù½ºÆ®ÀÇ ¸ñ·Ï Á¦°Å´Â ¿©±â¼­ Ã³¸®
-	QuestAcceptWidgetInstance->OnQuestAccept.AddDynamic(this, &UQuestSelectWidget::HandleOnQuestAccepted);
+	// ì–´ë–¤ ëª¨ë“œë¡œ ì—´ì§€ ê²°ì • (ë°˜ë‚© ë²„íŠ¼ ëª©ë¡ì— ìˆìœ¼ë©´ TurnIn, ì•„ë‹ˆë©´ Accept)
+	QuestAcceptWidgetInstance->SetQuestInfo(*QuestData, Mode);
+	QuestAcceptWidgetInstance->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UQuestSelectWidget::HandleOnQuestAccepted(FName QuestID)
 {
-	// ¹öÆ° Á¦°Å
-	if (UQuestButtonWidget** Found = ButtonMap.Find(QuestID))
+	// ìˆ˜ë½ ë²„íŠ¼ ì œê±° (NPC/ìœ„ì ¯ì—ì„œ ëª©ë¡ ì •ë¦¬)
+	if (UQuestButtonWidget** Found = AcceptButtons.Find(QuestID))
 	{
-		if (UQuestButtonWidget* Btn = *Found)
+		if (UQuestButtonWidget* Button = *Found)
 		{
-			QuestButtonContainer->RemoveChild(Btn);
-			ButtonMap.Remove(QuestID);
+			QuestButtonContainer->RemoveChild(Button);
 		}
+
+		AcceptButtons.Remove(QuestID);
 	}
 
-	// Äù½ºÆ® ¼ö¶ô ºê·ÎµåÄ³½ºÆ®
+	// ì™¸ë¶€(í€˜ìŠ¤íŠ¸ ì•¡í„°)ì—ê²Œ â€œìˆ˜ë½ë¨â€ ë¸Œë¡œë“œìºìŠ¤íŠ¸
 	OnQuestAccepted.Broadcast(QuestID);
+
+	// ìˆ˜ë½ì°½ ë‹«ê¸°(ìˆ¨ê¹€)
+	if (QuestAcceptWidgetInstance)
+	{
+		QuestAcceptWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UQuestSelectWidget::HandleOnQuestTurnIn(FName QuestID)
+{
+	// ë°˜ë‚© ë²„íŠ¼ ì œê±°
+	if (UQuestButtonWidget** Found = TurnInButtons.Find(QuestID))
+	{
+		if (UQuestButtonWidget* Button = *Found)
+		{
+			QuestButtonContainer->RemoveChild(Button);
+		}
+		TurnInButtons.Remove(QuestID);
+	}
+
+	// ì™¸ë¶€(í€˜ìŠ¤íŠ¸ ì•¡í„°)ì—ê²Œ â€œë°˜ë‚© ìš”ì²­â€ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+	OnQuestTurnInRequested.Broadcast(QuestID);
+
+	// ìˆ˜ë½ì°½ ë‹«ê¸°
+	if (QuestAcceptWidgetInstance)
+	{
+		QuestAcceptWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

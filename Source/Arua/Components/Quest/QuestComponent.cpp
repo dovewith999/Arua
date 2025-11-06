@@ -18,18 +18,27 @@ bool UQuestComponent::AcceptQuest(const FQuestData& Quest)
 		return false;
 	}
 
+	// 수락한 퀘스트 로그 출력
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
+		FString::Printf(TEXT("Accepted: %s"), *Quest.Title.ToString()));
+
 	// 새 퀘스트 진행 구조체 생성
 	FActiveQuest NewQuest;
 
-	// 새로 진행할 퀘스트 데이터 초기화
+	// 퀘스트 데이터 초기화
 	NewQuest.QuestData = Quest;
+
+	// 퀘스트 진행도 초기화
+	NewQuest.CurrentCount = 0;
+
+	// 퀘스트 진행 상태 초기화
+	NewQuest.Status = EQuestStatus::InProgress;
 
 	// 진행중인 퀘스트 목록에 추가
 	ActiveQuests.Add(Quest.QuestID, NewQuest);
 
-	// 수락한 퀘스트 로그 출력
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
-		FString::Printf(TEXT("Accepted: %s"), *Quest.Title.ToString()));
+	// 퀘스트 수락 브로드캐스트
+	OnQuestAcceptedSig.Broadcast(Quest);
 
 	return true;
 }
@@ -40,74 +49,105 @@ void UQuestComponent::AddProgressByEvent(EQuestType Type, FName Target, int32 Am
 	for (auto& ActiveQuest : ActiveQuests)
 	{
 		// 진행도를 갱신할 퀘스트, 해당 퀘스트 데이터를 가져옴
-		FActiveQuest& AQ = ActiveQuest.Value;
-		const FQuestData& AQData = AQ.QuestData;
+		FActiveQuest& Quest = ActiveQuest.Value;
+		const FQuestData& DataData = Quest.QuestData;
 
-		// 이미 퀘스트가 완료된 경우 or 퀘스트 타입이 다른 경우 or 데이터가 없거나 타깃이 아닌 경우
-		if (AQ.bCompleted ||
-			AQData.Type != Type ||
-			AQData.ObjectiveTarget != NAME_None &&
-			AQData.ObjectiveTarget != Target) continue;
+		// 이미 반납 대기/완료면 건너뜀
+		if (Quest.Status != EQuestStatus::InProgress) continue;
 
-		// 퀘스트의 목표 수치를 갱신
-		AQ.CurrentCount = FMath::Clamp(AQ.CurrentCount + Amount, 0, AQData.ObjectiveCount);
+		// 타입/타깃 일치 검사
+		if (DataData.Type != Type) continue;
+		if (DataData.ObjectiveTarget != NAME_None && DataData.ObjectiveTarget != Target) continue;
 
-		// 퀘스트 진행도 갱신 델리게이트 브로드캐스트
-		OnQuestProgress.Broadcast(AQData.QuestID, AQ.CurrentCount);
+		// 진행도 갱신
+		Quest.CurrentCount = FMath::Clamp(Quest.CurrentCount + Amount, 0, DataData.ObjectiveCount);
+		OnQuestProgressSig.Broadcast(DataData.QuestID, Quest.CurrentCount);
 
-		// 퀘스트 목표 수치를 만족하는 경우 (퀘스트 완료)
-		if (AQ.CurrentCount >= AQData.ObjectiveCount && AQData.ObjectiveCount > 0)
+		// 퀘스트 완료 → 반납 대기 상태로 전환 (보상은 아직 X)
+		if (Quest.CurrentCount >= DataData.ObjectiveCount && DataData.ObjectiveCount > 0)
 		{
-			// 퀘스트 완료 처리
-			AQ.bCompleted = true;
+			Quest.Status = EQuestStatus::ReadyToTurnIn;
 
-			// 퀘스트 보상 지급
-			GrantReward(AQData);
-
-			// 완료된 퀘스트 목록에 추가
-			CompletedQuests.Add(AQData.QuestID);
-
-			// 퀘스트 완료 델리게이트 브로드캐스트
-			OnQuestCompleted.Broadcast(AQData.QuestID);
+			// HUD/저널에서 [완료 가능]으로 표시
+			OnQuestReadyToTurnInSig.Broadcast(DataData.QuestID);
 		}
 	}
+}
 
-	// 완료된 퀘스트는 목록에서 제거
-	TArray<FName> RemoveKeys;
-	for (auto& ActiveQuest : ActiveQuests)
+bool UQuestComponent::TurnInQuest(FName QuestID)
+{
+	// 반납할 퀘스트 가져오기
+	FActiveQuest* Quest = ActiveQuests.Find(QuestID);
+	if (!Quest) 
 	{
-		if (ActiveQuest.Value.bCompleted)
-		{
-			RemoveKeys.Add(ActiveQuest.Key);
-		}
+		return false;
 	}
 
-	for (FName Key : RemoveKeys)
+	// 반납 가능한 상태인지 확인
+	if (Quest->Status != EQuestStatus::ReadyToTurnIn)
 	{
-		ActiveQuests.Remove(Key);
+		return false;
 	}
+
+	// 보상 지급 시점
+	GrantReward(Quest->QuestData);
+
+	// 퀘스트 진행 상태 갱신
+	Quest->Status = EQuestStatus::TurnedIn;
+
+	// Active 목록에서 제거
+	ActiveQuests.Remove(QuestID);
+
+	// 완료된 퀘스트 목록에 추가
+	CompletedQuests.Add(QuestID);
+
+	// UI 반영 브로드캐스트
+	OnQuestTurnedInSig.Broadcast(QuestID);
+
+	return true;
 }
 
 void UQuestComponent::TryCompleteQuest(FName QuestID)
 {
 	// 완료할 퀘스트를 가져옴
-	if (FActiveQuest* AQ = ActiveQuests.Find(QuestID))
+	if (FActiveQuest* Quest = ActiveQuests.Find(QuestID))
 	{
-		if (!AQ->bCompleted && AQ->CurrentCount >= AQ->QuestData.ObjectiveCount)
+		// 반납 가능한 상태인지 확인
+		if (Quest->Status != EQuestStatus::ReadyToTurnIn)
 		{
-			// 퀘스트 완료 처리
-			AQ->bCompleted = true;
-			GrantReward(AQ->QuestData);
-			CompletedQuests.Add(QuestID);
-			OnQuestCompleted.Broadcast(QuestID);
-			ActiveQuests.Remove(QuestID);
+			return;
 		}
+
+		// 퀘스트 진행 상태 갱신
+		Quest->Status = EQuestStatus::TurnedIn;
+
+		// 보상 지급 시점
+		GrantReward(Quest->QuestData);
+
+		// Active 목록에서 제거
+		ActiveQuests.Remove(QuestID);
+
+		// 완료된 퀘스트 목록에 추가
+		CompletedQuests.Add(QuestID);
+
+		// UI 반영 브로드캐스트
+		OnQuestTurnedInSig.Broadcast(QuestID);
 	}
+}
+
+const EQuestStatus UQuestComponent::GetQuestStatusFromQuestID(const FName QuestID) const
+{
+	if (const FActiveQuest* QuestData = ActiveQuests.Find(QuestID))
+	{
+		return QuestData->Status;
+	}
+
+	return EQuestStatus();
 }
 
 void UQuestComponent::GrantReward(const FQuestData& Quest)
 {
-	// TODO 김준형: 실제 인벤토리/골드 시스템과 보상 연동
+	// Todo 김준형: 퀘스트 완료 보상 지급 구현 (인벤토리/골드 연동)
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow,
 		FString::Printf(TEXT("Reward: Gold %d (%s)"), Quest.RewardGold, *Quest.Title.ToString()));
 }

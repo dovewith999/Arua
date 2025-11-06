@@ -74,13 +74,14 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 		if (QuestSelectWidgetInstance)
 		{
 			// 퀘스트 리스트 초기화
-			QuestSelectWidgetInstance->InitQuestList(ProvidedQuestIDs, QuestDataTables);
+			QuestSelectWidgetInstance->InitQuestList(InInteractor, ProvidedQuestIDs, QuestDataTables);
 
 			// 퀘스트 선택 위젯 그리기
 			QuestSelectWidgetInstance->AddToViewport();
 
-			// 퀘스트 수락 바인딩
+			// 퀘스트 수락/보상 수령 바인딩
 			QuestSelectWidgetInstance->OnQuestAccepted.AddDynamic(this, &AQuestGiverActor::HandleQuestAccepted);
+			QuestSelectWidgetInstance->OnQuestTurnInRequested.AddDynamic(this, &AQuestGiverActor::HandleQuestTurnIn);
 		}
 	}
 
@@ -152,7 +153,25 @@ void AQuestGiverActor::HandleQuestAccepted(FName QuestID)
 	}
 
 	// 이 NPC에서 제공하는 퀘스트 리스트에서 수락한 퀘스트 제거
-	ProvidedQuestIDs.Remove(QuestID);
+	//ProvidedQuestIDs.Remove(QuestID);
+}
+
+void AQuestGiverActor::HandleQuestTurnIn(FName QuestID)
+{
+	if (!InteractorPawn) return;
+
+	if (UQuestComponent* QuestComp = InteractorPawn->FindComponentByClass<UQuestComponent>())
+	{
+		if (QuestComp->TurnInQuest(QuestID))
+		{
+			// 보상 지급/상태 변경은 컴포넌트가 처리, 여기서는 안내만
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan,
+				FString::Printf(TEXT("[보상 수령 완료] %s"), *QuestID.ToString()));
+
+			// 이 NPC에서 제공하는 퀘스트 리스트에서 수락한 퀘스트 제거
+			ProvidedQuestIDs.Remove(QuestID);
+		}
+	}
 }
 
 void AQuestGiverActor::BeginPlay()
