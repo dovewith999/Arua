@@ -5,6 +5,9 @@
 #include "UI/View/PlayerHUDView.h"
 #include "UI/Model/PlayerData.h"
 #include "UI/ViewModel/PlayerViewModel.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet/PlayerAttributeSet.h"
+#include "Test/TestCharacterPlayer.h"
 
 AAruaPlayerController::AAruaPlayerController()
 {
@@ -20,10 +23,18 @@ void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+void AAruaPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
 	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
 		PlayerData->Initialize();
+		ATestCharacterPlayer* OwnerPlayer = Cast<ATestCharacterPlayer>(aPawn);
+		PlayerData->BindToAttributeSet(OwnerPlayer->GetAttributeSet());
 
 		ViewModel = NewObject<UPlayerViewModel>();
 		ViewModel->Initialize(PlayerData);

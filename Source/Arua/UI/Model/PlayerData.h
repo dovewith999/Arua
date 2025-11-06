@@ -20,19 +20,19 @@ public:
 	// Todo : 캐릭터가 만들어지면 사라질 코드, 임시 값 세팅
 	void Initialize();
 
-public:
-	FORCEINLINE float GetHp() const { return Hp; }
-	FORCEINLINE float GetMaxHp() const { return MaxHp; }
-	FORCEINLINE float GetHpRatio() const { return Hp / MaxHp; }
+	UFUNCTION()
+	void BindToAttributeSet(class UPlayerAttributeSet* InAttributeSet);
 
-	FORCEINLINE void TakeDamage(float InDamage) { Hp = FMath::Clamp(Hp - InDamage, 0, MaxHp); }
-	FORCEINLINE void SetHp(float InNewHp) { Hp = InNewHp; }
-	FORCEINLINE void SetMaxHp(float InMaxHp) { MaxHp = InMaxHp; }
+public:
+	float GetHp() const;
+	float GetMaxHp() const;
+	float GetHpRatio() const;
+
+	void SetHp(float InNewHp);
+	void SetMaxHp(float InNewMaxHp);
+	void TakeDamage(float InDamage);
 
 private:
 	UPROPERTY()
-	float Hp;
-
-	UPROPERTY()
-	float MaxHp;
+	TObjectPtr<class UPlayerAttributeSet> AttributeSet;
 };

@@ -23,6 +23,7 @@ public:
 public:
 	// Inherited via IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	FORCEINLINE class UPlayerAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 public:
 	void FinishLockOn();
@@ -54,5 +55,10 @@ private:
 private:
 	UPROPERTY()
 	TObjectPtr<AActor> Target;
+
+
+	// Todo : Player 클래스로 옮길 변수
+	UPROPERTY()
+	TObjectPtr<class UPlayerAttributeSet> AttributeSet;
 
 };

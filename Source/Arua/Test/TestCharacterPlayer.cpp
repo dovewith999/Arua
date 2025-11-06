@@ -9,11 +9,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "Tag/AruaGameplayTags.h"
 #include "Abilities/GameplayAbility.h"
+#include "AttributeSet/PlayerAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ATestCharacterPlayer::ATestCharacterPlayer()
 {
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+
+	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("AttributeSet"));
 }
 
 UAbilitySystemComponent* ATestCharacterPlayer::GetAbilitySystemComponent() const

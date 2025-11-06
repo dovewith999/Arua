@@ -2,9 +2,47 @@
 
 
 #include "PlayerData.h"
+#include "AttributeSet/PlayerAttributeSet.h"
 
 void UPlayerData::Initialize()
 {
-	MaxHp = 100;
-	Hp = MaxHp;
 }
+
+void UPlayerData::BindToAttributeSet(UPlayerAttributeSet* InAttributeSet)
+{
+	if (AttributeSet == InAttributeSet || InAttributeSet == nullptr)
+	{
+		return;
+	}
+
+	AttributeSet = InAttributeSet;
+}
+
+float UPlayerData::GetHp() const
+{
+	return AttributeSet->GetHealth();
+}
+float UPlayerData::GetMaxHp() const
+{
+	return AttributeSet->GetMaxHealth();
+}
+
+float UPlayerData::GetHpRatio() const
+{
+	return GetHp() / GetMaxHp();
+}
+
+void UPlayerData::TakeDamage(float InDamage)
+{
+	AttributeSet->SetHealth(InDamage);
+}
+
+void UPlayerData::SetHp(float InNewHp)
+{
+	AttributeSet->SetHealth(InNewHp);
+}
+void UPlayerData::SetMaxHp(float InNewMaxHp)
+{
+	AttributeSet->SetMaxHealth(InNewMaxHp);
+}
+

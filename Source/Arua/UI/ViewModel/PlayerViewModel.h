@@ -32,7 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHp(float NewHp)
 	{
-		Model->GetHp();
+		Model->SetHp(NewHp);
 		NotifyPropertyChanged(FName(TEXT("Hp")));
 	}
 
