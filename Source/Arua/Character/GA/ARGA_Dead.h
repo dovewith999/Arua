@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "ARGA_Death.generated.h"
+#include "ARGA_Dead.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API UARGA_Death : public UGameplayAbility
+class ARUA_API UARGA_Dead : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UARGA_Death();
+	UARGA_Dead();
 
 protected:
     virtual void ActivateAbility(
@@ -36,7 +36,7 @@ protected:
 private:
     // 몽타주가 끝나면 호출될 함수 - 25/11/07 임희섭
     UFUNCTION()
-    void OnDeathCallback();
+    void OnDeadCallback();
 
     // 이 어빌리티를 실행하는 Avator를 캐싱할 변수;
     UPROPERTY()

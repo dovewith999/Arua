@@ -18,17 +18,20 @@ public:
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	class UARAttributeSetBase* GetAttributeSet() const { return AttributeSet; }
+	FORCEINLINE class UAnimMontage* GetDeadMontage() const { return DeadMontage; }
 
 	// 컴포넌트 초기화가 끝나면 호출되는 이벤트 함수. 
 	virtual void PostInitializeComponents() override;
 
-protected:
+public:
 	// 죽음 섹션
 	virtual void SetDead();
 
+protected:
+
 	virtual void PlayDeadAnimation();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	// ASC

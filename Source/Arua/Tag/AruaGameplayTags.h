@@ -26,6 +26,6 @@ namespace AruaGamePlayTags
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Multiplier)
 
 	/*Event Tags*/
-	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Death)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Dead)
 
 }
