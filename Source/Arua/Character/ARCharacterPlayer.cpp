@@ -20,6 +20,8 @@
 
 #include "Tag/AruaGameplayTags.h"
 
+#include "AttributeSet/PlayerAttributeSet.h"
+
 AARCharacterPlayer::AARCharacterPlayer()
 {
 	bUseControllerRotationPitch = false;
@@ -148,6 +150,7 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
 	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
+	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AARCharacterPlayer::LockOnToggle);
 	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
 
@@ -164,6 +167,8 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 	{
 		ASC = PS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(PS, this);
+
+		AttributeSet = PS->GetAttributeSet();
 	
 		int InputId = 0;
 		for (const auto& StartAbility : StartAbilities)
@@ -175,8 +180,16 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 
 		SetupGASInputComponent();
 	}
+}
 
+void AARCharacterPlayer::FinishLockOn()
+{
+	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	// 카메라 옵션 초기화
+	SpringArm->SocketOffset = FVector(0.f, 0.f, 0.f);
+	SpringArm->bUsePawnControlRotation = true;
 }
 
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
@@ -241,20 +254,59 @@ void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 
 void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 {
-	if (bIsRolling)
+	//if (bIsRolling)
+	//	return;
+
+	//bIsRolling = true;
+
+	//PlayAnimMontage(RollActionMontage);
+
+	//GetWorld()->GetTimerManager().SetTimer(
+	//	RollAnimTimer,
+	//	this,
+	//	&AARCharacterPlayer::RollCompleted ,
+	//	RollActionMontage->GetPlayLength(),
+	//	false
+	//);
+
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
+
+	if (!ASC)
+	{
 		return;
+	}
 
-	bIsRolling = true;
+	if (!ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
+		ASC->TryActivateAbilitiesByTag(TagContainer);
+	}
+}
 
-	PlayAnimMontage(RollActionMontage);
+void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
+{
+	// Tag로 어빌리티를 찾아서 활성화
+	// InputTag나 AbilityTag를 사용할 수 있음
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
 
-	GetWorld()->GetTimerManager().SetTimer(
-		RollAnimTimer,
-		this,
-		&AARCharacterPlayer::RollCompleted ,
-		RollActionMontage->GetPlayLength(),
-		false
-	);
+	if (!ASC)
+	{
+		return;
+	}
+
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
+		FinishLockOn();
+		ASC->CancelAbilities(&TagContainer);
+	}
+
+	else
+	{
+		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		ASC->TryActivateAbilitiesByTag(TagContainer);
+	}
 }
 
 void AARCharacterPlayer::RollCompleted()

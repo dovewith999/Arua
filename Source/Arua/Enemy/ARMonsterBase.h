@@ -33,8 +33,8 @@ private:
 	TObjectPtr<class UARWidgetComponent> TargetLock;
 
 	// AttributeSet 생성 // 25/11/06 임희섭
-	UPROPERTY()
-	TObjectPtr<class UMonsterAttributeSet> AttributeSet;
+	//UPROPERTY()
+	//TObjectPtr<class UMonsterAttributeSet> AttributeSet;
 
 	UPROPERTY()
 	TObjectPtr<class UBossViewModel> VM;

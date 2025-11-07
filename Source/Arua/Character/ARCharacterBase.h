@@ -17,6 +17,7 @@ public:
 	AARCharacterBase();
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	class UARAttributeSetBase* GetAttributeSet() const { return AttributeSet; }
 
 	// 컴포넌트 초기화가 끝나면 호출되는 이벤트 함수. 
 	virtual void PostInitializeComponents() override;
@@ -32,5 +33,8 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
 	TObjectPtr<class UAbilitySystemComponent> ASC;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
+	TObjectPtr<class UARAttributeSetBase> AttributeSet;
 
 };

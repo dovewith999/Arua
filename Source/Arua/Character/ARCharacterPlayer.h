@@ -34,6 +34,10 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+public:
+	void FinishLockOn();
+	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
+	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	// 카메라 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -62,6 +66,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> LockOnAction;
+
 	// NPC 상호작용 입력 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> InteractionAction;
@@ -81,7 +88,9 @@ protected:
 	void RunTriggered(const FInputActionValue& Value);
 	void RunComplete(const FInputActionValue& Value);
 	virtual void Roll(const FInputActionValue& Value);
+	void LockOnToggle(const FInputActionValue& Value);
 	void RollCompleted();
+
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
@@ -123,4 +132,6 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UQuestComponent> QuestComponent;
+
+
 };

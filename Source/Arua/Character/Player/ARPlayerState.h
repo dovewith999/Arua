@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,9 +19,12 @@ public:
 	AARPlayerState();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	class UPlayerAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
 	UPROPERTY(EditAnywhere,Category = GAS)
 	TObjectPtr<class UAbilitySystemComponent> ASC;
-	
+
+	UPROPERTY()
+	TObjectPtr<class UPlayerAttributeSet> AttributeSet;
 };

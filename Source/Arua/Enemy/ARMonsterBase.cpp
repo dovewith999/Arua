@@ -5,6 +5,7 @@
 #include "UI/WidgetComponent/ARWidgetComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "AbilitySystemComponent.h"
+#include "AttributeSet/ARAttributeSetBase.h"
 #include "AttributeSet/MonsterAttributeSet.h"
 #include "UI/ViewModel/BossViewModel.h"
 #include "UI/Model/BossData.h"
@@ -52,7 +53,7 @@ void AARMonsterBase::BeginPlay()
 	VM = NewObject<UBossViewModel>();
 
 	UBossData* Model = NewObject<UBossData>();
-	Model->BindToAttributeSet(AttributeSet);
+	Model->BindToAttributeSet(Cast<UMonsterAttributeSet>(AttributeSet));
 	Model->SetName(TEXT("드래곤"));
 	
 	VM->Initialize(Model);

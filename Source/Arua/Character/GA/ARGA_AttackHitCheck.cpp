@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/GA/ARGA_AttackHitCheck.h"
@@ -30,6 +30,11 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 	{
 		FHitResult HitResult= UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle, 0);
 		UE_LOG(LogTemp, Log, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
+
+		//Todo : 태그 비교해서 같은 태그를 가지고 있으면 처리 x
+		
+		// Todo : 데미지 여기서 처리
+		//Damager->ApplyDamage(HitResult.GetActor(), 10.f, 2.f);
 	}
 
 	bool bReplicatedEndAbility = true;

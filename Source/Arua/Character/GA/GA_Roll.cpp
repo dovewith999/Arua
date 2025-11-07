@@ -5,7 +5,6 @@
 #include "Tag/AruaGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARCharacterPlayer.h"
-#include "Test/TestCharacterPlayer.h"
 
 UGA_Roll::UGA_Roll()
 {
@@ -33,7 +32,7 @@ void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 		return;
 	}
 
-	ATestCharacterPlayer* Player = CastChecked<ATestCharacterPlayer>(ActorInfo->AvatarActor.Get());
+	AARCharacterPlayer* Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 
 	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayRoll"), Player->GetRollMontage());
 

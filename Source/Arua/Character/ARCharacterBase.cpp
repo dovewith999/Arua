@@ -13,8 +13,8 @@ AARCharacterBase::AARCharacterBase()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	// 상속받은 클래스의 생성자에서 초기화.
-	ASC = NULL;
-
+	ASC = nullptr;
+	AttributeSet = nullptr;
 }
 
 UAbilitySystemComponent* AARCharacterBase::GetAbilitySystemComponent() const

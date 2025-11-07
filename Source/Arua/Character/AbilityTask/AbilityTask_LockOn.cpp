@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "AbilityTask_LockOn.h"
-#include "Test/TestCharacterPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Character/ARCharacterPlayer.h"
 
 UAbilityTask_LockOn* UAbilityTask_LockOn::CreateLockOnTask(UGameplayAbility* OwningAbility, AActor* TargetActor, float RotationSpeed)
 {
@@ -89,7 +89,7 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 #pragma endregion
 
 #pragma region 카메라 회전
-	if (ATestCharacterPlayer* Player = Cast<ATestCharacterPlayer>(OwnerActor))
+	if (AARCharacterPlayer* Player = Cast<AARCharacterPlayer>(OwnerActor))
 	{
 		if (USpringArmComponent* SpringArm = Player->GetSpringArm())
 		{

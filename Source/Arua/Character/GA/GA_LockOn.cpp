@@ -9,6 +9,7 @@
 #include "Character/AbilityTask/AbilityTask_LockOn.h"
 #include "Enemy/ARMonsterBase.h"
 #include "Controller/AruaPlayerController.h"
+#include "Character/ARCharacterPlayer.h"
 
 UGA_LockOn::UGA_LockOn()
 {
@@ -109,7 +110,7 @@ void UGA_LockOn::EndAbility(
 		return;
 	}
 
-	if (ATestCharacterPlayer* Owner = Cast<ATestCharacterPlayer>(Character))
+	if (AARCharacterPlayer* Owner = Cast<AARCharacterPlayer>(Character))
 	{
 		Owner->FinishLockOn();
 	}

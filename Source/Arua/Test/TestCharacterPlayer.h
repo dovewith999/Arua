@@ -23,7 +23,7 @@ public:
 public:
 	// Inherited via IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	FORCEINLINE class UPlayerAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	//FORCEINLINE class UPlayerAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 public:
 	void FinishLockOn();
@@ -53,10 +53,6 @@ protected:
 	// Todo : 대미지 테스트 함수
 	void TestAttack(const FInputActionValue& Value);
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> LockOnAction;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class UGameplayAbility>> StartingAbilities;
 
@@ -64,9 +60,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<AActor> Target;
 
-	// Todo : Player 클래스로 옮길 변수
-	UPROPERTY()
-	TObjectPtr<class UPlayerAttributeSet> AttributeSet;
+	//// Todo : Player 클래스로 옮길 변수
+	//UPROPERTY()
+	//TObjectPtr<class UPlayerAttributeSet> AttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameplayEffect", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UGameplayEffect> DamageEffect;
