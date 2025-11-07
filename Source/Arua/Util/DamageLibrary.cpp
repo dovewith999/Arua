@@ -34,8 +34,6 @@ bool UDamageLibrary::ApplyDamage(UAbilitySystemComponent* SourceASC, AActor* Dam
 		SpecHandle.Data->SetSetByCallerMagnitude(
 			FGameplayTag::RequestGameplayTag(FName("Data.Damage.Multiplier")), DamageMultiplier);
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Apply GameplayEffect")); // 화면출력
-
 		SourceASC->ApplyGameplayEffectSpecToTarget(
 			*SpecHandle.Data.Get(), TargetASC);
 
@@ -44,11 +42,8 @@ bool UDamageLibrary::ApplyDamage(UAbilitySystemComponent* SourceASC, AActor* Dam
 
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("SpecHandle Is Not valid")); // 화면출력
-
+		return false;
 	}
-
-	return false;
 }
 
 UAbilitySystemComponent* UDamageLibrary::GetASC(AActor* Actor)
