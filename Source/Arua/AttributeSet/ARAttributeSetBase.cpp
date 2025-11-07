@@ -5,6 +5,8 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemGlobals.h"
+#include "Character/ARCharacterBase.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 UARAttributeSetBase::UARAttributeSetBase()
 {
@@ -26,6 +28,21 @@ void UARAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
                 if (UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OwnerActor))
                 {
                     FGameplayEventData EventData;
+
+                    if (AActor* KillerActor = Data.EffectSpec.GetContext().GetInstigator())
+                    {
+                        if (UAbilitySystemComponent* KillerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(KillerActor))
+                        {
+                            FGameplayEventData KillEventData;
+                            KillEventData.Instigator = KillerActor;
+
+                            KillerASC->HandleGameplayEvent(
+                                FGameplayTag::RequestGameplayTag(TEXT("Event.QuestUpdate")),
+                                &KillEventData
+                            );
+                        }
+                    }
+
                     ASC->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Dead"), &EventData);
                 }
             }

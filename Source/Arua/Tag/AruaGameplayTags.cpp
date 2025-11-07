@@ -19,5 +19,6 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Multiplier, "Data.Damage.Multiplier")
 
 	/*Event Tags*/
-	 UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Quest_Update, "Event.Quest.Update")
 }

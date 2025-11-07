@@ -21,4 +21,21 @@ UMonsterAttributeSet::UMonsterAttributeSet()
 void UMonsterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
     Super::PostGameplayEffectExecute(Data);
+
+    if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+    {
+        SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+
+        if (GetHealth() <= 0.f)
+        {
+            //// 게임플레이 이벤트 데이터를 만들어, 충돌한 대상을 저장
+            //FGameplayEventData Payload;
+            //Payload.Instigator = OwnerActor;
+            //Payload.Target = OwnerActor;
+            //Payload.EventMagnitude = 1.0f;
+
+            //// 자신에게 근접 공격 이벤트 전달
+            //UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner<APawn>(), PA_GameplayTags::Shared_Event_MeleeHit, Payload);
+        }
+    }
 }
