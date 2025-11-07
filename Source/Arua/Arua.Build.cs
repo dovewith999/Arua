@@ -19,6 +19,7 @@ public class Arua : ModuleRules
             "GameplayStateTreeModule",
             "UMG",
             "Slate",
+            "SlateCore",
             "GameplayTags",
             "GameplayAbilities",
             "GameplayTasks",
