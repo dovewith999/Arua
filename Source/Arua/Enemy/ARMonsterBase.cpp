@@ -9,6 +9,7 @@
 #include "AttributeSet/MonsterAttributeSet.h"
 #include "UI/ViewModel/BossViewModel.h"
 #include "UI/Model/BossData.h"
+#include "AI/ARAIController.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -19,7 +20,7 @@ AARMonsterBase::AARMonsterBase()
 	// 위치 조정
 	float CenterPosition = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	TargetLock->SetRelativeLocation(FVector(0.f, 0.f, CenterPosition));
-	
+
 	// 어떤 Widget BP를 사용해 그릴지
 	static ConstructorHelpers::FClassFinder<UUserWidget> TargetLockViewRef(TEXT("/Game/Personal/LIM_H_S/UI/WBP_TargetLock.WBP_TargetLock_C"));
 	if (TargetLockViewRef.Succeeded())
@@ -55,6 +56,16 @@ void AARMonsterBase::BeginPlay()
 	UBossData* Model = NewObject<UBossData>();
 	Model->BindToAttributeSet(Cast<UMonsterAttributeSet>(AttributeSet));
 	Model->SetName(TEXT("드래곤"));
-	
+
 	VM->Initialize(Model);
+}
+
+void AARMonsterBase::SetDead()
+{
+	Super::SetDead();
+
+	if(AARAIController* AIController = Cast<AARAIController>(GetController()))
+	{
+		AIController->StopAI();
+	}
 }

@@ -2,6 +2,9 @@
 
 
 #include "AttributeSet/MonsterAttributeSet.h"
+#include "GameplayEffectExtension.h"
+#include "AbilitySystemComponent.h"
+//#include "AbilitySystemGlobals.h"
 
 UMonsterAttributeSet::UMonsterAttributeSet()
 {
@@ -13,4 +16,9 @@ UMonsterAttributeSet::UMonsterAttributeSet()
 
     Attack.SetBaseValue(10.f);
     Attack.SetCurrentValue(10.f);
+}
+
+void UMonsterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+    Super::PostGameplayEffectExecute(Data);
 }

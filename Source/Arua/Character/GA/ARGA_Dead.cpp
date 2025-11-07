@@ -8,11 +8,15 @@
 
 UARGA_Dead::UARGA_Dead()
 {
+	// 활성화 시 Owner에게 부여되는 Tag
+	// ActivationOwnedTags.AddTag(AruaGamePlayTags::Event_Dead);
 }
 
 void UARGA_Dead::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("ActivateAbility"));
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 	{
@@ -22,21 +26,23 @@ void UARGA_Dead::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 	if (Avator = CastChecked<AARCharacterBase>(ActorInfo->AvatarActor.Get()))
 	{
-		UAbilityTask_PlayMontageAndWait* DeathTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DeathTask"), Avator->GetDeadMontage());
+		UAbilityTask_PlayMontageAndWait* DeathTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DeadTask"), Avator->GetDeadMontage());
 
 		DeathTask->OnCompleted.AddDynamic(this, &UARGA_Dead::OnDeadCallback);
-	
+
 		DeathTask->ReadyForActivation();
+
+		Avator->SetDead();
 	}
+}
+
+void UARGA_Dead::OnDeadCallback()
+{
+    // 어빌리티 종료
+    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UARGA_Dead::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
-
-void UARGA_Dead::OnDeadCallback()
-{
-	// TODO : 죽음 처리
-	Avator->SetDead();
 }
