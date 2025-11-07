@@ -27,7 +27,7 @@ void UARAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
                 if (UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OwnerActor))
                 {
                     FGameplayEventData EventData;
-                    ASC->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Death"), &EventData);
+                    ASC->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Dead"), &EventData);
                 }
             }
         }

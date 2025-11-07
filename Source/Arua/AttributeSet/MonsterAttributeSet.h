@@ -17,4 +17,7 @@ class ARUA_API UMonsterAttributeSet : public UARAttributeSetBase
 
 public:
 	UMonsterAttributeSet();
+
+public:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 };
