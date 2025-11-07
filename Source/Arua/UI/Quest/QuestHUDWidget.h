@@ -30,17 +30,28 @@ protected:
 	UFUNCTION()
 	void HandleQuestTurnedIn(FName QuestID);
 
+private:
+	// 퀘스트 항목 생성 헬퍼
+	class UQuestHUDItemWidget* CreateQuestHUDItem(const FQuestData& Data, int32 DisplayOrder);
+
+	// VerticalBox에 쌓인 순서대로 퀘스트 순번 재정렬 함수
+	void ReIndexQuestOrders();
+
 protected:
 	// 현재 진행 중인 퀘스트 항목들을 표시하는 VerticalBox
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UVerticalBox> ActiveQuestList;
+
+	// 퀘스트 항목 위젯
+	UPROPERTY(BlueprintReadOnly)
+	TSubclassOf<class UQuestHUDItemWidget> QuestHUDItemWidgetClass;
 
 private:
 	// 플레이어의 퀘스트 컴포넌트
 	UPROPERTY()
 	UQuestComponent* QuestComponent = nullptr;
 
-	// 퀘스트 ID별로 생성된 HUD 항목(Row)을 추적 (진행도 갱신용)
+	// 퀘스트 항목 맵
 	UPROPERTY()
-	TMap<FName, class UHorizontalBox*> QuestRows;
+	TMap<FName, class UQuestHUDItemWidget*> QuestHUDItemMap;
 };

@@ -8,6 +8,16 @@
 #include "Interface/AR_NPCInteractionInterface.h"
 #include "QuestGiverActor.generated.h"
 
+// 위젯 가시화 기록 구조체
+USTRUCT()
+struct FWidgetVisibilityRecord
+{
+	GENERATED_BODY()
+
+	TWeakObjectPtr<UUserWidget> Widget;	// 위젯 클래스
+	ESlateVisibility PrevVisibility;	// 이전 가시화 여부
+};
+
 UCLASS()
 class ARUA_API AQuestGiverActor : public AActor, public IAR_NPCInteractionInterface
 {
@@ -108,4 +118,7 @@ private:
 	// 퀘스트 선택 위젯 인스턴스
 	UPROPERTY()
 	TObjectPtr<class UQuestSelectWidget> QuestSelectWidgetInstance = nullptr;
+
+	// PlayerCharacter 별로 숨긴 위젯과 이전 상태를 저장
+	static TMap<TWeakObjectPtr<APlayerController>, TArray<FWidgetVisibilityRecord>> CachedWidgetStates;
 };

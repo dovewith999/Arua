@@ -14,10 +14,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UI/Dialog/DialogWidget.h"
 #include "UI/Quest/QuestSelectWidget.h"
 
 static const FString QuestGiverActorContext(TEXT("QuestGiver_OnAccept"));
+TMap<TWeakObjectPtr<APlayerController>, TArray<FWidgetVisibilityRecord>> AQuestGiverActor::CachedWidgetStates;
 
 AQuestGiverActor::AQuestGiverActor()
 {
@@ -53,6 +55,9 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 	OriginalViewTarget = PC->GetViewTarget();
 	PC->SetViewTargetWithBlend(this, ViewTargetBlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
 
+	// #2: UI 상호작용 모드 설정 (입력 등)
+	ApplyUIInteractionMode();
+
 	// #3: Dialog 위젯 생성 및 표시
 	if (DialogWidgetClass && !DialogWidgetInstance)
 	{
@@ -85,10 +90,7 @@ void AQuestGiverActor::Interact(APawn* InInteractor)
 		}
 	}
 
-	// #5: UI 상호작용 모드 설정 (입력 등)
-	ApplyUIInteractionMode();
-
-	// #6: 상호작용 상태 플래그 활성화
+	// #5: 상호작용 상태 플래그 활성화
 	GetWorld()->GetTimerManager().SetTimer(ViewTargetBlendTimer,
 		FTimerDelegate::CreateWeakLambda(this, [this]()
 			{
@@ -247,6 +249,36 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 	PC->bEnableClickEvents = true;
 	PC->bEnableMouseOverEvents = true;
 
+	/* 플레이어 HUD 비가시화 */
+	TArray<FWidgetVisibilityRecord> Records;
+	TArray<UUserWidget*> AllWidgets;
+
+	// 월드 전체에서 위젯 클래스를 찾아서 저장
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(PC->GetWorld(), AllWidgets, UUserWidget::StaticClass(), false);
+
+	for (UUserWidget* Widget : AllWidgets)
+	{
+		if (!Widget) continue;
+
+		// 소유 플레이어가 동일한지 확인
+		if (Widget->GetOwningPlayer() && Widget->GetOwningPlayer()->IsA(PC->GetClass()))
+		{
+			// 위젯 가시화 기록 구조체에 가시화 정보 저장
+			FWidgetVisibilityRecord Rec;
+			Rec.Widget = Widget;
+			Rec.PrevVisibility = Widget->GetVisibility();
+			Widget->SetVisibility(ESlateVisibility::Collapsed);
+			Records.Add(MoveTemp(Rec));
+		}
+	}
+
+	// 가시화가 변경된 위젯이 있는 경우
+	if (Records.Num() > 0)
+	{
+		// 변경 위젯 갱신 (이동으로 최적화)
+		CachedWidgetStates.Add(PC, MoveTemp(Records));
+	}
+
 	// 입력 모드 UI Only로 설정 및 다이얼로그 위젯으로 포커싱
 	FInputModeGameAndUI Mode;
 	Mode.SetWidgetToFocus(DialogWidgetInstance ? DialogWidgetInstance->TakeWidget() : TSharedPtr<SWidget>());
@@ -273,8 +305,24 @@ void AQuestGiverActor::RestoreGameplayMode()
 	PC->bEnableClickEvents = false;
 	PC->bEnableMouseOverEvents = false;
 
+	/* 플레이어 HUD 비가시화 */
+	TArray<FWidgetVisibilityRecord>* Found = CachedWidgetStates.Find(PC);
+	if (!Found) return;
+
+	for (const FWidgetVisibilityRecord& Rec : *Found)
+	{
+		if (Rec.Widget.IsValid())
+		{
+			UUserWidget* W = Rec.Widget.Get();
+			// 위젯이 여전히 존재하면 이전 상태로 복원
+			W->SetVisibility(Rec.PrevVisibility);
+		}
+		// 만약 위젯이 파괴되었으면 무시
+	}
+
+	CachedWidgetStates.Remove(PC);
+
 	// 입력 모드 게임 모드로 복귀
 	FInputModeGameOnly Mode;
 	PC->SetInputMode(Mode);
 }
-

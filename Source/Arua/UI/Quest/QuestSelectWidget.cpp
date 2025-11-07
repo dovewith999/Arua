@@ -43,7 +43,7 @@ void UQuestSelectWidget::InitQuestList(APawn* InInteractor, const TArray<FName>&
 		if (!QuestButton) continue;
 
 		// 퀘스트 버튼 클릭 델리게이트에 퀘스트 버튼 위젯 선택(클릭) 콜백 함수 바인딩
-		QuestButton->Init(*QuestData);
+		QuestButton->Init(*QuestData, false);
 		QuestButton->OnClicked.AddDynamic(this, &UQuestSelectWidget::HandleQuestButtonClicked);
 
 		// 패널에 추가
@@ -69,7 +69,7 @@ void UQuestSelectWidget::InitQuestList(APawn* InInteractor, const TArray<FName>&
 		// 버튼 표시 텍스트 앞에 [완료] 추가
 		FQuestData Labeled = Quest.QuestData;
 		Labeled.Title = FText::FromString(TEXT("[완료] ") + Quest.QuestData.Title.ToString());
-		Button->Init(Labeled);
+		Button->Init(Labeled, true);
 
 		// 퀘스트 버튼 클릭 함수 바인딩
 		Button->OnClicked.AddDynamic(this, &UQuestSelectWidget::HandleQuestButtonClicked);
