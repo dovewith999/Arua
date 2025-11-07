@@ -1,11 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/GA/ARGA_AttackHitCheck.h"
+#include "ARGA_AttackHitCheck.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Character/AbilityTask/ARAT_Trace.h"
 #include "Character/GA/TA/ARTA_Trace.h"
-#include "ARGA_AttackHitCheck.h"
+#include "Util/DamageLibrary.h"
 
 UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 {
@@ -35,6 +35,8 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 		
 		// Todo : 데미지 여기서 처리
 		//Damager->ApplyDamage(HitResult.GetActor(), 10.f, 2.f);
+
+		UDamageLibrary::ApplyDamage(CurrentActorInfo->AbilitySystemComponent.Get(), HitResult.GetActor());
 	}
 
 	bool bReplicatedEndAbility = true;
