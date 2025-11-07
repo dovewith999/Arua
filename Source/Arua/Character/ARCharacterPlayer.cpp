@@ -22,6 +22,8 @@
 
 #include "AttributeSet/PlayerAttributeSet.h"
 
+#include "Util/DamageLibrary.h"
+
 AARCharacterPlayer::AARCharacterPlayer()
 {
 	bUseControllerRotationPitch = false;
@@ -289,6 +291,9 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 
 void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 {
+	// TODO 나중에 지워야함 죽음 처리용 즉사 코드
+	// UDamageLibrary::ApplyDamage(ASC, this, AttributeSet->GetMaxHealth());
+
 	// Tag로 어빌리티를 찾아서 활성화
 	// InputTag나 AbilityTag를 사용할 수 있음
 	FGameplayTagContainer TagContainer;

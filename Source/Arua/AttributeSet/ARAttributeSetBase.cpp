@@ -20,7 +20,6 @@ void UARAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 
         if (GetHealth() <= 0.f)
         {
-            // 여기서 죽음 처리
             if (AActor* OwnerActor = GetOwningActor())
             {
                 // AbilitySystemComponent에 이벤트 전달
