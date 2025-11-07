@@ -7,7 +7,7 @@
 
 UARBossAnimInstance::UARBossAnimInstance()
 {
-
+	MovingThreshold = 3.0f;
 }
 
 void UARBossAnimInstance::NativeInitializeAnimation()
