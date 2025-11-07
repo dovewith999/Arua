@@ -21,7 +21,8 @@
 #include "Tag/AruaGameplayTags.h"
 
 #include "AttributeSet/PlayerAttributeSet.h"
-
+#include "Controller/AruaPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Util/DamageLibrary.h"
 
 AARCharacterPlayer::AARCharacterPlayer()
@@ -34,7 +35,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-	
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("/Game/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet"));
 	if (CharacterMesh.Succeeded())
 	{
@@ -47,7 +48,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	}
 
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -90.0f),FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -90.0f), FRotator(0.0f, -90.0f, 0.0f));
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -55,7 +56,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 	SpringArm->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera -> SetupAttachment(SpringArm,USpringArmComponent::SocketName);
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
@@ -136,7 +137,7 @@ void AARCharacterPlayer::BeginPlay()
 	APlayerController* PlayerController = CastChecked<APlayerController>(GetController());
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
-		Subsystem->AddMappingContext(DefaultMappingContext,0);
+		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 	bIsRunning = false;
 	bIsWalking = false;
@@ -150,11 +151,11 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::Move);
-	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::NotMove);
-	EnhancedInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::Look);
-	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&AARCharacterPlayer::RunTriggered);
-	EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&AARCharacterPlayer::RunComplete);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::Move);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::NotMove);
+	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::Look);
+	EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::RunTriggered);
+	EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::RunComplete);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AARCharacterPlayer::LockOnToggle);
 	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
@@ -175,7 +176,7 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 		ASC->InitAbilityActorInfo(PS, this);
 
 		AttributeSet = PS->GetAttributeSet();
-	
+
 		int InputId = 0;
 		for (const auto& StartAbility : StartAbilities)
 		{
@@ -188,14 +189,16 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 	}
 }
 
+void AARCharacterPlayer::BeginLockOn()
+{
+	// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
 void AARCharacterPlayer::FinishLockOn()
 {
 	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	// 카메라 옵션 초기화
-	SpringArm->SocketOffset = FVector(0.f, 0.f, 0.f);
-	SpringArm->bUsePawnControlRotation = true;
 }
 
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
@@ -312,8 +315,7 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 
 	else
 	{
-		// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
-		GetCharacterMovement()->bOrientRotationToMovement = false;
+		BeginLockOn();
 		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 }

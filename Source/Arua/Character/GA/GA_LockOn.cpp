@@ -72,6 +72,17 @@ void UGA_LockOn::ActivateAbility(
 		LockOnTask->OnLostTarget.AddDynamic(this, &UGA_LockOn::LostTarget);
 
 		LockOnTask->ReadyForActivation();
+
+		ACharacter* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+		if (!Character)
+		{
+			return;
+		}
+
+		if (AARCharacterPlayer* Owner = Cast<AARCharacterPlayer>(Character))
+		{
+			Owner->BeginLockOn();
+		}
 	}
 
 	else

@@ -89,13 +89,32 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 #pragma endregion
 
 #pragma region 카메라 회전
+#pragma region 카메라 회전
 	if (AARCharacterPlayer* Player = Cast<AARCharacterPlayer>(OwnerActor))
 	{
-		if (USpringArmComponent* SpringArm = Player->GetSpringArm())
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
 		{
-			SpringArm->SocketOffset = LockOnCameraOffset;
-			SpringArm->bUsePawnControlRotation = false;
+			// 컨트롤러(카메라) 회전 계산
+			FVector CameraLocation = Player->GetPawnViewLocation();
+			FVector TargetLocation = Target->GetActorLocation();
+
+			// 타겟의 중심(약간 위쪽)을 바라보도록 조정
+			// TargetLocation.Z += 100.0f; // 타겟의 상체를 바라보도록
+
+			FRotator LookAtRotation = (TargetLocation - CameraLocation).Rotation();
+			FRotator CurrentControlRotation = PC->GetControlRotation();
+
+			// 컨트롤러 회전 보간
+			FRotator NewControlRotation = FMath::RInterpTo(
+				CurrentControlRotation,
+				LookAtRotation,
+				DeltaTime,
+				InterpSpeed * 0.8f // 플레이어보다 약간 느리게
+			);
+
+			PC->SetControlRotation(NewControlRotation);
 		}
 	}
+#pragma endregion
 #pragma endregion
 }

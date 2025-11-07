@@ -33,6 +33,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
+	void BeginLockOn();
 	void FinishLockOn();
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
@@ -41,8 +42,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> SpringArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camear, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> Camera;
+
+	// LockOn용 카메라 생성 - 25/11/08 임희섭
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn|Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USpringArmComponent> LockOnSpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn|Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCameraComponent> LockOnCamera;
 
 	// 입력 관련 섹션
 protected:
@@ -133,6 +141,4 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UQuestComponent> QuestComponent;
-
-
 };
