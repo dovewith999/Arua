@@ -23,11 +23,13 @@ public:
 	virtual void PostInitializeComponents() override;
 
 protected:
-	// 죽음 설정 함수.
-	// 죽음 상태 설정
+	// 죽음 섹션
 	virtual void SetDead();
 
-	void PlayDeadAnimation();
+	virtual void PlayDeadAnimation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	// ASC
 protected:

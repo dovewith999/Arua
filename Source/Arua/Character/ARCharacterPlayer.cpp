@@ -113,6 +113,12 @@ AARCharacterPlayer::AARCharacterPlayer()
 		ComboActionMontage = ComboActionMontageRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Game/Animation/Player/AM_Dead.AM_Dead"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UARComboActionData> ComboActionDataRef(TEXT("/Script/Arua.ARComboActionData'/Game/GameData/ARA_ComboAttack.ARA_ComboAttack'"));
 	if (ComboActionDataRef.Object)
 	{
@@ -135,9 +141,7 @@ void AARCharacterPlayer::BeginPlay()
 	bIsRolling = false;
 }
 
-void AARCharacterPlayer::SetDead()
-{
-}
+
 
 void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -333,6 +337,13 @@ void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 			NPCInteractionInterface->PlayInteraction(this);
 		}
 	}
+}
+
+void AARCharacterPlayer::SetDead()
+{
+	Super::SetDead();
+
+	// 후에 있을지 모르는 플레이어 죽음 이후 상태 구현.
 }
 
 void AARCharacterPlayer::SetupGASInputComponent()

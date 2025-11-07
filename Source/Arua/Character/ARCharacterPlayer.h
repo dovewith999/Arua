@@ -20,8 +20,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void SetDead() override;
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FORCEINLINE bool GetRunState() { return bIsRunning; }
@@ -94,6 +92,9 @@ protected:
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
+
+	// 죽음 처리 함수
+	virtual void SetDead() override;
 
 	// 애니메이션 섹션
 protected:
