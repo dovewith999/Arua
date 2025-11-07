@@ -19,4 +19,7 @@ public:
 	UPlayerAttributeSet();
 
 
+public:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
 };

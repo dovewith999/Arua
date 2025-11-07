@@ -9,3 +9,8 @@ UPlayerAttributeSet::UPlayerAttributeSet()
 	Attack.SetBaseValue(10.f);
 	Attack.SetCurrentValue(10.f);
 }
+
+void UPlayerAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+}
