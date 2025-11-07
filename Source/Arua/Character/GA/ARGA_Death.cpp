@@ -24,11 +24,11 @@ void UARGA_Death::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	if (Avator = CastChecked<AARCharacterBase>(ActorInfo->AvatarActor.Get()))
 	{
-		//UAbilityTask_PlayMontageAndWait* DeathTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DeathTask"), Avator->GetDeathMontage());
+		UAbilityTask_PlayMontageAndWait* DeathTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DeathTask"), Avator->GetDeathMontage());
 
-		//DeathTask->OnCompleted.AddDynamic(this, &UARGA_Death::OnDeathCallback);
+		DeathTask->OnCompleted.AddDynamic(this, &UARGA_Death::OnDeathCallback);
 	
-		//DeathTask->ReadyForActivation();
+		DeathTask->ReadyForActivation();
 	}
 }
 
@@ -40,5 +40,5 @@ void UARGA_Death::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 void UARGA_Death::OnDeathCallback()
 {
 	// TODO : 죽음 처리
-	//Avator->SetDaad();
+	Avator->SetDead();
 }
