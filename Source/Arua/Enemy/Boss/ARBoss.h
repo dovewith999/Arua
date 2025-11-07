@@ -21,6 +21,14 @@ public:
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
 
+	//GAS 관련 함수
+	virtual void PossessedBy(AController* NewController) override;
+
+	//GA 관련 변수
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
+	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackFireBreathSwipe;

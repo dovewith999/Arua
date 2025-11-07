@@ -38,7 +38,7 @@ AARMonsterBase::AARMonsterBase()
 	}
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
-	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttrubuteSet"));
+	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttriubuteSet"));
 }
 
 void AARMonsterBase::SetTargetLockWidget(bool InShow)

@@ -3,6 +3,7 @@
 
 #include "Enemy/Boss/ARBoss.h"
 #include "AI/ARAIController.h"
+#include "AbilitySystemComponent.h"
 
 AARBoss::AARBoss()
 {
@@ -22,7 +23,6 @@ AARBoss::AARBoss()
 
 
 	// 브레스 몽타주 에셋 지정
-
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackFireBreathSwipeRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe"));
 	if (MontageAttackFireBreathSwipeRef.Succeeded())
 	{
@@ -39,9 +39,27 @@ AARBoss::AARBoss()
 	AIControllerClass = AARAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+}
 
+//GAS
+
+void AARBoss::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+
+		ASC = GetAbilitySystemComponent();
+		ASC->InitAbilityActorInfo(this, this);
+
+		for (const auto& StartAbility : StartAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartAbility);
+			ASC->GiveAbility(StartSpec);
+		}
 
 }
+
+
 
 void AARBoss::AttackFireBreathSwipe()
 {
