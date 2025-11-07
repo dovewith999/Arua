@@ -21,6 +21,11 @@ public:
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
 
+	//getter, setter
+	FORCEINLINE float GetBossAttackRange() { return BossAttackRange; }
+	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
+
+
 	//GAS 관련 함수
 	virtual void PossessedBy(AController* NewController) override;
 
@@ -29,11 +34,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
 
-protected:
+	//Montage 관련 변수
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackFireBreathSwipe;
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackPawLeft;
+
+	//Decorator, Task 관련 변수
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	float BossAttackRange = 500.0f;
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	float BossTurnSpeed = 2.0f;
 
 };
