@@ -45,11 +45,11 @@ void UGA_LockOn::ActivateAbility(
 	{
 		CurrentTarget = Target;
 
+		// 보스 이름 받아서 HUD에 띄우기 테스트용 로직
 		if (AARMonsterBase* TargetMonster = Cast<AARMonsterBase>(CurrentTarget))
 		{
 			TargetMonster->SetTargetLockWidget(false);
-
-			// Todo : 보스 이름 받아서 HUD에 띄우기 테스트용 로직
+			
 			ACharacter* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 			if (!Character)
 			{

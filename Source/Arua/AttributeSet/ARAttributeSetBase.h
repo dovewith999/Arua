@@ -19,6 +19,9 @@ public:
 	UARAttributeSetBase();
 
 public:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+public:
 	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, Health)
 	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, MaxHealth)
 	ATTRIBUTE_ACCESSORS_BASIC(UARAttributeSetBase, Attack)

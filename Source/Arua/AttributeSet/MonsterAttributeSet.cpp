@@ -8,8 +8,8 @@ UMonsterAttributeSet::UMonsterAttributeSet()
     MaxHealth.SetBaseValue(200.f);
     MaxHealth.SetCurrentValue(200.f);
 
-    Health.SetBaseValue(200.f);
-    Health.SetCurrentValue(200.f);
+    Health.SetBaseValue(30.f);
+    Health.SetCurrentValue(30.f);
 
     Attack.SetBaseValue(10.f);
     Attack.SetCurrentValue(10.f);
