@@ -4,8 +4,9 @@
 #include "UI/Quest/QuestButtonWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
-void UQuestButtonWidget::Init(const FQuestData& InQuestData)
+void UQuestButtonWidget::Init(const FQuestData& InQuestData, bool IsCompletedQuest)
 {
 	// 퀘스트 ID 초기화
 	QuestID = InQuestData.QuestID;
@@ -14,6 +15,15 @@ void UQuestButtonWidget::Init(const FQuestData& InQuestData)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 10.f, FColor::Red, FString("InValid: QuestButton or QuestNameText"));
 		return;
+	}
+
+	if (QuestAcceptedIcon)
+	{
+		QuestAcceptedIcon->SetVisibility(IsCompletedQuest ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	}
+	if (QuestTurnedInIcon)
+	{
+		QuestTurnedInIcon->SetVisibility(IsCompletedQuest ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 
 	// 퀘스트 버튼 클릭 바인딩
