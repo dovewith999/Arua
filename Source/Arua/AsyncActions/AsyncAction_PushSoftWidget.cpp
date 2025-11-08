@@ -11,14 +11,10 @@ UAsyncAction_PushSoftWidget* UAsyncAction_PushSoftWidget::PushSoftWidget(const U
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 7.f, FColor::Green, TEXT("GEngine is valid"));
-
 		// World를 받아오는 주체를 WorldContextObject에서 OwningPlayerController로 변경
 		// WorldContextObject로 하면 null이 뜸
 		if (UWorld* World = GEngine->GetWorldFromContextObject(OwningPlayerController, EGetWorldErrorMode::LogAndReturnNull))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 7.f, FColor::Blue, TEXT("World is valid"));
-
 			UAsyncAction_PushSoftWidget* Node = NewObject<UAsyncAction_PushSoftWidget>();
 			Node->CachedOwningWorld = World;
 			Node->CachedOwningPC = OwningPlayerController;
@@ -38,8 +34,6 @@ UAsyncAction_PushSoftWidget* UAsyncAction_PushSoftWidget::PushSoftWidget(const U
 void UAsyncAction_PushSoftWidget::Activate()
 {
 	Super::Activate();
-
-	GEngine->AddOnScreenDebugMessage(-1, 7.f, FColor::Blue, TEXT("Activate"));
 
 	// 비동기 로직 처리
 	UUISubsystem* UISubsystem = UUISubsystem::Get(CachedOwningWorld.Get());

@@ -22,9 +22,12 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Quest_Update, "Event.Quest.Update")
 	
-	/*Widget Tags*/
+	/*WidgetStack Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_Modal, "WidgetStack.Modal")
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_GameMenu, "WidgetStack.GameMenu")
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_GameHUD, "WidgetStack.GameHUD")
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_GameFrontend, "WidgetStack.GameFrontend")
+
+	/*Widget Tags*/
+	UE_DEFINE_GAMEPLAY_TAG(Widget_Title, "Widget.Title")
 }

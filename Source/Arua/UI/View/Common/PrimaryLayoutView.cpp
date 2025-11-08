@@ -8,7 +8,6 @@ UCommonActivatableWidgetContainerBase* UPrimaryLayoutView::FindWidgetStackByTag(
 {
 	ensureAlways(RegisteredWidgetStackMap.Contains(InStackTag));
 
-
 	return RegisteredWidgetStackMap.FindRef(InStackTag);
 }
 

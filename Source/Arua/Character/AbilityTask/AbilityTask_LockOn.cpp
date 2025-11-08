@@ -89,7 +89,6 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 #pragma endregion
 
 #pragma region 카메라 회전
-#pragma region 카메라 회전
 	if (AARCharacterPlayer* Player = Cast<AARCharacterPlayer>(OwnerActor))
 	{
 		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
@@ -115,6 +114,5 @@ void UAbilityTask_LockOn::TickTask(float DeltaTime)
 			PC->SetControlRotation(NewControlRotation);
 		}
 	}
-#pragma endregion
 #pragma endregion
 }
