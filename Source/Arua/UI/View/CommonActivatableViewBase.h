@@ -12,7 +12,7 @@ class UViewModelBase;
  * 작성자 : 임희섭
  * 작성일 : 25/11/03
  */
-UCLASS(Abstract)
+UCLASS(Abstract, BlueprintType, meta = (DisableNativeTick))
 class ARUA_API UCommonActivatableViewBase : public UCommonActivatableWidget
 {
     GENERATED_BODY()

@@ -19,6 +19,8 @@ void UPrimaryLayoutView::RegisterWidgetStack(UPARAM(meta = (Categories = "Widget
 		if (!RegisteredWidgetStackMap.Contains(InStackTag))
 		{
 			RegisteredWidgetStackMap.Add(InStackTag, InStack);
+
+			UE_LOG(LogTemp, Log, TEXT("Widget Stack Register : %s"), *InStackTag.ToString());
 		}
 	}
 }
