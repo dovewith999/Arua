@@ -35,9 +35,10 @@ void UARAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
                         {
                             FGameplayEventData KillEventData;
                             KillEventData.Instigator = KillerActor;
+                            KillEventData.Target = OwnerActor;
 
                             KillerASC->HandleGameplayEvent(
-                                FGameplayTag::RequestGameplayTag(TEXT("Event.QuestUpdate")),
+                                FGameplayTag::RequestGameplayTag(TEXT("Event.Quest.Update")),
                                 &KillEventData
                             );
                         }
