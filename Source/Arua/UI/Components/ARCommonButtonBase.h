@@ -23,6 +23,8 @@ public:
 private:
 	virtual void NativePreConstruct() override;
 
+	virtual void NativeOnCurrentTextStyleChanged() override;
+
 private:
 	/*BoundWidget*/
 	UPROPERTY(meta = (BindWidgetOptional))

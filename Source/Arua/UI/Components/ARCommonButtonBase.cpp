@@ -20,3 +20,13 @@ void UARCommonButtonBase::NativePreConstruct()
 
 	SetButtonText(ButtonDisplayText);
 }
+
+void UARCommonButtonBase::NativeOnCurrentTextStyleChanged()
+{
+	Super::NativeOnCurrentTextStyleChanged();
+
+	if (CommonTextBlock_ButtonText)
+	{
+		CommonTextBlock_ButtonText->SetStyle(GetCurrentTextStyleClass());
+	}
+}
