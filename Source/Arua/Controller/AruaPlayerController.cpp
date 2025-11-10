@@ -40,6 +40,9 @@ void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FInputModeGameOnly Mode;
+	this->SetInputMode(Mode);
+
 	// 퀘스트 HUD 위젯 생성 및 그리기
 	if (QuestHUDClass)
 	{
