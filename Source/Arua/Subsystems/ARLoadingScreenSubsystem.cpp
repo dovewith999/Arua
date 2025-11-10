@@ -2,6 +2,10 @@
 
 
 #include "ARLoadingScreenSubsystem.h"
+#include "PreLoadScreenManager.h"
+#include "Settings/ARLoadingScreenSettings.h"
+#include "Blueprint/UserWidget.h"
+#include "Interface/ARLoadingScreenInterface.h"
 
 bool UARLoadingScreenSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -28,12 +32,255 @@ void UARLoadingScreenSubsystem::Deinitialize()
 	FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
 }
 
+UWorld* UARLoadingScreenSubsystem::GetTickableGameObjectWorld() const
+{
+	if (UGameInstance* OwningGameInstance = GetGameInstance())
+	{
+		return OwningGameInstance->GetWorld();
+	}
+	return nullptr;
+}
+
+void UARLoadingScreenSubsystem::Tick(float DeltaTime)
+{
+	TryUpdateLoadingScreen();
+}
+
+ETickableTickType UARLoadingScreenSubsystem::GetTickableTickType() const
+{
+	if (IsTemplate())
+	{
+		return ETickableTickType::Never;
+	}
+
+	return ETickableTickType::Conditional;
+}
+
+bool UARLoadingScreenSubsystem::IsTickable() const
+{
+	return GetGameInstance() && GetGameInstance()->GetGameViewportClient();
+}
+
+TStatId UARLoadingScreenSubsystem::GetStatId() const
+{
+	RETURN_QUICK_DECLARE_CYCLE_STAT(UARLoadingScreenSubsystem, STATGROUP_Tickables);
+}
+
 void UARLoadingScreenSubsystem::OnMapPreLoaded(const FWorldContext& WorldContext, const FString& MapName)
 {
-	UE_LOG(LogTemp, Log, TEXT("On Map Pre Loaded"));
+	if (WorldContext.OwningGameInstance != GetGameInstance())
+	{
+		return;
+	}
+
+	SetTickableTickType(ETickableTickType::Conditional);
+
+	bIsCurrentlyLoadingMap = true;
+
+	TryUpdateLoadingScreen();
 }
 
 void UARLoadingScreenSubsystem::OnMapPostLoaded(UWorld* LoadedWorld)
 {
-	UE_LOG(LogTemp, Log, TEXT("On Map Post Loaded"));
+	if (LoadedWorld && LoadedWorld->GetGameInstance() == GetGameInstance())
+	{
+		bIsCurrentlyLoadingMap = false;
+	}
+}
+
+void UARLoadingScreenSubsystem::TryUpdateLoadingScreen()
+{
+	if (IsPreLoadScreenActive())
+	{
+		return;
+	}
+
+	// 현재 로딩 스크린을 띄울 수 있는지 검사
+	if (ShouldShowLoadingScreen())
+	{
+		// 로딩 스크린 띄우기
+		TryDisplayLoadingScreenIfNone();
+		 
+		// 로딩 이유 표시하는 UI에 글 표시하기 
+		OnLoadingReasonUpdated.Broadcast(CurrentLoadingReason);
+	}
+
+	else
+	{
+		// 로딩 스크린 비활성화
+		TryRemoveLoadingScreen();
+		HoldLoadingScreenStartUpTime = -1.f;
+
+		// 로딩 완료 Notify 실행 
+		
+		// 틱 비활성화
+		SetTickableTickType(ETickableTickType::Never);
+	}
+}
+
+bool UARLoadingScreenSubsystem::IsPreLoadScreenActive() const
+{
+	if (FPreLoadScreenManager* PreLoadScreenManager = FPreLoadScreenManager::Get())
+	{
+		return PreLoadScreenManager->HasValidActivePreLoadScreen();
+	}
+
+	return false;
+}
+
+bool UARLoadingScreenSubsystem::ShouldShowLoadingScreen()
+{
+	const UARLoadingScreenSettings* LoadingScreenSettings = GetDefault<UARLoadingScreenSettings>();
+
+	if (GIsEditor && !LoadingScreenSettings->bShouldLoadingScreenInEditor)
+	{
+		return false;
+	}
+
+	if (CheckTheNeedToShowLoadingScreen())
+	{
+		GetGameInstance()->GetGameViewportClient()->bDisableWorldRendering = true;
+
+		return true;
+	}
+
+	CurrentLoadingReason = TEXT("Waiting for Texture Streaming");
+
+	GetGameInstance()->GetGameViewportClient()->bDisableWorldRendering = false;
+
+	const float CurrentTime = FPlatformTime::Seconds();
+
+	if (HoldLoadingScreenStartUpTime < 0.f)
+	{
+		HoldLoadingScreenStartUpTime = CurrentTime;
+	}
+
+	const float ElapsedTime = CurrentTime - HoldLoadingScreenStartUpTime;
+
+	if (ElapsedTime < LoadingScreenSettings->HoldLoadingScreenExtraSceonds)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool UARLoadingScreenSubsystem::CheckTheNeedToShowLoadingScreen()
+{
+	if (bIsCurrentlyLoadingMap)
+	{
+		CurrentLoadingReason = TEXT("Loading Level");
+		return true;
+	}
+
+	UWorld* OwningWorld = GetGameInstance()->GetWorld();
+
+	if (!OwningWorld)
+	{
+		CurrentLoadingReason = TEXT("Initializing Level");
+
+		return true;
+	}
+
+	if (!OwningWorld->HasBegunPlay())
+	{
+		CurrentLoadingReason = TEXT("World hasn't Begunplay yet");
+
+		return true;
+	}
+
+	if (!OwningWorld->GetFirstPlayerController())
+	{
+		CurrentLoadingReason = TEXT("Player Controller Is Not World Yet");
+
+		return true;
+	}
+
+	// 현재 Game States를 확인한다. PlayerStates나 PlayerCharacter, Actor Component는 준비가 된 지 확인한다.
+	// 준비가 되어있지 않으면 false를 반환
+
+	return false;
+}
+
+void UARLoadingScreenSubsystem::TryDisplayLoadingScreenIfNone()
+{
+	// 이미 활성화된 로딩 화면이 있는지 확인
+	if (CachedCreateLoadingScreenWidget)
+	{
+		return;
+	}
+
+	const UARLoadingScreenSettings* LoadingScreenSettings = GetDefault<UARLoadingScreenSettings>();
+
+	TSubclassOf<UUserWidget> LoadedWidgetClass = LoadingScreenSettings->GetLoadingScreenWidgetClassCheck();
+
+	UUserWidget* CreateWidget = UUserWidget::CreateWidgetInstance(*GetGameInstance(), LoadedWidgetClass, NAME_None);
+
+	CachedCreateLoadingScreenWidget = CreateWidget->TakeWidget();
+
+	GetGameInstance()->GetGameViewportClient()->AddViewportWidgetContent(
+		CachedCreateLoadingScreenWidget.ToSharedRef(),
+		1000 // 오더
+	);
+
+	NotifyLoadingScreenVisiblilityChanged(true);
+}
+
+void UARLoadingScreenSubsystem::TryRemoveLoadingScreen()
+{
+	if (!CachedCreateLoadingScreenWidget)
+	{
+		return;
+	}
+
+	GetGameInstance()->GetGameViewportClient()->RemoveViewportWidgetContent(CachedCreateLoadingScreenWidget.ToSharedRef());
+
+	CachedCreateLoadingScreenWidget.Reset();
+
+	NotifyLoadingScreenVisiblilityChanged(false);
+}
+
+void UARLoadingScreenSubsystem::NotifyLoadingScreenVisiblilityChanged(bool bIsVisible)
+{
+	for (ULocalPlayer* ExistingLocalPlayer : GetGameInstance()->GetLocalPlayers())
+	{
+		if (!ExistingLocalPlayer)
+		{
+			continue;
+		}
+
+		if(APlayerController* PC = ExistingLocalPlayer->GetPlayerController(GetGameInstance()->GetWorld()))
+		{
+			if (PC->Implements<UARLoadingScreenInterface>())
+			{
+				if (bIsVisible)
+				{
+					IARLoadingScreenInterface::Execute_OnLoadingScreenActivated(PC);
+				}
+				else
+				{
+					IARLoadingScreenInterface::Execute_OnLoadingScreenDeactivated(PC);
+
+				}
+			}
+
+			if (APawn* OwningPawn = PC->GetPawn())
+			{
+				if (OwningPawn->Implements<UARLoadingScreenInterface>())
+				{
+					if (bIsVisible)
+					{
+						IARLoadingScreenInterface::Execute_OnLoadingScreenActivated(PC);
+					}
+					else
+					{
+						IARLoadingScreenInterface::Execute_OnLoadingScreenDeactivated(PC);
+
+					}
+				}
+			}
+		}
+
+		
+	}
 }
