@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Arua_EnumTypes.generated.h"
+
 // 아이템 분류 열거형
 UENUM(BlueprintType)
 enum class EAR_ItemCategory : uint8
