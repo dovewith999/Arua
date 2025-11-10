@@ -25,6 +25,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Util/DamageLibrary.h"
 
+#include "Weapon/ARWeaponBase.h"
+
 AARCharacterPlayer::AARCharacterPlayer()
 {
 	bUseControllerRotationPitch = false;
@@ -393,4 +395,30 @@ void AARCharacterPlayer::GASInputReleased(int32 InputId)
 		}
 	}
 }
+
+//void AARCharacterPlayer::EquipWeapon(AARWeaponBase* Weapon, FName SocketName)
+//{
+//	if (Weapon && GetMesh())
+//	{
+//		CurrentWeapon = Weapon;
+//
+//		Weapon->AttachToSocket(this,SocketName);
+//		if (UAnimInstance* AnimInst = GetMesh()->GetAnimInstance())
+//		{
+//			//GetMesh()->SetAnimInstanceClass();
+//		}
+//
+//		
+//	}
+//}
+//
+//void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)
+//{
+//	if (Weapon)
+//	{
+//		CurrentWeapon = nullptr;
+//
+//		Weapon->DetachToCharacter();
+//	}
+//}
 
