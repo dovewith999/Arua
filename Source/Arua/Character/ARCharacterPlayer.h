@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/ARCharacterBase.h"
 #include "InputActionValue.h"
+#include "Character/Weapon/ARWeaponBase.h"
 #include "ARCharacterPlayer.generated.h"
 
 /**
@@ -109,7 +110,7 @@ protected:
 	// 무기 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Weapon;
+	class UStaticMeshComponent* Weapon;
 
 	// ASC 어빌리티 섹션
 protected:
@@ -134,5 +135,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UQuestComponent> QuestComponent;
 
+	// 무기 교체 섹션.
+protected:
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AARWeaponBase> CurrentWeapon;
 
+	void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
+	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
+	
 };
