@@ -12,7 +12,7 @@ UBTService_DetectPlayer::UBTService_DetectPlayer()
 
 	NodeName = TEXT("Detect");
 
-	Interval = 0.0f;
+	Interval = 0.1f;
 }
 
 void UBTService_DetectPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
