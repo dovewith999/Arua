@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/ARCharacterBase.h"
 #include "InputActionValue.h"
+#include "Character/Weapon/ARWeaponBase.h"
 #include "ARCharacterPlayer.generated.h"
 
 /**
@@ -33,7 +34,6 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
-	void BeginLockOn();
 	void FinishLockOn();
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
@@ -42,15 +42,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> SpringArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camear, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> Camera;
-
-	// LockOn용 카메라 생성 - 25/11/08 임희섭
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn|Camera", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USpringArmComponent> LockOnSpringArm;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn|Camera", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCameraComponent> LockOnCamera;
 
 	// 입력 관련 섹션
 protected:
@@ -117,7 +110,7 @@ protected:
 	// 무기 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Weapon;
+	class UStaticMeshComponent* Weapon;
 
 	// ASC 어빌리티 섹션
 protected:
@@ -141,4 +134,13 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UQuestComponent> QuestComponent;
+
+	// 무기 교체 섹션.
+protected:
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AARWeaponBase> CurrentWeapon;
+
+	void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
+	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
+	
 };
