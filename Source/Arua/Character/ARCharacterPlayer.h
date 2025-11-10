@@ -34,6 +34,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
+	void BeginLockOn();
 	void FinishLockOn();
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
