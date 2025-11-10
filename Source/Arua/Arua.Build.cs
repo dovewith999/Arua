@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+Ôªø// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -10,7 +10,7 @@ public class Arua : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
-        // «¡∑Œ¡ß∆Æ ∞Ê∑Œ º≥¡§
+        // ÌîÑÎ°úÏ†ùÌä∏ Í≤ΩÎ°ú ÏÑ§Ï†ï
         PublicIncludePaths.Add("Arua");
 
         PublicDependencyModuleNames.AddRange(new string[] {
@@ -30,7 +30,8 @@ public class Arua : ModuleRules
             "MovieSceneTracks",
             "LevelSequence",
             "CommonUI",
-            "CommonInput"
+            "CommonInput",
+            "PreLoadScreen"
         });
 
 
