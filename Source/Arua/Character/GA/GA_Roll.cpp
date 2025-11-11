@@ -20,6 +20,8 @@ UGA_Roll::UGA_Roll()
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Roll);
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Condition_Immunity);
+
+	//BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::At)
 }
 
 void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
