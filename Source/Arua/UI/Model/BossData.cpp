@@ -19,8 +19,6 @@ void UBossData::BindToAttributeSet(UMonsterAttributeSet* InAttributeSet)
 			FName("MaxHp"));
 		BindAttributeChange(ASC, UMonsterAttributeSet::GetAttackAttribute(),
 			FName("Attack"));
-
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Boss Bind To AttributeSet"));
 	}
 }
 

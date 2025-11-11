@@ -48,7 +48,6 @@ void UBossHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyNam
 	{
 		UE_LOG(LogTemp, Log, TEXT("Set BossHpBar"));
 		HpProgressBar->SetPercent(VM->GetHpRatio());
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("%f"), VM->GetHpRatio()));
 	}
 
 	else if (PropertyName == "Name")

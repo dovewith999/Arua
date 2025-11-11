@@ -72,7 +72,6 @@ void AARBoss::PossessedBy(AController* NewController)
 
 	if (AttributeSet == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("Boss ATS is null")));
 		AttributeSet = Cast<UARAttributeSetBase>(
 			const_cast<UAttributeSet*>(ASC->GetAttributeSet(UMonsterAttributeSet::StaticClass()))
 		);
