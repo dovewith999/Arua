@@ -19,6 +19,8 @@ void UBossData::BindToAttributeSet(UMonsterAttributeSet* InAttributeSet)
 			FName("MaxHp"));
 		BindAttributeChange(ASC, UMonsterAttributeSet::GetAttackAttribute(),
 			FName("Attack"));
+
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Boss Bind To AttributeSet"));
 	}
 }
 
@@ -33,6 +35,11 @@ float UBossData::GetMaxHp() const
 
 float UBossData::GetHpRatio() const
 {
+	if (AttributeSet == nullptr)
+	{
+		return 0.f;
+	}
+
 	return GetHp() / GetMaxHp();
 }
 

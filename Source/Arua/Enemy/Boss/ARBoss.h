@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,7 +17,7 @@ class ARUA_API AARBoss : public AARMonsterBase
 public:
 	AARBoss();
 	
-	//ÃßÈÄ¿¡ interface·Î ¸®ÆÑÅä¸µ ¿¹Á¤
+	//ì¶”í›„ì— interfaceë¡œ ë¦¬íŒ©í† ë§ ì˜ˆì •
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
 
@@ -25,23 +25,24 @@ public:
 	FORCEINLINE float GetBossAttackRange() { return BossAttackRange; }
 	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
 
+	virtual void BeginPlay() override;
 
-	//GAS °ü·Ã ÇÔ¼ö
+	//GAS ê´€ë ¨ í•¨ìˆ˜
 	virtual void PossessedBy(AController* NewController) override;
 
-	//GA °ü·Ã º¯¼ö
+	//GA ê´€ë ¨ ë³€ìˆ˜
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
 
-	//Montage °ü·Ã º¯¼ö
+	//Montage ê´€ë ¨ ë³€ìˆ˜
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackFireBreathSwipe;
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackPawLeft;
 
-	//Decorator, Task °ü·Ã º¯¼ö
+	//Decorator, Task ê´€ë ¨ ë³€ìˆ˜
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	float BossAttackRange = 500.0f;
 

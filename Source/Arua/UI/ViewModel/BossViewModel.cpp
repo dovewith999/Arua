@@ -11,6 +11,7 @@ void UBossViewModel::Initialize(class UModelBase* InModel)
 	if (Model)
 	{
 		Model->OnModelDataChanged.AddUObject(this, &UBossViewModel::OnModelDataChanged);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Binding Boss Hp"));
 	}
 }
 
@@ -51,4 +52,6 @@ float UBossViewModel::GetHpRatio() const
 void UBossViewModel::OnModelDataChanged(const FName& PropertyName)
 {
 	NotifyPropertyChanged(PropertyName);
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, PropertyName.ToString());
+
 }

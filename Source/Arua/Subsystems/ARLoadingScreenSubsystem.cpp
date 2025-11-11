@@ -167,12 +167,14 @@ bool UARLoadingScreenSubsystem::ShouldShowLoadingScreen()
 
 bool UARLoadingScreenSubsystem::CheckTheNeedToShowLoadingScreen()
 {
+	// 1. 맵 로딩 중인지 확인
 	if (bIsCurrentlyLoadingMap)
 	{
 		CurrentLoadingReason = TEXT("Loading Level");
 		return true;
 	}
 
+	// 2. 월드가 생성됐는지 확인
 	UWorld* OwningWorld = GetGameInstance()->GetWorld();
 
 	if (!OwningWorld)
@@ -182,6 +184,7 @@ bool UARLoadingScreenSubsystem::CheckTheNeedToShowLoadingScreen()
 		return true;
 	}
 
+	// 3. BegunPlay 호출 여부 확인
 	if (!OwningWorld->HasBegunPlay())
 	{
 		CurrentLoadingReason = TEXT("World hasn't Begunplay yet");
@@ -189,15 +192,13 @@ bool UARLoadingScreenSubsystem::CheckTheNeedToShowLoadingScreen()
 		return true;
 	}
 
+	// 4. PlayerController 생성 여부 확인
 	if (!OwningWorld->GetFirstPlayerController())
 	{
 		CurrentLoadingReason = TEXT("Player Controller Is Not World Yet");
 
 		return true;
 	}
-
-	// 현재 Game States를 확인한다. PlayerStates나 PlayerCharacter, Actor Component는 준비가 된 지 확인한다.
-	// 준비가 되어있지 않으면 false를 반환
 
 	return false;
 }

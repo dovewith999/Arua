@@ -17,6 +17,8 @@ void UModelBase::BindAttributeChange(UAbilitySystemComponent* ASC, FGameplayAttr
     if (FDelegateHandle* ExistingHandle = AttributeHandles.Find(Attribute))
     {
         ASC->GetGameplayAttributeValueChangeDelegate(Attribute).Remove(*ExistingHandle);
+
+        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, FString::Printf(TEXT("UnBind AttributeSet")));
     }
 
     // 새로 바인딩

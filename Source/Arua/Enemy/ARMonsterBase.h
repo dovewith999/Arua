@@ -28,7 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetDead() override;
 
-private:
+protected:
 	// 타겟으로 지정됐을 때 띄울 3D 위젯 - 25/11/05 임희섭
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|Target", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UARWidgetComponent> TargetLock;

@@ -1,18 +1,21 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Enemy/Boss/ARBoss.h"
 #include "AI/ARAIController.h"
 #include "AbilitySystemComponent.h"
+#include "AttributeSet/MonsterAttributeSet.h"
+#include "UI/Model/BossData.h"
+#include "UI/ViewModel/BossViewModel.h"
 
 AARBoss::AARBoss()
 {
-	// ¸Ş½Ã ÄÄÆ÷³ÍÆ® ¼³Á¤.
+	// ë©”ì‹œ ì»´í¬ë„ŒíŠ¸ ì„¤ì •.
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f)
 	);
 
-	// ¾Ö¼Â ÁöÁ¤.
+	// ì• ì…‹ ì§€ì •.
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(
 		TEXT("/Game/Elemental_Dragon/Meshes/SK_Elemental_Dragon_Toon.SK_Elemental_Dragon_Toon"));
 
@@ -22,45 +25,64 @@ AARBoss::AARBoss()
 	}
 
 
-	// ºê·¹½º ¸ùÅ¸ÁÖ ¿¡¼Â ÁöÁ¤
+	// ë¸Œë ˆìŠ¤ ëª½íƒ€ì£¼ ì—ì…‹ ì§€ì •
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackFireBreathSwipeRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe"));
 	if (MontageAttackFireBreathSwipeRef.Succeeded())
 	{
 		MontageAttackFireBreathSwipe = MontageAttackFireBreathSwipeRef.Object;
 	}
 
-	//¿Ş¼Õ °ø°İ ¸ùÅ¸ÁÖ ¿¡¼Â ÁöÁ¤
+	//ì™¼ì† ê³µê²© ëª½íƒ€ì£¼ ì—ì…‹ ì§€ì •
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackPawLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Attack_Paw_Left.AM_Attack_Paw_Left"));
 	if (MontageAttackPawLeftRef.Succeeded())
 	{
 		MontageAttackPawLeft = MontageAttackPawLeftRef.Object;
 	}
 
-
 	AIControllerClass = AARAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttributeSet"));
 }
 
 //GAS
+
+void AARBoss::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
 
 void AARBoss::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	ASC->InitAbilityActorInfo(this, this);
 
-		ASC = GetAbilitySystemComponent();
-		ASC->InitAbilityActorInfo(this, this);
+	for (const auto& StartAbility : StartAbilities)
+	{
+		FGameplayAbilitySpec StartSpec(StartAbility);
+		ASC->GiveAbility(StartSpec);
+	}
 
-		for (const auto& StartAbility : StartAbilities)
-		{
-			FGameplayAbilitySpec StartSpec(StartAbility);
-			ASC->GiveAbility(StartSpec);
-		}
+	VM = NewObject<UBossViewModel>();
 
+	UBossData* Model = NewObject<UBossData>();
+
+	if (AttributeSet == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("Boss ATS is null")));
+		AttributeSet = Cast<UARAttributeSetBase>(
+			const_cast<UAttributeSet*>(ASC->GetAttributeSet(UMonsterAttributeSet::StaticClass()))
+		);
+	}
+
+	Model->BindToAttributeSet(Cast<UMonsterAttributeSet>(AttributeSet));
+	Model->SetName(TEXT("ë“œë˜ê³¤"));
+
+	VM->Initialize(Model);
 }
-
-
 
 void AARBoss::AttackFireBreathSwipe()
 {

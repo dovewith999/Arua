@@ -37,9 +37,6 @@ AARMonsterBase::AARMonsterBase()
 
 		TargetLock->bHiddenInGame = true;
 	}
-
-	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
-	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttriubuteSet"));
 }
 
 void AARMonsterBase::SetTargetLockWidget(bool InShow)
@@ -50,14 +47,6 @@ void AARMonsterBase::SetTargetLockWidget(bool InShow)
 void AARMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	VM = NewObject<UBossViewModel>();
-
-	UBossData* Model = NewObject<UBossData>();
-	Model->BindToAttributeSet(Cast<UMonsterAttributeSet>(AttributeSet));
-	Model->SetName(TEXT("드래곤"));
-
-	VM->Initialize(Model);
 }
 
 void AARMonsterBase::SetDead()
