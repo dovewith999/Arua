@@ -23,13 +23,14 @@ AARBoss::AARBoss()
 
 
 	// 브레스 몽타주 에셋 지정
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackFireBreathSwipeRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackFireBreathSwipeRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Attack_FireBreath_Swipe.AM_Attack_FireBreath_Swipe"));
 	if (MontageAttackFireBreathSwipeRef.Succeeded())
 	{
 		MontageAttackFireBreathSwipe = MontageAttackFireBreathSwipeRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackPawLeftRef(TEXT("/Game/Personal/LEE_J_S/Animation/AM_Attack_Paw_Left.AM_Attack_Paw_Left"));
+	//왼손 공격 몽타주 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackPawLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Attack_Paw_Left.AM_Attack_Paw_Left"));
 	if (MontageAttackPawLeftRef.Succeeded())
 	{
 		MontageAttackPawLeft = MontageAttackPawLeftRef.Object;
