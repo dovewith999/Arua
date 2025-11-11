@@ -51,6 +51,5 @@ float UBossViewModel::GetHpRatio() const
 void UBossViewModel::OnModelDataChanged(const FName& PropertyName)
 {
 	NotifyPropertyChanged(PropertyName);
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, PropertyName.ToString());
-
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, PropertyName.ToString());
 }

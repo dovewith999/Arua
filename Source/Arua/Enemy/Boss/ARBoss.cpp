@@ -39,11 +39,24 @@ AARBoss::AARBoss()
 		MontageAttackPawLeft = MontageAttackPawLeftRef.Object;
 	}
 
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttributeSet"));
+
+	//AttributeSet = NewObject<UMonsterAttributeSet>(ASC, UMonsterAttributeSet::StaticClass());
+	ASC->AddAttributeSetSubobject(AttributeSet.Get());
+
 	AIControllerClass = AARAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
-	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttributeSet"));
+
+	//if (AttributeSet)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("AttributeSet created in constructor: %s"), *AttributeSet->GetName());
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("AttributeSet is NULL in constructor"));
+	//}
 }
 
 //GAS
@@ -75,6 +88,9 @@ void AARBoss::PossessedBy(AController* NewController)
 		AttributeSet = Cast<UARAttributeSetBase>(
 			const_cast<UAttributeSet*>(ASC->GetAttributeSet(UMonsterAttributeSet::StaticClass()))
 		);
+
+		UE_LOG(LogTemp, Error, TEXT("AttributeSet is NULL in constructor"));
+
 	}
 
 	Model->BindToAttributeSet(Cast<UMonsterAttributeSet>(AttributeSet));
