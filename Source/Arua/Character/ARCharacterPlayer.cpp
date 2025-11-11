@@ -210,6 +210,7 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 
 	bIsWalking = true;
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	CurrentInputAxis = MovementVector;
 
 	FRotator Rotation;
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
@@ -231,6 +232,9 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
 
+	// 수락한 퀘스트 로그 출력
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
+		FString::Printf(TEXT("X: %f, Y : %f"), CurrentInputAxis.X, CurrentInputAxis.Y));
 }
 
 void AARCharacterPlayer::NotMove(const FInputActionValue& Value)

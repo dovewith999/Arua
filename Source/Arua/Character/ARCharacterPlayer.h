@@ -143,5 +143,7 @@ protected:
 
 	void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
 	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
-	
+
+private:
+	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
 };

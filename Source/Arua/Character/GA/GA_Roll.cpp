@@ -5,6 +5,7 @@
 #include "Tag/AruaGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARCharacterPlayer.h"
+#include "AbilitySystemComponent.h"
 
 UGA_Roll::UGA_Roll()
 {
@@ -41,6 +42,25 @@ void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	PlayRollTask->OnCompleted.AddDynamic(this, &UGA_Roll::OnCompleteCallback);
 
 	PlayRollTask->ReadyForActivation();
+}
+
+void UGA_Roll::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
+{
+	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+
+	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
+	{
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
+		TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
+
+		if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+		{
+			ASC->CancelAbilities(&TagContainer);
+		}
+	}
+
+	K2_EndAbility();
 }
 
 void UGA_Roll::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
