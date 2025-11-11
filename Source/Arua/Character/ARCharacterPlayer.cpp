@@ -265,20 +265,20 @@ void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 
 void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 {
-	//if (bIsRolling)
-	//	return;
+	/*if (bIsRolling)
+		return;
 
-	//bIsRolling = true;
+	bIsRolling = true;
 
-	//PlayAnimMontage(RollActionMontage);
+	PlayAnimMontage(RollActionMontage);
 
-	//GetWorld()->GetTimerManager().SetTimer(
-	//	RollAnimTimer,
-	//	this,
-	//	&AARCharacterPlayer::RollCompleted ,
-	//	RollActionMontage->GetPlayLength(),
-	//	false
-	//);
+	GetWorld()->GetTimerManager().SetTimer(
+		RollAnimTimer,
+		this,
+		&AARCharacterPlayer::RollCompleted ,
+		RollActionMontage->GetPlayLength(),
+		false
+	);*/
 
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
