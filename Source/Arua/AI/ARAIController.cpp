@@ -12,7 +12,7 @@ AARAIController::AARAIController()
 {
 	//사용할 BlackBoard
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef
-	(TEXT("/Game/Personal/LEE_J_S/AI/BB_Boss_ElementalDragon.BB_Boss_ElementalDragon"));
+	(TEXT("/Game/AI/BB_Boss_ElementalDragon.BB_Boss_ElementalDragon"));
 	if (BBAssetRef.Succeeded())
 	{
 		BBAsset = BBAssetRef.Object;
@@ -20,7 +20,7 @@ AARAIController::AARAIController()
 
 	//사용할 BehaviorTree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTAssetRef
-	(TEXT("/Game/Personal/LEE_J_S/AI/BT_Boss_ElementalDragon.BT_Boss_ElementalDragon"));
+	(TEXT("/Game/AI/BT_Boss_ElementalDragon.BT_Boss_ElementalDragon"));
 	if (BTAssetRef.Succeeded())
 	{
 		BTAsset = BTAssetRef.Object;
