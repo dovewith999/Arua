@@ -36,6 +36,12 @@ void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
 	HUD->SetBossViewModel(InTargetMonster->GetViewModel());
 }
 
+void AAruaPlayerController::TargetOff()
+{
+	HUD->TurnOffBossHpBar();
+	
+}
+
 void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -85,13 +91,8 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
 	{
 		UPlayerData* PlayerData = NewObject<UPlayerData>();
-		// Todo : ARCharacterPlayer로 변경해야 함
-		if (ATestCharacterPlayer* Test = Cast<ATestCharacterPlayer>(aPawn))
-		{
-			PlayerData->BindToAttributeSet(Cast<UPlayerAttributeSet>(Test->GetAttributeSet()));
-		}
 
-		else if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(aPawn))
+		if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(aPawn))
 		{
 			UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(OwnerPlayer->GetAttributeSet());
 			PlayerData->BindToAttributeSet(PlayerAttributeSet);
@@ -106,7 +107,8 @@ void AAruaPlayerController::OnPossess(APawn* aPawn)
 		// HUD 뷰포트에 띄우기
 		HUD->AddToViewport();
 
+		// Todo : 연동 확인용 값 초기화
 		ViewModel->SetMaxHp(100.f);
-		ViewModel->SetHp(90.f);
+		ViewModel->SetHp(100.f);
 	}
 }

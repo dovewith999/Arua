@@ -33,9 +33,7 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 
 		//Todo : 태그 비교해서 같은 태그를 가지고 있으면 처리 x
 		
-		// Todo : 데미지 여기서 처리
-		//Damager->ApplyDamage(HitResult.GetActor(), 10.f, 2.f);
-
+		// 데미지 여기서 처리
 		UDamageLibrary::ApplyDamage(CurrentActorInfo->AbilitySystemComponent.Get(), HitResult.GetActor());
 	}
 

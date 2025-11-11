@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ARDamageExecutionCalculation.h"
@@ -17,7 +17,7 @@ struct FDamageStatics
     }
 };
 
-static const FDamageStatics& DamageStatics()
+static const FDamageStatics& DamageStatics() 
 {
     static FDamageStatics DStatics;
     return DStatics;
@@ -25,15 +25,15 @@ static const FDamageStatics& DamageStatics()
 
 UARDamageExecutionCalculation::UARDamageExecutionCalculation()
 {
-    // ÇÊ¿äÇÑ AttributeµéÀ» µî·Ï
+    // í•„ìš”í•œ Attributeë“¤ì„ ë“±ë¡
     RelevantAttributesToCapture.Add(DamageStatics().AttackDef);
     RelevantAttributesToCapture.Add(DamageStatics().HealthDef);
 }
 
 void UARDamageExecutionCalculation::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-    UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent(); // Å¸°ÙÀÇ ASC
-    UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent(); // OwenerÀÇ ASC
+    UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent(); // íƒ€ê²Ÿì˜ ASC
+    UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent(); // Owenerì˜ ASC
 
     AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
     AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
@@ -47,23 +47,23 @@ void UARDamageExecutionCalculation::Execute_Implementation(const FGameplayEffect
     EvaluationParameters.SourceTags = SourceTags;
     EvaluationParameters.TargetTags = TargetTags;
 
-    // Attribute °ª °¡Á®¿À±â
+    // Attribute ê°’ ê°€ì ¸ì˜¤ê¸°
     float Attack = 0.f;
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
         DamageStatics().AttackDef, EvaluationParameters, Attack);
 
-    // SetByCaller¸¦ ÅëÇÑ Ãß°¡ µ¥¹ÌÁö ¸ğµğÆÄÀÌ¾î (½ºÅ³º° ¹èÀ² µî)
+    // SetByCallerë¥¼ í†µí•œ ì¶”ê°€ ë°ë¯¸ì§€ ëª¨ë””íŒŒì´ì–´ (ìŠ¤í‚¬ë³„ ë°°ìœ¨ ë“±)
     float DamageMultiplier = Spec.GetSetByCallerMagnitude(
         FGameplayTag::RequestGameplayTag(FName("Data.Damage.Multiplier")), false, 1.0f);
 
     float BaseDamage = Spec.GetSetByCallerMagnitude(
         FGameplayTag::RequestGameplayTag(FName("Data.Damage.Base")), false, 0.0f);
 
-    // µ¥¹ÌÁö °è»ê 
-    // Todo : ÃßÈÄ¿¡ °ø½Ä °è»êÇØ¼­ ³ÖÀ» ¿¹Á¤
+    // ë°ë¯¸ì§€ ê³„ì‚° 
+    // Todo : ì¶”í›„ì— ê³µì‹ ê³„ì‚°í•´ì„œ ë„£ì„ ì˜ˆì •
     float FinalDamage = (Attack + BaseDamage) * DamageMultiplier;
 
-    // Health Attribute¿¡ µ¥¹ÌÁö Àû¿ë
+    // Health Attributeì— ë°ë¯¸ì§€ ì ìš©
     OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
         DamageStatics().HealthProperty, EGameplayModOp::Additive, -FinalDamage));
 }
