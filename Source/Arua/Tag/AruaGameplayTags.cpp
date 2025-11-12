@@ -33,4 +33,5 @@ namespace AruaGamePlayTags
 
 	/*Player Hit Tag*/
 	UE_DEFINE_GAMEPLAY_TAG(Character_State_Tag,"Character.State.Tag")
+	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Character_AttackHit,"GameplayCue.Character.AttackHit")
 }
