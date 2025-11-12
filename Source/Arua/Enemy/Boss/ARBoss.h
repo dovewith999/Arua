@@ -52,8 +52,10 @@ protected:
 	TObjectPtr<class UAnimMontage> MontageComboAttackPawLeft_TailRight;
 
 	//Decorator, Task 관련 변수
+
+	//반지름 기준 (기본 크기 50cm, 0.5m)
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossAttackRange = 500.0f;
+	float BossAttackRange = 50.0 * 11.0f;
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 2.0f;
