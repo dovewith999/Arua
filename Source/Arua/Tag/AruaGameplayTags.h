@@ -16,6 +16,7 @@ namespace AruaGamePlayTags
 	/*Ability Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOn)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Roll)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOnDodge)
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
