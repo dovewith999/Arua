@@ -8,6 +8,7 @@
 #include "Util/DamageLibrary.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemComponent.h"
+#include "Tag/AruaGameplayTags.h"
 
 UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 {
@@ -63,8 +64,7 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 				Params.Location = HitResult.ImpactPoint;
 				Params.Normal = HitResult.ImpactNormal;
 
-				CurrentActorInfo->AbilitySystemComponent->ExecuteGameplayCue(HitCueTag, Params);
-
+				CurrentActorInfo->AbilitySystemComponent->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
 			}
 		}
 
