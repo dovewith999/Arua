@@ -206,8 +206,10 @@ void AARCharacterPlayer::FinishLockOn()
 
 void AARCharacterPlayer::SetInputDirection()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
-		FString::Printf(TEXT("X: %f, Y : %f"), CurrentInputAxis.X, CurrentInputAxis.Y));
+	if (ASC == nullptr || ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
+	{
+		return;
+	}
 
 	FVector CameraForwardDir = FVector(Camera->GetForwardVector().X, Camera->GetForwardVector().Y, 0.f) * CurrentInputAxis.Y;
 	FVector CameraRightDir = FVector(Camera->GetRightVector().X, Camera->GetRightVector().Y, 0.f) * CurrentInputAxis.X;
@@ -220,7 +222,7 @@ void AARCharacterPlayer::SetInputDirection()
 
 	TotalDir.Normalize();
 
-	// SprintArm 튀는 현상 방지
+	// SprintArm 튀는 현상 방지 - 25/11/12 임희섭
 	// 1. 회전 전 SpringArm의 월드 회전 저장
 	FRotator SavedSpringArmRotation = SpringArm->GetComponentRotation();
 
@@ -243,8 +245,8 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 	FRotator Rotation;
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
-		// LockOn일 때는 SprintArm의 Forward를 기준으로 이동 방향을 정하도록 설정 25/11/06 임희섭
-		Rotation = SpringArm->GetComponentRotation();
+		// LockOn일 때는 Camera의 Forward를 기준으로 이동 방향을 정하도록 설정 - 25/11/06 임희섭
+		Rotation = Camera->GetComponentRotation();S
 	}
 
 	else
@@ -264,6 +266,7 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 void AARCharacterPlayer::NotMove(const FInputActionValue& Value)
 {
 	bIsWalking = false;
+	CurrentInputAxis = FVector2D::Zero();
 }
 
 void AARCharacterPlayer::Look(const FInputActionValue& Value)
