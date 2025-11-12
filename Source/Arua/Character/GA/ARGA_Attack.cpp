@@ -15,7 +15,7 @@ void UARGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	AARCharacterPlayer* ARCharacter = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
+	ARCharacter = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 	CurrentComboData = ARCharacter->GetComboActionData();
 
 	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), ARCharacter->GetComboActionMontage(),1.0f,GetNextSection());
@@ -24,7 +24,6 @@ void UARGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	PlayAttackTask->ReadyForActivation();
 
 	StartComboTimer();
-
 }
 
 void UARGA_Attack::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -92,6 +91,7 @@ void UARGA_Attack::CheckComboInput()
 
 	if (HasNextComboInput)
 	{
+		ARCharacter->SetInputDirection();
 		MontageJumpToSection(GetNextSection());
 		StartComboTimer();
 		HasNextComboInput = false;

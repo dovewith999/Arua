@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -35,11 +35,13 @@ protected:
 	void CheckComboInput();
 
 protected:
-	// ƒﬁ∫∏ æ◊º« µ•¿Ã≈Õ.
+	// ÏΩ§Î≥¥ Ïï°ÏÖò Îç∞Ïù¥ÌÑ∞.
 	UPROPERTY()
 	TObjectPtr<class UARComboActionData> CurrentComboData;
 
 	uint8 CurrentCombo = 0;
 	FTimerHandle ComboTimerHandle;
 	bool HasNextComboInput = false;
+
+	class AARCharacterPlayer* ARCharacter;
 };

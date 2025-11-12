@@ -26,6 +26,7 @@
 #include "Util/DamageLibrary.h"
 
 #include "Weapon/ARWeaponBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AARCharacterPlayer::AARCharacterPlayer()
 {
@@ -203,6 +204,33 @@ void AARCharacterPlayer::FinishLockOn()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void AARCharacterPlayer::SetInputDirection()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
+		FString::Printf(TEXT("X: %f, Y : %f"), CurrentInputAxis.X, CurrentInputAxis.Y));
+
+	FVector CameraForwardDir = FVector(Camera->GetForwardVector().X, Camera->GetForwardVector().Y, 0.f) * CurrentInputAxis.Y;
+	FVector CameraRightDir = FVector(Camera->GetRightVector().X, Camera->GetRightVector().Y, 0.f) * CurrentInputAxis.X;
+	FVector TotalDir = CameraForwardDir + CameraRightDir;
+
+	if (TotalDir.SizeSquared() < 0.01f)
+	{
+		return;
+	}
+
+	TotalDir.Normalize();
+
+	// SprintArm 튀는 현상 방지
+	// 1. 회전 전 SpringArm의 월드 회전 저장
+	FRotator SavedSpringArmRotation = SpringArm->GetComponentRotation();
+
+	FRotator Rot = FRotationMatrix::MakeFromX(TotalDir).Rotator();
+	SetActorRotation(Rot);
+
+	// 2. SpringArm을 저장된 회전으로 즉시 복원 (Controller 회전 유지)
+	SpringArm->SetWorldRotation(SavedSpringArmRotation);
+}
+
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
 	//if (bIsRolling)
@@ -231,10 +259,6 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
-
-	// 수락한 퀘스트 로그 출력
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
-		FString::Printf(TEXT("X: %f, Y : %f"), CurrentInputAxis.X, CurrentInputAxis.Y));
 }
 
 void AARCharacterPlayer::NotMove(const FInputActionValue& Value)
@@ -300,9 +324,6 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 
 void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 {
-	// TODO 나중에 지워야함 죽음 처리용 즉사 코드
-	// UDamageLibrary::ApplyDamage(ASC, this, AttributeSet->GetMaxHealth());
-
 	// Tag로 어빌리티를 찾아서 활성화
 	// InputTag나 AbilityTag를 사용할 수 있음
 	FGameplayTagContainer TagContainer;

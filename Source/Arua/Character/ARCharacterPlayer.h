@@ -36,6 +36,8 @@ public:
 public:
 	void BeginLockOn();
 	void FinishLockOn();
+	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
+
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	// 카메라 섹션
