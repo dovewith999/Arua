@@ -48,6 +48,19 @@ AARBoss::AARBoss()
 		MontageComboAttackPawLeft_TailRight = MontageComboAttackPawLeft_TailRightRef.Object;
 	}
 
+	//왼쪽 회전 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTurnLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Turn_Left.AM_Turn_Left"));
+	if (MontageTurnLeftRef.Succeeded())
+	{
+		MontageTurnLeft = MontageTurnLeftRef.Object;
+	}
+
+	//오른쪽 회전 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTurnRightRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Turn_Right.AM_Turn_Right"));
+	if (MontageTurnRightRef.Succeeded())
+	{
+		MontageTurnRight = MontageTurnRightRef.Object;
+	}
 
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
@@ -176,3 +189,24 @@ void AARBoss::ComboAttackPawLeft_TailRight()
 	}
 
 }
+
+void AARBoss::TurnLeft()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageTurnLeft);
+	}
+}
+
+void AARBoss::TurnRight()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageTurnRight);
+	}
+}
+

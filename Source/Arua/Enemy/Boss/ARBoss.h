@@ -21,6 +21,9 @@ public:
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
 	void ComboAttackPawLeft_TailRight();
+	void TurnLeft();
+	void TurnRight();
+
 
 	//getter, setter
 	FORCEINLINE float GetBossAttackRange() { return BossAttackRange; }
@@ -50,7 +53,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageComboAttackPawLeft_TailRight;
+public:
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageTurnLeft;
 
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageTurnRight;
+protected:
 	//Decorator, Task 관련 변수
 
 	//반지름 기준 (기본 크기 50cm, 0.5m)

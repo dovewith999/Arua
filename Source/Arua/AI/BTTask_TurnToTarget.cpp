@@ -7,6 +7,7 @@
 #include "ARAI.h"
 #include "Enemy/Boss/ARBoss.h"
 
+
 UBTTask_TurnToTarget::UBTTask_TurnToTarget()
 {
     NodeName = TEXT("TurnToTarget");
@@ -15,7 +16,7 @@ UBTTask_TurnToTarget::UBTTask_TurnToTarget()
 
 EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    return EBTNodeResult::InProgress; // 한 프레임에 끝내지 않고 진행 상태로 둠
+    return EBTNodeResult::InProgress; 
 }
 
 void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -42,6 +43,7 @@ void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
     FRotator FinalRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaSeconds, AIPawn->GetBossTurnSpeed());
     ControllingPawn->SetActorRotation(FinalRot);
+    //AIPawn->TurnLeft();
 
     //  목표 방향과 거의 같아졌는지 확인 후 종료
     if (FMath::Abs(FinalRot.Yaw - TargetRot.Yaw) < 5.0f)
