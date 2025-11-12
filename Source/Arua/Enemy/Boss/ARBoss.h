@@ -55,10 +55,10 @@ protected:
 
 	//반지름 기준 (기본 크기 50cm, 0.5m)
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossAttackRange = 50.0 * 11.0f;
+	float BossAttackRange = 50.0 * 11.0f;/*현재 scale 2배 해놔서, 공격 범위도 2배임->아직 안함*/
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossTurnSpeed = 2.0f;
+	float BossTurnSpeed = 10.0f;
 
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
