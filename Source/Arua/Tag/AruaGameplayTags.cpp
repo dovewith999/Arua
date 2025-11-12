@@ -30,4 +30,7 @@ namespace AruaGamePlayTags
 
 	/*Widget Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Widget_Title, "Widget.Title")
+
+	/*Player Hit Tag*/
+	UE_DEFINE_GAMEPLAY_TAG(Character_State_Tag,"Character.State.Tag")
 }

@@ -6,6 +6,8 @@
 #include "Character/AbilityTask/ARAT_Trace.h"
 #include "Character/GA/TA/ARTA_Trace.h"
 #include "Util/DamageLibrary.h"
+#include "GameFramework/Character.h"
+#include "AbilitySystemComponent.h"
 
 UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 {
@@ -35,6 +37,38 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 		
 		// 데미지 여기서 처리
 		UDamageLibrary::ApplyDamage(CurrentActorInfo->AbilitySystemComponent.Get(), HitResult.GetActor());
+
+		if (HitResult.GetActor()->ActorHasTag(FName("Player")))
+		{
+			ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+			ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+			if (TargetCharacter && Instigator)
+			{
+				FVector ToInstigator = (Instigator->GetActorLocation() - TargetCharacter->GetActorLocation()).GetSafeNormal2D();
+				FVector TargetForward = TargetCharacter->GetActorForwardVector();
+
+				float Dot = FVector::DotProduct(TargetForward, ToInstigator);
+				float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
+
+				FGameplayTag HitCueTag;
+
+				if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
+				else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
+				else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
+				else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
+
+				FGameplayCueParameters Params;
+				Params.Instigator = Instigator;
+				Params.EffectCauser = Instigator;
+				Params.Location = HitResult.ImpactPoint;
+				Params.Normal = HitResult.ImpactNormal;
+
+				CurrentActorInfo->AbilitySystemComponent->ExecuteGameplayCue(HitCueTag, Params);
+
+			}
+		}
+
+
 	}
 
 	bool bReplicatedEndAbility = true;
