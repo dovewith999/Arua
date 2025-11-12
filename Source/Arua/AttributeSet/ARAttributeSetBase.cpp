@@ -16,6 +16,8 @@ void UARAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCall
 {
 	Super::PostGameplayEffectExecute(Data);
 
+    // GE_Damage 등 GE가 적용된 이후에 호출되는 함수
+
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
         SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));

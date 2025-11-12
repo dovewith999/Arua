@@ -36,6 +36,8 @@ public:
 public:
 	void BeginLockOn();
 	void FinishLockOn();
+	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
+
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	// 카메라 섹션
@@ -143,5 +145,7 @@ protected:
 
 	void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
 	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
-	
+
+private:
+	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
 };
