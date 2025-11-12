@@ -107,8 +107,13 @@ protected:
 
 	FTimerHandle RollAnimTimer;
 
+	// 콤보 공격 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Animation)
 	TObjectPtr<class UAnimMontage> ComboActionMontage;
+
+	// 히트 애니메이션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Hit Reaction")
+	TObjectPtr<class UAnimMontage> HitReactMontage;
 
 	// 무기 섹션
 protected:
@@ -148,4 +153,5 @@ protected:
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
+
 };

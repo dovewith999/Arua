@@ -39,4 +39,7 @@ namespace AruaGamePlayTags
 
 	/*Widget Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Widget_Title)
+	
+	/*Player Hit Tag*/
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Tag)
 }

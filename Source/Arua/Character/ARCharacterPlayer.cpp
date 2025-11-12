@@ -421,6 +421,62 @@ void AARCharacterPlayer::GASInputReleased(int32 InputId)
 	}
 }
 
+//void AARCharacterPlayer::ReceivePointDamage(float Damage, UDamageType const* DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent* HitComponent, FName BoneName, FVector ShotFromDirection, AController* InstigateBy, AActor* DamageCauser, const FHitResult& HitInfo)
+//{
+//	Super::ReceivePointDamage(Damage, DamageType, HitLocation, HitNormal, HitComponent, BoneName, ShotFromDirection,
+//		InstigateBy, DamageCauser, HitInfo);
+//
+//	if (!DamageCauser) return;
+//
+//	FVector AttackerLocation = DamageCauser->GetActorLocation();
+//	EHitDirection Direction = GetHitDirection(AttackerLocation);
+//
+//	PlayHitReaction(Direction);
+//}
+//
+//EHitDirection AARCharacterPlayer::GetHitDirection(const FVector& AttackerLocation) const
+//{
+//	FVector PlayerLocation = GetActorLocation();
+//	FVector Forward = GetActorForwardVector();
+//	FVector Right = GetActorRightVector();
+//
+//	FVector ToAttacker = (AttackerLocation - PlayerLocation).GetSafeNormal();
+//
+//	float ForwardDot = FVector::DotProduct(Forward, ToAttacker);
+//	float RightDot = FVector::DotProduct(Right, ToAttacker);
+//
+//	if (ForwardDot > 0.7f)
+//		return EHitDirection::Front;
+//	else if (ForwardDot < -0.7f)
+//		return EHitDirection::Back;
+//	else if (RightDot > 0.0f)
+//		return EHitDirection::Right;
+//	else
+//		return EHitDirection::Left;
+//
+//	return EHitDirection();
+//}
+//
+//void AARCharacterPlayer::PlayHitReaction(EHitDirection Direction)
+//{
+//	if (!HitReactMontage) return;
+//
+//	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+//	if (!AnimInstance) return;
+//
+//	FName SectionName;
+//	switch (Direction)
+//	{
+//		case EHitDirection::Front: SectionName = "Hit_Front"; break;
+//		case EHitDirection::Back: SectionName = "Hit_Back"; break;
+//		case EHitDirection::Right: SectionName = "Hit_Right"; break;
+//		case EHitDirection::Left: SectionName = "Hit_Left"; break;
+//	}
+//
+//	AnimInstance->execIsAnyMontagePlaying(HitReactMontage);
+//	AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage);
+//}
+
 //void AARCharacterPlayer::EquipWeapon(AARWeaponBase* Weapon, FName SocketName)
 //{
 //	if (Weapon && GetMesh())
