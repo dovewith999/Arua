@@ -37,5 +37,5 @@ bool UARGC_PlayerHit::OnExecute_Implementation(AActor* Target, const FGameplayCu
     //        UE_LOG(LogTemp, Log, TEXT("Hit from Back"));
     //    }
     //}
-        
+    return true;
 }
