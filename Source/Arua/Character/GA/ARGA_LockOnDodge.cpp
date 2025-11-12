@@ -35,7 +35,7 @@ void UARGA_LockOnDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	AARCharacterPlayer* Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 	Player->SetInputDirection();
 
-	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), Player->GetRollMontage(), 1.f/*, Player->GetRollMontageSection()*/);
+	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), Player->GetLockOnDodgeMontage(), 1.f, Player->GetLockOnDodgeMontageSection());
 	PlayRollTask->OnCompleted.AddDynamic(this, &UARGA_LockOnDodge::OnCompleteCallback);
 	PlayRollTask->ReadyForActivation();
 }
@@ -43,6 +43,16 @@ void UARGA_LockOnDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 void UARGA_LockOnDodge::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
 {
 	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+
+	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
+	{
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
+		TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
+		ASC->CancelAbilities(&TagContainer);
+	}
+
+	K2_EndAbility();
 }
 
 void UARGA_LockOnDodge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

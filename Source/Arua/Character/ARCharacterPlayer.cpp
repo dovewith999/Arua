@@ -233,6 +233,44 @@ void AARCharacterPlayer::SetInputDirection()
 	SpringArm->SetWorldRotation(SavedSpringArmRotation);
 }
 
+FName AARCharacterPlayer::GetLockOnDodgeMontageSection() const
+{
+	EDodgeDirection Direction = GetDodgeDirection();
+
+	switch (Direction)
+	{
+	case EDodgeDirection::Front:
+		return FName("Front");
+	case EDodgeDirection::Back:
+		return FName("Back");
+	case EDodgeDirection::Left:
+		return FName("Left");
+	case EDodgeDirection::Right:
+		return FName("Right");
+	default:
+		return FName("Front");
+	}
+}
+
+EDodgeDirection AARCharacterPlayer::GetDodgeDirection() const
+{
+	// 입력이 거의 없으면 전방
+	if (CurrentInputAxis.IsNearlyZero(0.1f))
+	{
+		return EDodgeDirection::Front;
+	}
+
+	// 절댓값이 더 큰 축 우선
+	if (FMath::Abs(CurrentInputAxis.Y) > FMath::Abs(CurrentInputAxis.X))
+	{
+		return CurrentInputAxis.Y > 0 ? EDodgeDirection::Front : EDodgeDirection::Back;
+	}
+	else
+	{
+		return CurrentInputAxis.X > 0 ? EDodgeDirection::Right : EDodgeDirection::Left;
+	}
+}
+
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
 	//if (bIsRolling)
@@ -246,7 +284,7 @@ void AARCharacterPlayer::Move(const FInputActionValue& Value)
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
 		// LockOn일 때는 Camera의 Forward를 기준으로 이동 방향을 정하도록 설정 - 25/11/06 임희섭
-		Rotation = Camera->GetComponentRotation();S
+		Rotation = Camera->GetComponentRotation();
 	}
 
 	else
@@ -312,7 +350,7 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 	);*/
 
 	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
+	
 
 	if (!ASC)
 	{
@@ -321,6 +359,13 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 
 	if (!ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
+		TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
+		ASC->TryActivateAbilitiesByTag(TagContainer);
+	}
+
+	else
+	{
+		TagContainer.AddTag(AruaGamePlayTags::Ability_LockOnDodge);
 		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 }

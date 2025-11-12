@@ -50,11 +50,6 @@ void UGA_Roll::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 		FGameplayTagContainer TagContainer;
 		TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
 		TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
-
-		if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
-		{
-			ASC->CancelAbilities(&TagContainer);
-		}
 	}
 
 	K2_EndAbility();

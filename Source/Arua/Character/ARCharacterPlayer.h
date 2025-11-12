@@ -8,6 +8,15 @@
 #include "Character/Weapon/ARWeaponBase.h"
 #include "ARCharacterPlayer.generated.h"
 
+UENUM(BlueprintType)
+enum class EDodgeDirection : uint8
+{
+	Front,
+	Back,
+	Left,
+	Right
+};
+
 /**
  * 
  */
@@ -37,8 +46,11 @@ public:
 	void BeginLockOn();
 	void FinishLockOn();
 	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
+	FName GetLockOnDodgeMontageSection() const;
+	EDodgeDirection GetDodgeDirection() const;
 
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
+	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	// 카메라 섹션
 protected:
@@ -106,6 +118,9 @@ protected:
 	TObjectPtr<class UAnimMontage> RollActionMontage;
 
 	FTimerHandle RollAnimTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> LockOnDodgeActionMontage;
 
 	// 콤보 공격 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Animation)
