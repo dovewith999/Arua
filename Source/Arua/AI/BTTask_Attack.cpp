@@ -26,11 +26,27 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	//브레스 공격
-	//AIPawn->AttackFireBreathSwipe();
+	//랜덤하게 공격하도록 로직 생성
 
-	//왼발 공격
-	AIPawn->AttackPawLeft();
+	int32 RandAttackNum = FMath::RandRange(0, 2);
+
+	switch (RandAttackNum)
+	{
+	case 0: //브레스 공격
+		AIPawn->AttackFireBreathSwipe();
+		break;
+
+
+	case 1: //왼발 공격
+
+		AIPawn->AttackPawLeft();
+		break;
+
+	case 2: //콤보 1 공격
+
+		AIPawn->ComboAttackPawLeft_TailRight();
+		break;
+	}
 
 	return EBTNodeResult::Succeeded;
 

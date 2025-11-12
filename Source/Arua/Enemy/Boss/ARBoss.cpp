@@ -7,6 +7,8 @@
 #include "AttributeSet/MonsterAttributeSet.h"
 #include "UI/Model/BossData.h"
 #include "UI/ViewModel/BossViewModel.h"
+#include "AI/BTTask_WaitForAttack.h"
+#include "AI/ARAI.h"
 
 AARBoss::AARBoss()
 {
@@ -38,6 +40,15 @@ AARBoss::AARBoss()
 	{
 		MontageAttackPawLeft = MontageAttackPawLeftRef.Object;
 	}
+
+	//콤보 공격 1 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageComboAttackPawLeft_TailRightRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Attack_Combo_PawLeft_TailRight.AM_Attack_Combo_PawLeft_TailRight"));
+	if (MontageComboAttackPawLeft_TailRightRef.Succeeded())
+	{
+		MontageComboAttackPawLeft_TailRight = MontageComboAttackPawLeft_TailRightRef.Object;
+	}
+
+
 
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttributeSet"));
@@ -106,8 +117,19 @@ void AARBoss::AttackFireBreathSwipe()
 	if (AnimInstance)
 	{
 		AnimInstance->Montage_Play(MontageAttackFireBreathSwipe);
-
 	}
+
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_WAITTIME, AttackFireBreathSwipeTime);
+		}
+	}
+
+
 }
 
 void AARBoss::AttackPawLeft()
@@ -116,7 +138,41 @@ void AARBoss::AttackPawLeft()
 
 	if (AnimInstance)
 	{
+
 		AnimInstance->Montage_Play(MontageAttackPawLeft);
 
 	}
+
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_WAITTIME, AttackPawLeftTime);
+		}
+	}
+
+}
+
+void AARBoss::ComboAttackPawLeft_TailRight()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageComboAttackPawLeft_TailRight);
+
+	}
+
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_WAITTIME, ComboAttackPawLeft_TailRightTime);
+		}
+	}
+
 }

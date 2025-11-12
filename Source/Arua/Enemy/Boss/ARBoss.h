@@ -20,10 +20,16 @@ public:
 	//추후에 interface로 리팩토링 예정
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
+	void ComboAttackPawLeft_TailRight();
 
 	//getter, setter
 	FORCEINLINE float GetBossAttackRange() { return BossAttackRange; }
 	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
+
+	FORCEINLINE float GetAttackFireBreathSwipeTime() { return AttackFireBreathSwipeTime; }
+	FORCEINLINE float GetAttackPawLeftTime() { return AttackPawLeftTime; }
+	FORCEINLINE float GetComboAttackPawLeft_TailRightTime() { return ComboAttackPawLeft_TailRightTime; }
+
 
 	virtual void BeginPlay() override;
 
@@ -42,11 +48,24 @@ protected:
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackPawLeft;
 
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageComboAttackPawLeft_TailRight;
+
 	//Decorator, Task 관련 변수
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	float BossAttackRange = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 2.0f;
+
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	float AttackFireBreathSwipeTime = 4.0f;
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	float AttackPawLeftTime = 1.8f;
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	float ComboAttackPawLeft_TailRightTime = 3.1f;
 
 };
