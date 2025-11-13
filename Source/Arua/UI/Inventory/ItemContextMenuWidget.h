@@ -43,6 +43,10 @@ protected:
 	void OnCancelClicked();
 
 protected:
+	// 아이템 이름
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ItemName;
+
 	// [사용] 버튼 위젯
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UButton> OnUseButton;
@@ -66,6 +70,10 @@ protected:
 	// 연동된 인벤토리
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<class UInventoryComponent> Inventory;
+
+	// 아이템 수량 선택 팝업 위젯 클래스
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class UItemQuantityPopupWidget> ItemQuantityPopupWidgetClass;
 
 	// 연동된 인벤토리 슬롯 인덱스
 	int32 SlotIndex;
