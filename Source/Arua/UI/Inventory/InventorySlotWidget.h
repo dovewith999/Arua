@@ -48,6 +48,6 @@ protected:
 	int32 SlotIndex;
 
 	// 우클릭 메뉴 위젯 클래스 (아이템 사용 관련 콘텍스트)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UItemContextMenuWidget> ItemContextMenuWidgetClass;
 };

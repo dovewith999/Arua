@@ -60,7 +60,8 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 			// 아이템의 수량이 1보다 크면 수량 표시
 			if (InventorySlot.Quantity > 1)
 			{
-				QuantityText->SetText(FText::AsNumber(InventorySlot.Quantity));
+				//QuantityText->SetText( FText::AsNumber(InventorySlot.Quantity));
+				QuantityText->SetText(FText::FromString(TEXT("x") + FText::AsNumber(InventorySlot.Quantity).ToString()));
 			}
 			else
 			{
