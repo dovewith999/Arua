@@ -51,6 +51,7 @@ public:
 
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
+	class UAnimMontage* GetSkillMontage(const struct FGameplayTag& InTag) const;
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	// 카메라 섹션
 protected:
@@ -83,6 +84,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> LockOnAction;
 
+#pragma region Skill Section
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> SkillWhirlwindAction;
+#pragma endregion
+
 	// NPC 상호작용 입력 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> InteractionAction;
@@ -103,8 +109,8 @@ protected:
 	void RunComplete(const FInputActionValue& Value);
 	virtual void Roll(const FInputActionValue& Value);
 	void LockOnToggle(const FInputActionValue& Value);
+	void PlaySkillWhirlwind(const FInputActionValue& Value);
 	void RollCompleted();
-
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
@@ -129,6 +135,12 @@ protected:
 	// 히트 애니메이션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Hit Reaction")
 	TObjectPtr<class UAnimMontage> HitReactMontage;
+
+#pragma region Skill Section
+	// 스킬 - 휠윈드 애니메이션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill|Whirlwind")
+	TObjectPtr<class UAnimMontage> SkillWhirlwindMontage;
+#pragma endregion
 
 	// 무기 섹션
 protected:
