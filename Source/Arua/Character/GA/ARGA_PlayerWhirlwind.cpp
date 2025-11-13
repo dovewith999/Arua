@@ -33,7 +33,7 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
+	//Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 
 	UAbilityTask_PlayMontageAndWait* PlayWhirlwindTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayWhirlwind"), Player->GetSkillMontage(AruaGamePlayTags::Ability_Whirlwind));
 	PlayWhirlwindTask->OnCompleted.AddDynamic(this, &UARGA_PlayerWhirlwind::OnCompleteCallback);
