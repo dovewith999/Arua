@@ -53,7 +53,14 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 	}
 
 
-	// #2: 아이템 아이콘 이미지 설정
+	// #2: 아이템 이름 설정
+	if (ItemName && InventorySlot.ItemDefinition)
+	{
+		ItemName->SetText(InventorySlot.ItemDefinition->ItemName);
+	}
+
+
+	// #3: 아이템 아이콘 이미지 설정
 	if (ItemIconImage && InventorySlot.ItemDefinition)
 	{
 		// 아이템 데이터의 아이템 아이콘 이미지 동기 로딩 후, 아이템 아이콘 이미지 설정
@@ -64,7 +71,7 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 	}
 
 
-	// #3: 현재 수량/최대 수량 표시 설정
+	// #4: 현재 수량/최대 수량 표시 설정
 	int32 MaxQuantity = InventorySlot.Quantity;
 	if (QuantityLabel)
 	{
@@ -73,7 +80,7 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 	}
 
 
-	// #4: 스핀박스 설정
+	// #5: 스핀박스 설정
 	if (QuantitySpinBox)
 	{
 		// 스핀박스 기본/최소/최대 값 설정
@@ -82,7 +89,7 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 		QuantitySpinBox->SetValue(1.f);
 
 		// 슬라이더를 통한 최소/최대 값 설정
-		QuantitySpinBox->Delta = 1.f; // 숫자 이동값 정도
+		QuantitySpinBox->SetDelta(1.f); // 숫자 이동값 정도
 		QuantitySpinBox->SetMinSliderValue(1.f);
 		QuantitySpinBox->SetMaxSliderValue(static_cast<float>(MaxQuantity));
 	}

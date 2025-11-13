@@ -44,6 +44,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UTextBlock> TitleText;
 
+	// 아이템 이름
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ItemName;
+
 	// 아이템 아이콘 이미지
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UImage> ItemIconImage;
