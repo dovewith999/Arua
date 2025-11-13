@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemComponent.h"
 #include "Tag/AruaGameplayTags.h"
+#include "Character/ARCharacterPlayer.h"
 
 UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 {
@@ -43,28 +44,42 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 		{
 			ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
 			ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+
 			if (TargetCharacter && Instigator)
 			{
+				
 				FVector ToInstigator = (Instigator->GetActorLocation() - TargetCharacter->GetActorLocation()).GetSafeNormal2D();
 				FVector TargetForward = TargetCharacter->GetActorForwardVector();
 
 				float Dot = FVector::DotProduct(TargetForward, ToInstigator);
 				float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
 
+				UE_LOG(LogTemp, Log, TEXT("%f"), Dot);
 				FGameplayTag HitCueTag;
 
 				if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
 				else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
-				else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
-				else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
+				else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
+				else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
 
 				FGameplayCueParameters Params;
 				Params.Instigator = Instigator;
 				Params.EffectCauser = Instigator;
-				Params.Location = HitResult.ImpactPoint;
+				Params.Location = HitResult.ImpactPoint; 
+				Params.SourceObject = HitResult.GetActor();
 				Params.Normal = HitResult.ImpactNormal;
 
-				CurrentActorInfo->AbilitySystemComponent->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
+				Params.AggregatedTargetTags.AddTag(HitCueTag);
+				if (Params.AggregatedTargetTags.HasTag(HitCueTag))
+				{
+					UE_LOG(LogTemp, Log, TEXT("HitCueTag is in AggregatedTargetTags!"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
+				}
+
+				Cast<AARCharacterPlayer>(HitResult.GetActor())->GetAbilitySystemComponent()->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
 			}
 		}
 

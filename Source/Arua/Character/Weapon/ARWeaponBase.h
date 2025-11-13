@@ -22,7 +22,9 @@ public:
 	// Sets default values for this actor's properties
 	AARWeaponBase();
 
+	// 무기를 장착하는 함수
 	virtual void AttachToSocket(class ACharacter* Character, FName SocketName);
+	// 무기를 해제하는 함수
 	virtual void DetachToCharacter();
 
 	//FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; } 
@@ -60,6 +62,8 @@ public:
 	// 락온 시 걷기 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UBlendSpace> LockOnWalkByWeapon;
+
+	//
 
 	// 콤보 액션을 위한 액션 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
