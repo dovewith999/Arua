@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,7 +20,7 @@ public:
 	UARAT_Trace();
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "WaitForTrace", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UARAT_Trace* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<class AARTA_Trace> TargetActorClass);
+	static UARAT_Trace* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<class AARTA_TraceBase> TargetActorClass);
 	virtual void Activate() override;
 	virtual void OnDestroy(bool AbilityEnded) override;
 
@@ -36,8 +36,8 @@ public:
 
 protected:
 	UPROPERTY()
-	TSubclassOf<class AARTA_Trace> TargetActorClass;
+	TSubclassOf<class AARTA_TraceBase> TargetActorClass;
 
 	UPROPERTY()
-	TObjectPtr<class AARTA_Trace> SpawnedTargetActor;
+	TObjectPtr<class AARTA_TraceBase> SpawnedTargetActor;
 };

@@ -4,7 +4,7 @@
 #include "ARGA_AttackHitCheck.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Character/AbilityTask/ARAT_Trace.h"
-#include "Character/GA/TA/ARTA_Trace.h"
+#include "Character/GA/TA/ARTA_TraceBase.h"
 #include "Util/DamageLibrary.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemComponent.h"
@@ -19,13 +19,22 @@ UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 void UARGA_AttackHitCheck::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	
+	// OptionalObject에서 클래스 정보를 추출
+	const UClass* TargetClass = Cast<UClass>(TriggerEventData->OptionalObject.Get());
 
+	// TargetActorClass를 AGameplayAbilityTargetActor의 자식 클래스로 제한합니다.
+	TSubclassOf<AARTA_TraceBase> TargetActorClass = nullptr;
 
-	UARAT_Trace* AttackTraceTask = UARAT_Trace::CreateTask(this, AARTA_Trace::StaticClass());
+	if (TargetClass && TargetClass->IsChildOf(AARTA_TraceBase::StaticClass()))
+	{
+		TargetActorClass = TSubclassOf<AARTA_TraceBase>(const_cast<UClass*>(TargetClass));
+	}
+	
+	//Todo : 호출시킨 공격 태그를 가져오도록 설정
+	UARAT_Trace* AttackTraceTask = UARAT_Trace::CreateTask(this, TargetActorClass);
 	AttackTraceTask->OnComplete.AddDynamic(this, &UARGA_AttackHitCheck::OnTraceResultCallback);
 	AttackTraceTask->ReadyForActivation();
-
-
 }
 
 void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle)

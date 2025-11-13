@@ -1,15 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/AbilityTask/ARAT_Trace.h"
-#include "Character/GA/TA/ARTA_Trace.h"
+#include "Character/GA/TA/ARTA_TraceBase.h"
 #include "AbilitySystemComponent.h"
 
 UARAT_Trace::UARAT_Trace()
 {
 }
 
-UARAT_Trace* UARAT_Trace::CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<AARTA_Trace> TargetActorClass)
+UARAT_Trace* UARAT_Trace::CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<AARTA_TraceBase> TargetActorClass)
 {
 	UARAT_Trace* NewTask = NewAbilityTask<UARAT_Trace>(OwningAbility);
 	NewTask->TargetActorClass = TargetActorClass;
@@ -39,7 +39,7 @@ void UARAT_Trace::OnDestroy(bool AbilityEnded)
 
 void UARAT_Trace::SpawnAndInitializeTargetActor()
 {
-	SpawnedTargetActor = Cast<AARTA_Trace>(Ability->GetWorld()->SpawnActorDeferred<AGameplayAbilityTargetActor>(TargetActorClass,FTransform::Identity,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn));
+	SpawnedTargetActor = Cast<AARTA_TraceBase>(Ability->GetWorld()->SpawnActorDeferred<AGameplayAbilityTargetActor>(TargetActorClass,FTransform::Identity,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn));
 	if (SpawnedTargetActor)
 	{
 		SpawnedTargetActor->SetShowDebug(true);
