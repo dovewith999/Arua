@@ -8,13 +8,31 @@
 #include "Character/Weapon/ARWeaponBase.h"
 #include "ARCharacterPlayer.generated.h"
 
+// 방향을 알기 위한 enum
+// 작성자 : 임희섭
+// 작성일 : 25/11/12
 UENUM(BlueprintType)
-enum class EDodgeDirection : uint8
+enum class EInputDirection : uint8
 {
 	Front,
 	Back,
 	Left,
 	Right
+};
+
+// Ability Input Binding을 위한 구조체 
+// 작성자 : 임희섭
+// 작성일 : 25/11/13
+USTRUCT(BlueprintType)
+struct FAbilityInputMapping
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class UGameplayAbility> AbilityClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UInputAction> InputAction;
 };
 
 /**
@@ -47,7 +65,7 @@ public:
 	void FinishLockOn();
 	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
 	FName GetLockOnDodgeMontageSection() const;
-	EDodgeDirection GetDodgeDirection() const;
+	EInputDirection GetDodgeDirection() const;
 
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
@@ -87,6 +105,9 @@ protected:
 #pragma region Skill Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SkillWhirlwindAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> SkillChargeAttackAction;
 #pragma endregion
 
 	// NPC 상호작용 입력 액션
@@ -109,7 +130,6 @@ protected:
 	void RunComplete(const FInputActionValue& Value);
 	virtual void Roll(const FInputActionValue& Value);
 	void LockOnToggle(const FInputActionValue& Value);
-	void PlaySkillWhirlwind(const FInputActionValue& Value);
 	void RollCompleted();
 
 	// NPC 상호작용 입력 콜백 함수
@@ -180,5 +200,11 @@ protected:
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS|Abilities", meta = (AllowPrivateAccess = "true"))
+	TArray<FAbilityInputMapping> AbilityInputMappings;
+
+	UPROPERTY()
+	TMap<TObjectPtr<class UInputAction>, int> InputIds;
 
 };

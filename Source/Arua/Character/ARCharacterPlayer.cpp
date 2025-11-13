@@ -177,15 +177,27 @@ void AARCharacterPlayer::PossessedBy(AController* NewController)
 	{
 		ASC = PS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(PS, this);
-
 		AttributeSet = PS->GetAttributeSet();
 
+
 		int InputId = 0;
-		for (const auto& StartAbility : StartAbilities)
+		//for (const auto& StartAbility : StartAbilities)
+		//{
+		//	FGameplayAbilitySpec StartSpec(StartAbility);
+		//	StartSpec.InputID = InputId++;
+		//	ASC->GiveAbility(StartSpec);
+		//}
+
+		for (const auto& Ability : AbilityInputMappings)
 		{
-			FGameplayAbilitySpec StartSpec(StartAbility);
+			FGameplayAbilitySpec StartSpec(Ability.AbilityClass);
 			StartSpec.InputID = InputId++;
 			ASC->GiveAbility(StartSpec);
+
+			if (Ability.InputAction != nullptr)
+			{
+				InputIds.Add(Ability.InputAction, StartSpec.InputID);
+			}
 		}
 
 		SetupGASInputComponent();
@@ -239,39 +251,39 @@ void AARCharacterPlayer::SetInputDirection()
 
 FName AARCharacterPlayer::GetLockOnDodgeMontageSection() const
 {
-	EDodgeDirection Direction = GetDodgeDirection();
+	EInputDirection Direction = GetDodgeDirection();
 
 	switch (Direction)
 	{
-	case EDodgeDirection::Front:
+	case EInputDirection::Front:
 		return FName("Front");
-	case EDodgeDirection::Back:
+	case EInputDirection::Back:
 		return FName("Back");
-	case EDodgeDirection::Left:
+	case EInputDirection::Left:
 		return FName("Left");
-	case EDodgeDirection::Right:
+	case EInputDirection::Right:
 		return FName("Right");
 	default:
 		return FName("Front");
 	}
 }
 
-EDodgeDirection AARCharacterPlayer::GetDodgeDirection() const
+EInputDirection AARCharacterPlayer::GetDodgeDirection() const
 {
 	// 입력이 거의 없으면 전방
 	if (CurrentInputAxis.IsNearlyZero(0.1f))
 	{
-		return EDodgeDirection::Front;
+		return EInputDirection::Front;
 	}
 
 	// 절댓값이 더 큰 축 우선
 	if (FMath::Abs(CurrentInputAxis.Y) > FMath::Abs(CurrentInputAxis.X))
 	{
-		return CurrentInputAxis.Y > 0 ? EDodgeDirection::Front : EDodgeDirection::Back;
+		return CurrentInputAxis.Y > 0 ? EInputDirection::Front : EInputDirection::Back;
 	}
 	else
 	{
-		return CurrentInputAxis.X > 0 ? EDodgeDirection::Right : EDodgeDirection::Left;
+		return CurrentInputAxis.X > 0 ? EInputDirection::Right : EInputDirection::Left;
 	}
 }
 
@@ -412,10 +424,6 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	}
 }
 
-void AARCharacterPlayer::PlaySkillWhirlwind(const FInputActionValue& Value)
-{
-}
-
 void AARCharacterPlayer::RollCompleted()
 {
 	bIsRolling = false;
@@ -456,10 +464,14 @@ void AARCharacterPlayer::SetupGASInputComponent()
 	{
 		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 7);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, 7);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, 7);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[AttackAction]);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillWhirlwindAction]);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
+
+		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillChargeAttackAction]);
+		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
+		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
 	}
 }
 
