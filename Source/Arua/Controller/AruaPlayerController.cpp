@@ -7,9 +7,10 @@
 #include "UI/ViewModel/PlayerViewModel.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet/PlayerAttributeSet.h"
-#include "Test/TestCharacterPlayer.h"
 #include "Enemy/ARMonsterBase.h"
 #include "UI/ViewModel/BossViewModel.h"
+#include "Tag/AruaGameplayTags.h"
+#include "Character/ARCharacterPlayer.h"
 
 #include "UI/Quest/QuestHUDWidget.h"
 #include "UI/Quest/QuestJournalWidget.h"
@@ -39,7 +40,12 @@ void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
 void AAruaPlayerController::TargetOff()
 {
 	HUD->TurnOffBossHpBar();
-	
+	if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(GetPawn()))
+	{
+		UE_LOG(LogTemp, Log, TEXT("OwnerPlayer is valid"));
+
+		OwnerPlayer->FinishLockOn();
+	}
 }
 
 void AAruaPlayerController::BeginPlay()

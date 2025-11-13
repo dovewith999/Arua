@@ -202,6 +202,10 @@ void AARCharacterPlayer::FinishLockOn()
 {
 	// 캐릭터가 이동 방향으로 자동 회전하도록 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
+	ASC->CancelAbilities(&TagContainer);
 }
 
 void AARCharacterPlayer::SetInputDirection()
@@ -386,8 +390,7 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 {
 	// Tag로 어빌리티를 찾아서 활성화
 	// InputTag나 AbilityTag를 사용할 수 있음
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
+
 
 	if (!ASC)
 	{
@@ -397,12 +400,14 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_LockOn))
 	{
 		FinishLockOn();
-		ASC->CancelAbilities(&TagContainer);
 	}
 
 	else
 	{
 		BeginLockOn();
+
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
 		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 }
