@@ -2,25 +2,24 @@
 
 #include "CoreMinimal.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "AR_ItemStruct.generated.h"
+#include "AR_InventorySlot.generated.h"
 
 /**
- * 실제 인벤토리에서 한 슬롯을 표현하는 구조체
- * 아이템 데이터(DA_ItemDefinition)와 수량을 보유
+ * 실제 인벤토리에서 한 슬롯을 표현하는 데이터 구조체
+ * 기본 아이템 정의(DA_ItemDefinition)와 수량을 보유
  */
-
 USTRUCT(BlueprintType)
 struct ARUA_API FInventorySlot
 {
 	GENERATED_BODY()
 
-	// 생성자. 수량을 0으로 초기화
+	// 기본 아이템 인스턴스 초기화, 수량을 0으로 초기화
 	FInventorySlot()
 		: ItemDefinition(nullptr), Quantity(0)
 	{
 	}
 
-	// 아이템 정의 (UItemDefinition의 인스턴스를 가리킨다)
+	// 기본 아이템 인스턴스 (UDA_ItemDefinition의 인스턴스를 가리킴)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	TObjectPtr<UDA_ItemDefinition> ItemDefinition;
 
@@ -28,17 +27,17 @@ struct ARUA_API FInventorySlot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	int32 Quantity;
 
-	// 이 슬롯에 아이템을 추가 (가능한 만큼 반환)
+	// 이 슬롯에 아이템을 추가 (추가할 수 있는 만큼 반환)
 	int32 AddQuantity(int32 Amount)
 	{
 		// 아이템 인스턴스가 없거나 수량이 0인 경우
 		if (!ItemDefinition || Amount <= 0) return 0;
 
 		// 최대 겹침 수량까지 남은 수량
-		const int32 Space = ItemDefinition->MaxStackSize - Quantity;
+		const int32 Remain = ItemDefinition->MaxStackSize - Quantity;
 
 		// 최대 겹침 수량까지 슬롯에 아이템을 추가
-		const int32 Addable = FMath::Min(Space, Amount);
+		const int32 Addable = FMath::Min(Remain, Amount);
 		Quantity += Addable;
 
 		// 현재 슬롯에 추가할 수 있는 만큼 반환

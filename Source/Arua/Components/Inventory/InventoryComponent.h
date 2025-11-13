@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "AruaTypes/StructTypes/AR_ItemStruct.h"
+#include "AruaTypes/StructTypes/AR_InventorySlot.h"
 #include "InventoryComponent.generated.h"
 
 // 인벤토리 슬롯 업데이트 델리게이트
@@ -12,9 +12,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 /**
  * 액터에 부착 가능한 인벤토리 컴포넌트
- * 아이템 슬롯 60개와 재화 골드를 관리
+ * 아이템 슬롯 60개와 재화 금액을 관리하며 아이템 사용 효과를 수행
  */
-
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ARUA_API UInventoryComponent : public UActorComponent
 {
@@ -23,7 +22,11 @@ class ARUA_API UInventoryComponent : public UActorComponent
 public:
 	UInventoryComponent();
 
-	// 인벤토리에 아이템을 추가하는 함수
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	// 아이템 추가 함수
 	/*
 	* ItemDef		: 추가할 아이템의 정의
 	* Amount		: 추가할 개수
@@ -39,11 +42,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void UseItem(int32 SlotIndex);
 
-	// 아이템 스택 분리 함수
+	// 아이템 묶음 사용 함수
+	/*
+	* SlotIndex		: 사용 슬롯
+	* Amount		: 사용 개수
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void BundleUseItem(int32 SlotIndex, int32 Amount);
+
+	// 아이템 나누기 함수
 	/*
 	* SlotIndex		: 원본 슬롯
-	* SplitAmount	: 분리할 수량
-	* @Return		: 분리된 새 슬롯 인덱스 or -1(분리 실패)
+	* SplitAmount	: 나눌 수량
+	* @Return		: 나눠진 새 슬롯 인덱스 or -1(나누기 실패)
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	int32 SplitStack(int32 SlotIndex, int32 SplitAmount);
@@ -64,8 +75,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void MoveItem(int32 FromIndex, int32 ToIndex);
 
+	// 아이템 드롭(삭제) 함수
 	// 인벤토리 영역 밖으로 드롭하여 제거하는 함수
-	// UI에서 호출 후, 확인 다이얼로그 표시
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void DropItem(int32 SlotIndex);
 
@@ -73,15 +84,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory | Gold")
 	void AddGolds(int32 Amount);
 
-	// 재화(골드) 사용 함수
+	// 재화(골드) 소모 함수
 	UFUNCTION(BlueprintCallable, Category = "Inventory | Gold")
 	bool SpendGolds(int32 Amount);
 
-protected:
-	virtual void BeginPlay() override;
-
 public:
-	// 인벤토리 업데이트 이벤트 (UI에서 바인딩)
+	// 인벤토리 슬롯 업데이트 이벤트
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnInventoryUpdated OnInventoryUpdated;
 
@@ -89,7 +97,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 MaxSlots = 60;
 
-	// 슬롯 배열
+	// 인벤토리 슬롯 배열
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<FInventorySlot> Slots;
 

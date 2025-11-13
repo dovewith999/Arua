@@ -3,16 +3,16 @@
 
 #include "Components/Inventory/InventoryComponent.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "Engine/World.h"
+#include "GameFramework/Actor.h"
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// 현재 보유 재화(골드) 초기화
+	// 재화 초기화
 	Golds = 0;
 
-	// 최대 슬롯 수 만큼 초기 슬롯 배열 생성
+	// 인벤토리 슬롯 배열 공간 초기화 (reserve)
 	Slots.SetNumZeroed(MaxSlots);
 }
 
@@ -23,108 +23,151 @@ void UInventoryComponent::BeginPlay()
 
 int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 {
+	// 예외 처리
 	if (!ItemDef || Amount <= 0) return 0;
 
-	// 남은 추가할 아이템 개수
+	// 추가할 아이템 수량으로 추가해야 할 아이템 수량 초기화
+	// 여러 슬롯에 나눠 추가될 수 있기 떄문에, 차감하는 방식으로 구현
 	int32 Remaining = Amount;
 
-	// #1: 먼저 같은 아이템이 있는 슬롯에 추가할 수 있는 만큼 모두 추가
-	for (FInventorySlot& Slot : Slots)
+	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
+	for (FInventorySlot& InventorySlot : Slots)
 	{
-		// 해당 슬롯의 아이템 인스턴스가 동일하고, 스택이 가득차지 않은 경우
-		if (Slot.ItemDefinition == ItemDef && !Slot.IsFull())
+		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
+		if (InventorySlot.ItemDefinition == ItemDef && InventorySlot.IsFull())
 		{
-			// 해당 슬롯에 아이템을 추가할 수 있는 만큼 추가함
-			Remaining -= Slot.AddQuantity(Remaining);
-			if (Remaining <= 0) break;
+			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가해야 할 아이템 수량 차감
+			Remaining -= InventorySlot.AddQuantity(Remaining);
+			if (Remaining <= 0) return 0;
 		}
 	}
 
-	// #2: 빈 슬롯에 새로운 스택을 생성
+	// 새 슬롯 생성
 	if (Remaining > 0)
 	{
-		// 빈 슬롯을 찾음
-		for (FInventorySlot& Slot : Slots)
+		// 인벤토리 슬롯 배열에서 비어있는 슬롯을 확보
+		for (FInventorySlot& InventorySlot : Slots)
 		{
-			if (Slot.IsEmpty())
+			if (InventorySlot.IsEmpty())
 			{
-				// 해당 슬롯을 추가할 아이템으로 초기화
-				Slot.ItemDefinition = ItemDef;
+				// 해당 슬롯의 아이템 정의를 추가하는 아이템으로 초기화
+				InventorySlot.ItemDefinition = ItemDef;
 
-				// 아이템의 최대 겹침 수량만큼 추가
-				const int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
-				Slot.Quantity = AddAmount;
+				// 해당 슬롯의 수량을 초기화. 추가하려는 아이템의 최대 수량을 넘지 않도록 Min 계산
+				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
+				InventorySlot.Quantity = AddAmount;
+
+				// 추가해야 할 아이템 수량 차감
 				Remaining -= AddAmount;
-
-				// 남은 추가할 아이템 개수를 모두 소진할 때 까지 반복
-				if (Remaining <= 0) break;
+				if (Remaining <= 0) return 0;
 			}
 		}
 	}
 
-	// #3: 인벤토리 업데이트 이벤트 브로드캐스트
-	if (Amount != Remaining) OnInventoryUpdated.Broadcast();
+	// 하나라도 아이템을 추가한 경우
+	if (Amount != Remaining)
+	{
+		// 인벤토리 업데이트 이벤트 브로드캐스트
+		OnInventoryUpdated.Broadcast();
+	}
 
-	// 실제로 추가된 아이템 개수 반환
+	// 추가한 수량만큼 반환
 	return Amount - Remaining;
 }
 
 void UInventoryComponent::UseItem(int32 SlotIndex)
 {
-	// 사용 슬롯이 비어있으면 종료
+	// 사용하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 사용 실패
 	if (!Slots.IsValidIndex(SlotIndex)) return;
 
-	// 사용 슬롯의 아이템 데이터 인스턴스를 가져옴
-	FInventorySlot& Slot = Slots[SlotIndex];
-	if (Slot.IsEmpty()) return;
+	// 사용하려는 인벤토리 슬롯의 아이템 데이터 가져오기
+	FInventorySlot& InventorySlot = Slots[SlotIndex];
+	if (InventorySlot.IsEmpty()) return;
 
-	// 아이템 효과 적용 (ex. 회복약이라면 캐릭터 체력 회복, 장비라면 장착 처리 등)
-	if (Slot.ItemDefinition)
+	if (InventorySlot.ItemDefinition)
 	{
-		Slot.ItemDefinition->ApplyEffect(GetOwner());
+		// 사용자에게 아이템 효과 적용
+		InventorySlot.ItemDefinition->ApplyEffect(GetOwner());
 	}
 
-	// 사용 후 수량 감소
-	Slot.Quantity -= 1;
+	// 아이템 사용 후, 수량 감소
+	InventorySlot.Quantity -= 1;
 
-	// 모두 사용했으면 해당 슬롯 초기화
-	if (Slot.Quantity <= 0)
+	// 아이템 수량이 0이면, 해당 슬롯을 빈 슬롯으로 초기화
+	if (InventorySlot.Quantity <= 0)
 	{
-		Slot.ItemDefinition = nullptr;
-		Slot.Quantity = 0;
+		InventorySlot.ItemDefinition = nullptr;
+		InventorySlot.Quantity = 0;
 	}
 
 	// 인벤토리 업데이트 이벤트 브로드캐스트
 	OnInventoryUpdated.Broadcast();
 }
 
+void UInventoryComponent::BundleUseItem(int32 SlotIndex, int32 Amount)
+{
+	// 사용하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 사용 실패
+	if (!Slots.IsValidIndex(SlotIndex) || Amount <= 0) return;
+
+	// 사용하려는 인벤토리 슬롯의 아이템 데이터 가져오기
+	FInventorySlot& InventorySlot = Slots[SlotIndex];
+	if (InventorySlot.IsEmpty()) return;
+
+	// 사용할 개수를 초기화
+	int32 UseCount = FMath::Min(Amount, InventorySlot.Quantity);
+
+	// 사용 개수만큼 반복적으로 아이템 사용
+	for (int32 i = 0; i < UseCount; ++i)
+	{
+		if (InventorySlot.IsEmpty()) break;
+
+		// 아이템 효과 적용
+		if (InventorySlot.ItemDefinition)
+		{
+			InventorySlot.ItemDefinition->ApplyEffect(GetOwner());
+		}
+
+		// 개수 차감
+		InventorySlot.Quantity -= 1;
+
+		// 아이템 수량이 0이면, 해당 슬롯을 빈 슬롯으로 초기화
+		if (InventorySlot.Quantity <= 0)
+		{
+			InventorySlot.ItemDefinition = nullptr;
+			InventorySlot.Quantity = 0;
+			break;
+		}
+	}
+
+	// 최종적으로 한번만 인벤토리 업데이트 이벤트 브로드캐스트
+	OnInventoryUpdated.Broadcast();
+}
+
 int32 UInventoryComponent::SplitStack(int32 SlotIndex, int32 SplitAmount)
 {
-	// 분리하려는 슬롯이 비어있으면 종료
+	// 나누려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 분리 실패
 	if (!Slots.IsValidIndex(SlotIndex)) return -1;
 
-	// 분리할 슬롯의 아이템 데이터 인스턴스를 가져옴
-	FInventorySlot& Slot = Slots[SlotIndex];
+	// 나누려는 인벤토리 슬롯의 아이템 데이터 가져오기
+	FInventorySlot& Source = Slots[SlotIndex];
+	if (Source.IsEmpty() || SplitAmount <= 0 || SplitAmount >= Source.Quantity) return -1;
 
-	// 예외 처리
-	if (Slot.IsEmpty() || SplitAmount <= 0 || SplitAmount >= Slot.Quantity) return -1;
-
-	// 빈 슬롯 찾기
+	// 나눈 후 저장할 수 있는 슬롯 확보
 	for (int32 i = 0; i < Slots.Num(); ++i)
 	{
 		if (Slots[i].IsEmpty())
 		{
-			// 빈 슬롯을 현재 아이템으로 초기화
-			Slots[i].ItemDefinition = Slot.ItemDefinition;
-
-			// 분리한 아이템 스택만큼으로 초기화
+			// 해당 슬롯의 아이템과 수량을 초기화
+			Slots[i].ItemDefinition = Source.ItemDefinition;
 			Slots[i].Quantity = SplitAmount;
-			Slot.Quantity -= SplitAmount;
+
+			// 나눈 수량만큼 나눈 슬롯에서 차감
+			Source.Quantity -= SplitAmount;
 
 			// 인벤토리 업데이트 이벤트 브로드캐스트
 			OnInventoryUpdated.Broadcast();
 
-			// 분리된 새 슬롯 인덱스를 반환
+			// 나눠서 저장한 슬롯 반환
 			return i;
 		}
 	}
@@ -134,23 +177,22 @@ int32 UInventoryComponent::SplitStack(int32 SlotIndex, int32 SplitAmount)
 
 void UInventoryComponent::RemoveItem(int32 SlotIndex, int32 RemoveAmount)
 {
-	// 제거하려는 슬롯이 비어있으면 종료
+	// 제거하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 제거 실패
 	if (!Slots.IsValidIndex(SlotIndex)) return;
 
-	// 제거할 슬롯의 아이템 데이터 인스턴스를 가져옴
-	FInventorySlot& Slot = Slots[SlotIndex];
-	if (Slot.IsEmpty()) return;
+	// 제거하려는 인벤토리 슬롯의 아이템 데이터 가져오기
+	FInventorySlot& InventorySlot = Slots[SlotIndex];
+	if (InventorySlot.IsEmpty()) return;
 
-	// 전체 제거 혹은 제거할 수량이 제거할 슬롯의 수보다 많은 경우
-	if (RemoveAmount <= 0 || RemoveAmount >= Slot.Quantity)
+	// 모두 지우는 경우, 해당 슬롯을 빈 슬롯으로 초기화
+	if (RemoveAmount <= 0 || RemoveAmount >= InventorySlot.Quantity)
 	{
-		// 전체 제거
-		Slot.ItemDefinition = nullptr;
-		Slot.Quantity = 0;
+		InventorySlot.ItemDefinition = nullptr;
+		InventorySlot.Quantity = 0;
 	}
 	else
 	{
-		Slot.Quantity -= RemoveAmount;
+		InventorySlot.Quantity -= RemoveAmount;
 	}
 
 	// 인벤토리 업데이트 이벤트 브로드캐스트
@@ -159,35 +201,39 @@ void UInventoryComponent::RemoveItem(int32 SlotIndex, int32 RemoveAmount)
 
 void UInventoryComponent::MoveItem(int32 FromIndex, int32 ToIndex)
 {
-	// 두 슬롯 중 하나라도 유효하지 않거나, 두 슬롯이 서로 같은 경우 종료
+	// 이동 시작/종료하려는 인덱스의 인벤토리 슬롯이 유효하지 않거나 두 인덱스가 같으면 이동 실패
 	if (!Slots.IsValidIndex(FromIndex) || !Slots.IsValidIndex(ToIndex) || FromIndex == ToIndex) return;
 
-	// 옮겨질 슬롯, 옮길 슬롯의 아이템 데이터 인스턴스를 가져옴
+	// 이동 시작/종료하려는 인덱스의 아이템 데이터 가져오기
 	FInventorySlot& From = Slots[FromIndex];
 	FInventorySlot& To = Slots[ToIndex];
 	if (From.IsEmpty()) return;
 
-	// #1: 옮길 슬롯이 빈 슬롯이면 그대로 이동
+	// 이동하려는 인덱스가 비어있는 경우, From의 데이터를 To로 이동
 	if (To.IsEmpty())
 	{
 		To = From;
-		From.ItemDefinition = nullptr;
-		From.Quantity = 0;
+		To.ItemDefinition = nullptr;
+		To.Quantity = 0;
 	}
-	// #2: 두 슬롯의 아이템이 같은 아이템이고, 옮길 슬롯의 스택이 가득 차지 않은 경우
-	else if (To.ItemDefinition == From.ItemDefinition && !To.IsFull())
+	// 두 슬롯의 아이템 데이터가 같고, 이동하려는 인덱스의 아이템이 최대 수량이 아닌 경우
+	else if (From.ItemDefinition == To.ItemDefinition && !To.IsFull())
 	{
-		// 합칠 수 있는 수량 확인
-		const int32 MoveAmount = FMath::Min(From.Quantity, To.ItemDefinition->MaxStackSize - To.Quantity);
+		// 이동(추가)시킬 수 있는 수량 확인 후, 추가
+		int32 MoveAmount = FMath::Min(From.Quantity, To.ItemDefinition->MaxStackSize - To.Quantity);
 		To.Quantity += MoveAmount;
+
+		// 이동(추가)시킨 만큼 From에서 차감
 		From.Quantity -= MoveAmount;
+
+		// From의 남은 수량이 없으면 해당 슬롯을 빈 슬롯으로 초기화
 		if (From.Quantity <= 0)
 		{
 			From.ItemDefinition = nullptr;
 			From.Quantity = 0;
 		}
 	}
-	// #3: 두 슬롯의 아이템이 서로 다른 아이템이면 슬롯 교환
+	// 두 슬롯의 아이템 데이터가 다른 경우, 서로 슬롯을 교체
 	else
 	{
 		Swap(From, To);
@@ -199,24 +245,24 @@ void UInventoryComponent::MoveItem(int32 FromIndex, int32 ToIndex)
 
 void UInventoryComponent::DropItem(int32 SlotIndex)
 {
-	// 드롭하려는 슬롯이 비어있으면 종료
-	if (!Slots.IsValidIndex(SlotIndex)) return;
+	// 드롭(삭제)하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 드롭(삭제) 실패
+	if (Slots.IsValidIndex(SlotIndex)) return;
 
-	// 드롭할 슬롯의 아이템 데이터 인스턴스를 가져옴
-	FInventorySlot& Slot = Slots[SlotIndex];
-	if (Slot.IsEmpty()) return;
+	// 드롭(삭제)하려는 인덱스의 아이템 데이터 가져오기
+	FInventorySlot& InventorySlot = Slots[SlotIndex];
+	if (InventorySlot.IsEmpty()) return;
 
-	// UI에서 확인 다이얼로그를 띄운 후 확정되면 아래를 실행
-	// 예시로 바로 제거 처리
-	// 실제 게임에서는 월드에 드랍 오브젝트를 생성해 떨어뜨릴 수 있음
-	Slot.ItemDefinition = nullptr;
-	Slot.Quantity = 0;
+	// 해당 슬롯을 빈 슬롯으로 초기화
+	InventorySlot.ItemDefinition = nullptr;
+	InventorySlot.Quantity = 0;
+
+	// 인벤토리 업데이트 이벤트 브로드캐스트
 	OnInventoryUpdated.Broadcast();
 }
 
 void UInventoryComponent::AddGolds(int32 Amount)
 {
-	// 추가 개수만큼 골드에 더함
+	// 현재 재화(골드) 추가
 	Golds += Amount;
 
 	// 인벤토리 업데이트 이벤트 브로드캐스트
@@ -225,15 +271,18 @@ void UInventoryComponent::AddGolds(int32 Amount)
 
 bool UInventoryComponent::SpendGolds(int32 Amount)
 {
-	// 현재 보유 재화(골드)가 충분한 경우
 	if (Golds >= Amount)
 	{
+		// 현재 재화(골드) 차감
 		Golds -= Amount;
 
 		// 인벤토리 업데이트 이벤트 브로드캐스트
 		OnInventoryUpdated.Broadcast();
+
+		// 재화(골드) 차감 성공 반환
 		return true;
 	}
 
+	// 재화(골드) 차감 실패 반환
 	return false;
 }

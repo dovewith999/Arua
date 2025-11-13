@@ -10,18 +10,21 @@
 
 /**
  * 게임에서 사용될 아이템의 기본 정의 클래스
- * 소프트 레퍼런스를 사용하여 에셋을 필요할 때 로드한다.
+ * UPrimaryDataAsset을 상속하여 에디터에서 관리 가능한 데이터 자산으로 구현
  */
-
 UCLASS()
 class ARUA_API UDA_ItemDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	// 아이템 사용 효과 함수
+	/**
+	* 아이템 사용 효과 함수
+	* 파생 클래스에서 재정의하여 구체적인 효과를 구현
+	*/
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")
 	void ApplyEffect(AActor* User);
+	virtual void ApplyEffect_Implementation(AActor* User);
 
 public:
 	// 아이템 표시 이름
@@ -29,7 +32,6 @@ public:
 	FText ItemName;
 
 	// UI에 표시될 아이콘 (소프트 레퍼런스)
-	// 아이콘 텍스처가 실제로 필요해질 때까지 로딩되지 않으므로, 초기 로딩 시간과 메모리 사용량을 절약
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	TSoftObjectPtr<UTexture2D> ItemIcon;
 
@@ -45,10 +47,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	int32 MaxStackSize = 1;
 
-	// 장비일 경우 공격력/방어력 등 스탯
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EItemCategory::Armor"))
+
+	// 장비의 경우, 공겨력/방어력 등 스탯 추가 정의
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EAR_ItemCategory::Equipment"))
 	int32 AttackPower = 0;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EItemCategory::Armor"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EAR_ItemCategory::Equipment"))
 	int32 DefensePower = 0;
 };
