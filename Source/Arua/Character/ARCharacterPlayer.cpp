@@ -271,6 +271,18 @@ EDodgeDirection AARCharacterPlayer::GetDodgeDirection() const
 	}
 }
 
+UAnimMontage* AARCharacterPlayer::GetSkillMontage(const FGameplayTag& InTag) const
+{
+	UAnimMontage* ReturnMontage = nullptr;
+
+	if (InTag == AruaGamePlayTags::Ability_Whirlwind)
+	{
+		ReturnMontage = SkillWhirlwindMontage;
+	}
+
+	return ReturnMontage;
+}
+
 void AARCharacterPlayer::Move(const FInputActionValue& Value)
 {
 	//if (bIsRolling)
@@ -395,6 +407,10 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	}
 }
 
+void AARCharacterPlayer::PlaySkillWhirlwind(const FInputActionValue& Value)
+{
+}
+
 void AARCharacterPlayer::RollCompleted()
 {
 	bIsRolling = false;
@@ -436,6 +452,9 @@ void AARCharacterPlayer::SetupGASInputComponent()
 		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 7);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, 7);
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, 7);
 	}
 }
 

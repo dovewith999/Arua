@@ -12,11 +12,13 @@ namespace AruaGamePlayTags
 	/*Player State Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_LockOn)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Roll)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Skill_Whirlwind)
 
 	/*Ability Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOn)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Roll)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOnDodge)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Whirlwind)
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그

@@ -5,12 +5,13 @@ namespace AruaGamePlayTags
 	/*Player State Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_LockOn, "Player.State.LockOn")
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Roll, "Player.State.Roll")
-		
+	UE_DEFINE_GAMEPLAY_TAG(Player_State_Skill_Whirlwind, "Player.State.Skill.Whirlwind")
+
 	/*Ability Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Ability_LockOn, "Ability.LockOn")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Roll, "Ability.Roll")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_LockOnDodge, "Ability.LockOnDodge")
-
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Whirlwind, "Ability.Whirlwind")
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
