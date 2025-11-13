@@ -139,13 +139,13 @@ void AARBoss::PossessedBy(AController* NewController)
 }
 
 ////디버그용
-//void AARBoss::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//		DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
-//
-//}
+void AARBoss::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
+
+}
 
 
 
