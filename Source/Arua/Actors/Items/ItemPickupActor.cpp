@@ -50,11 +50,12 @@ void AItemPickupActor::Interact(APawn* Interactor)
 	{
 		// 아이템 추가
 		int32 Added = InventoryComp->AddItem(ItemDefinition, Quantity);
-		if (Added > 0)
-		{
-			// 성공적으로 추가되면 아이템 액터 삭제
-			Destroy();
-		}
+		//if (Added > 0)
+		//{
+		//	// 성공적으로 추가되면 아이템 액터 삭제
+		//	Destroy();
+		//}
+		Destroy();
 	}
 }
 

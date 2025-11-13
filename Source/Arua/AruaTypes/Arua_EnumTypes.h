@@ -1,28 +1,28 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Arua_EnumTypes.generated.h"
 
 /**
- * ¾ÆÀÌÅÛ ºĞ·ù ¿­°ÅÇü
+ * ì•„ì´í…œ ë¶„ë¥˜ ì—´ê±°í˜•
  */
 UENUM(BlueprintType)
 enum class EAR_ItemCategory : uint8
 {
-	Equipment       UMETA(DisplayName = "Àåºñ"),
-	Consumable		UMETA(DisplayName = "¼Ò¸ğÇ°"),
-	Quest			UMETA(DisplayName = "Äù½ºÆ®"),
-	Misc			UMETA(DisplayName = "±âÅ¸")
+	Equipment       UMETA(DisplayName = "ì¥ë¹„"),
+	Consumable		UMETA(DisplayName = "ì†Œëª¨í’ˆ"),
+	Quest			UMETA(DisplayName = "í€˜ìŠ¤íŠ¸"),
+	Misc			UMETA(DisplayName = "ê¸°íƒ€")
 };
 
 /**
- * Àåºñ ¾ÆÀÌÅÛÀ» ÀåÂøÇÒ ½½·Ô Å¸ÀÔÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
- * ¹«±â, ¹æ¾î±¸, Àå½Å±¸ µî Àåºñ ½½·ÔÀ» Á¤ÀÇ
+ * ì¥ë¹„ ì•„ì´í…œì„ ì¥ì°©í•  ìŠ¬ë¡¯ íƒ€ì…ì„ ì •ì˜í•˜ëŠ” ì—´ê±°í˜•
+ * ë¬´ê¸°, ë°©ì–´êµ¬, ì¥ì‹ êµ¬ ë“± ì¥ë¹„ ìŠ¬ë¡¯ì„ ì •ì˜
  */
 UENUM(BlueprintType)
 enum class EAR_EquipmentSlotType : uint8
 {
-	None			UMETA(DisplayName = "¾øÀ½"),
-	Weapon			UMETA(DisplayName = "¹«±â"),
-	Armor			UMETA(DisplayName = "¹æ¾î±¸"),
-	Accessory		UMETA(DisplayName = "Àå½Å±¸"),
+	None			UMETA(DisplayName = "ì—†ìŒ"),
+	Weapon			UMETA(DisplayName = "ë¬´ê¸°"),
+	Armor			UMETA(DisplayName = "ë°©ì–´êµ¬"),
+	Accessory		UMETA(DisplayName = "ì¥ì‹ êµ¬"),
 };

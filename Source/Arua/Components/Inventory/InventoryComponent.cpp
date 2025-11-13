@@ -19,6 +19,11 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (auto& i : TestStartItems)
+	{
+		AddItem(i, 1);;
+	}
 }
 
 int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
@@ -29,16 +34,21 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 	// 추가할 아이템 수량으로 추가해야 할 아이템 수량 초기화
 	// 여러 슬롯에 나눠 추가될 수 있기 떄문에, 차감하는 방식으로 구현
 	int32 Remaining = Amount;
+	int32 Added = 0;
 
 	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
 	for (FInventorySlot& InventorySlot : Slots)
 	{
 		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
-		if (InventorySlot.ItemDefinition == ItemDef && InventorySlot.IsFull())
+		if (InventorySlot.ItemDefinition == ItemDef && !InventorySlot.IsFull())
 		{
 			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가해야 할 아이템 수량 차감
+			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가한 개수 저장
+			//Added += InventorySlot.AddQuantity(Amount - Added);
+
 			Remaining -= InventorySlot.AddQuantity(Remaining);
 			if (Remaining <= 0) return 0;
+			//if (Added >= Amount) return Added;
 		}
 	}
 
