@@ -2,6 +2,9 @@
 
 
 #include "UI/Inventory/ItemContextMenuWidget.h"
+#include "UI/Inventory/ItemQuantityPopupWidget.h"
+
+#include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/Inventory/InventoryComponent.h"
 
@@ -9,6 +12,15 @@ void UItemContextMenuWidget::InitializeMenu(UInventoryComponent* InInventory, in
 {
 	Inventory = InInventory;
 	SlotIndex = InSlotIndex;
+
+	// 슬롯의 아이템 데이터 가져오기
+	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+
+	// 아이템 이름 설정
+	if (ItemName && InventorySlot.ItemDefinition)
+	{
+		ItemName->SetText(InventorySlot.ItemDefinition->ItemName);
+	}
 }
 
 void UItemContextMenuWidget::NativeConstruct()
@@ -50,31 +62,75 @@ void UItemContextMenuWidget::OnUseClicked()
 
 void UItemContextMenuWidget::OnBundleUseClicked()
 {
-	// 아이템 사용 후, 위젯 제거
-	if (Inventory)
+	// 예외 처리
+	if (!Inventory || !ItemQuantityPopupWidgetClass)
 	{
-		Inventory->BundleUseItem(SlotIndex, 1);
+		RemoveFromParent();
+		return;
 	}
+
+	// 아이템 수량 선택 팝업 위젯 생성 및 초기화
+	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
+	if (PopUp)
+	{
+		// 아이템 묶음 사용으로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::BundleUse);
+		PopUp->AddToViewport();
+	}
+
 	RemoveFromParent();
 }
 
 void UItemContextMenuWidget::OnSplitClicked()
 {
-	if (Inventory)
+	// 예외 처리
+	if (!Inventory || !ItemQuantityPopupWidgetClass)
 	{
-		// 나누려는 슬롯의 데이터 가져오기
-		const FInventorySlot& Slots = Inventory->Slots[SlotIndex];
-		if (Slots.Quantity > 1)
-		{
-
-		}
+		RemoveFromParent();
+		return;
 	}
+
+	// 나누려는 슬롯의 아이템 데이터 가져오기
+	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+
+	// 나눌 수 있는 수량이 없다면 아무 동작 없이 메뉴 닫기
+	if (InventorySlot.Quantity <= 1)
+	{
+		RemoveFromParent();
+		return;
+	}
+
+	// 아이템 수량 선택 팝업 위젯 생성 및 초기화
+	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
+	if (PopUp)
+	{
+		// 아이템 나누기로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::Split);
+		PopUp->AddToViewport();
+	}
+
 	RemoveFromParent();
 }
 
 void UItemContextMenuWidget::OnRemoveClicked()
 {
+	// 예외 처리
+	if (!Inventory || !ItemQuantityPopupWidgetClass)
+	{
+		RemoveFromParent();
+		return;
+	}
 
+	// 아이템 수량 선택 팝업 위젯 생성 및 초기화
+	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
+	if (PopUp)
+	{
+		// 아이템 묶음 사용으로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::Remove);
+		PopUp->AddToViewport();
+	}
+
+	RemoveFromParent();
 }
 
 void UItemContextMenuWidget::OnCancelClicked()

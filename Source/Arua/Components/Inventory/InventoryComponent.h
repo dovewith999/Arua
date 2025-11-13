@@ -104,4 +104,8 @@ public:
 	// 현재 보유 재화(골드)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int32 Golds;
+
+	// 현재 보유 재화(골드)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
+	TArray<TObjectPtr<class UDA_ItemDefinition>> TestStartItems;
 };
