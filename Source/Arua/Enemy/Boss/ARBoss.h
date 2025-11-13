@@ -16,6 +16,8 @@ class ARUA_API AARBoss : public AARMonsterBase
 	
 public:
 	AARBoss();
+	virtual void Tick(float DeltaTime) override;
+
 	
 	//추후에 interface로 리팩토링 예정
 	void AttackFireBreathSwipe();
@@ -64,7 +66,7 @@ protected:
 
 	//반지름 기준 (기본 크기 50cm, 0.5m)
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossAttackRange = 50.0 * 11.0f;/*현재 scale 2배 해놔서, 공격 범위도 2배임->아직 안함*/
+	float BossAttackRange = 50.0 * 9.0f * 2; /*현재 scale 2배 해놔서, 공격 범위도 2배임*/
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 10.0f;

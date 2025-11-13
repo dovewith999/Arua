@@ -52,6 +52,6 @@ bool UBTDecorator_AttackInRange::CalculateRawConditionValue(UBehaviorTreeCompone
 	float AttackRange = AIPawn->GetBossAttackRange();
 
 	// 캐릭터와의 거리가 공격 가능 범위 안에 있는지 확인 후 결과 반환.
-	Result = (DistanceToTarget <= AttackRange);
+	Result = (DistanceToTarget <= (AttackRange * 1.1));
 	return Result;
 }

@@ -7,11 +7,16 @@
 #include "AttributeSet/MonsterAttributeSet.h"
 #include "UI/Model/BossData.h"
 #include "UI/ViewModel/BossViewModel.h"
-#include "AI/BTTask_WaitForAttack.h"
 #include "AI/ARAI.h"
+#include "Behaviortree/BlackboardComponent.h"
+#include "DrawDebugHelpers.h"
+
 
 AARBoss::AARBoss()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
+
 	// 메시 컴포넌트 설정.
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f)
@@ -62,7 +67,6 @@ AARBoss::AARBoss()
 		MontageTurnRight = MontageTurnRightRef.Object;
 	}
 
-
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	AttributeSet = CreateDefaultSubobject<UMonsterAttributeSet>(TEXT("AttributeSet"));
 
@@ -88,6 +92,17 @@ AARBoss::AARBoss()
 void AARBoss::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//공격 범위 설정
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_ATTACKRADIUS, GetBossAttackRange());
+		}
+	}
 	
 }
 
@@ -122,6 +137,18 @@ void AARBoss::PossessedBy(AController* NewController)
 
 	VM->Initialize(Model);
 }
+
+//디버그용
+void AARBoss::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+		DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
+
+}
+
+
+
 
 void AARBoss::AttackFireBreathSwipe()
 {
