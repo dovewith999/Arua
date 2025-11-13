@@ -7,56 +7,47 @@
 #include "ARAI.h"
 #include "Enemy/Boss/ARBoss.h"
 
+
 UBTTask_TurnToTarget::UBTTask_TurnToTarget()
 {
-	NodeName = TEXT("TurntoTarget");
+    NodeName = TEXT("TurnToTarget");
+    bNotifyTick = true; //  Tick 활성화
 }
 
 EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+    return EBTNodeResult::InProgress; 
+}
 
-	// NPC가 캐릭터를 바라보는 방향.
-	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-	if (!ControllingPawn)
-	{
-		return EBTNodeResult::Failed;
-	}
+void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+    APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+    APawn* TargetPawn = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_PLAYERACTOR));
 
-	// 캐릭터 구하기.
-	APawn* TargetPawn = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_PLAYERACTOR));
+    if (!ControllingPawn || !TargetPawn)
+    {
+        FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+        return;
+    }
 
-	if (!TargetPawn)
-	{
-		return EBTNodeResult::Failed;
-	}
+    AARBoss* AIPawn = Cast<AARBoss>(ControllingPawn);
+    if (!AIPawn)
+    {
+        FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+        return;
+    }
 
-	AARBoss* AIPawn = Cast<AARBoss>(ControllingPawn);
-	if (!AIPawn)
-	{
-		return EBTNodeResult::Failed;
-	}
+    FVector LookVector = TargetPawn->GetActorLocation() - ControllingPawn->GetActorLocation();
+    FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
+    FRotator CurrentRot = ControllingPawn->GetActorRotation();
 
-	// NPC가 바라볼 방향 구하기.
-	FVector LookVector = TargetPawn->GetActorLocation() - ControllingPawn->GetActorLocation();
+    FRotator FinalRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaSeconds, AIPawn->GetBossTurnSpeed());
+    ControllingPawn->SetActorRotation(FinalRot);
+    //AIPawn->TurnLeft();
 
-	// 회전 값 구하기.
-	FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-
-	// DeltaTime.
-	UWorld* World = ControllingPawn->GetWorld();
-
-	//회전 속도
-	float TurnSpeed = AIPawn->GetBossTurnSpeed();
-
-	//부드럽게 회전 처리
-	FRotator FinalRotator = FMath::RInterpTo(ControllingPawn->GetActorRotation(), TargetRot, World->GetDeltaSeconds(), TurnSpeed);
-
-	//회전 설정
-	ControllingPawn->SetActorRotation(FinalRotator);
-
-	return EBTNodeResult::Succeeded;
-
-
-
+    //  목표 방향과 거의 같아졌는지 확인 후 종료
+    if (FMath::Abs(FinalRot.Yaw - TargetRot.Yaw) < 5.0f)
+    {
+        FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+    }
 }
