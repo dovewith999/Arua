@@ -37,22 +37,13 @@ void UARGA_LockOnDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), Player->GetLockOnDodgeMontage(), 1.f, Player->GetLockOnDodgeMontageSection());
 	PlayRollTask->OnCompleted.AddDynamic(this, &UARGA_LockOnDodge::OnCompleteCallback);
+	PlayRollTask->OnInterrupted.AddDynamic(this, &UARGA_LockOnDodge::OnInterruptedCallback);
 	PlayRollTask->ReadyForActivation();
 }
 
 void UARGA_LockOnDodge::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
 {
 	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
-
-	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
-	{
-		FGameplayTagContainer TagContainer;
-		TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
-		TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
-		ASC->CancelAbilities(&TagContainer);
-	}
-
-	K2_EndAbility();
 }
 
 void UARGA_LockOnDodge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -62,5 +53,14 @@ void UARGA_LockOnDodge::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 void UARGA_LockOnDodge::OnCompleteCallback()
 {
-	K2_EndAbility();
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = false;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+}
+
+void UARGA_LockOnDodge::OnInterruptedCallback()
+{
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = true;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
 }

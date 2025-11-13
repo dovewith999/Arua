@@ -46,4 +46,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|BossHpBar", meta = (BindWidget, AllowPrivateAccess = "true"))
 	TObjectPtr<class UBossHpBarView> BossHpBar;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|InteractImage", meta = (BindWidget, AllowPrivateAccess = "true"))
+	//TObjectPtr<class UBossHpBarView> InteractImage;
 };

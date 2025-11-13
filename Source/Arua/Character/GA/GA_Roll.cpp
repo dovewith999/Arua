@@ -38,6 +38,7 @@ void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 
 	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayRoll"), Player->GetRollMontage());
 	PlayRollTask->OnCompleted.AddDynamic(this, &UGA_Roll::OnCompleteCallback);
+	PlayRollTask->OnInterrupted.AddDynamic(this, &UGA_Roll::OnInterruptedCallback);
 	PlayRollTask->ReadyForActivation();
 }
 
@@ -45,12 +46,12 @@ void UGA_Roll::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 {
 	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
 
-	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
-	{
-		FGameplayTagContainer TagContainer;
-		TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
-		TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
-	}
+	//if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
+	//{
+	//	FGameplayTagContainer TagContainer;
+	//	TagContainer.AddTag(AruaGamePlayTags::Player_State_Roll);
+	//	TagContainer.AddTag(AruaGamePlayTags::Condition_Immunity);
+	//}
 
 	K2_EndAbility();
 }
@@ -62,5 +63,14 @@ void UGA_Roll::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGamepl
 
 void UGA_Roll::OnCompleteCallback()
 {
-	K2_EndAbility();
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = false;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+}
+
+void UGA_Roll::OnInterruptedCallback()
+{
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = true;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
 }

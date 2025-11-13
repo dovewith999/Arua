@@ -44,5 +44,8 @@ public:
 private:
 	UFUNCTION()
 	void OnCompleteCallback();
+
+	UFUNCTION()
+	void OnInterruptedCallback();
 	
 };

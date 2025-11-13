@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARCharacterPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AbilitySystemComponent.h"
 
 UARGA_PlayerWhirlwind::UARGA_PlayerWhirlwind()
 {
@@ -26,11 +27,18 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
 	Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 
-	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayWhirlwind"), Player->GetSkillMontage(AruaGamePlayTags::Ability_Whirlwind));
-	PlayRollTask->OnCompleted.AddDynamic(this, &UARGA_PlayerWhirlwind::OnCompleteCallback);
-	PlayRollTask->ReadyForActivation();
+	UAbilityTask_PlayMontageAndWait* PlayWhirlwindTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayWhirlwind"), Player->GetSkillMontage(AruaGamePlayTags::Ability_Whirlwind));
+	PlayWhirlwindTask->OnCompleted.AddDynamic(this, &UARGA_PlayerWhirlwind::OnCompleteCallback);
+	PlayWhirlwindTask->OnInterrupted.AddDynamic(this, &UARGA_PlayerWhirlwind::OnInterruptedCallback);
+	PlayWhirlwindTask->ReadyForActivation();
 
 	if (USkeletalMeshComponent* SkelMesh = Player->GetMesh())
 	{
@@ -41,9 +49,24 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	}
 }
 
+void UARGA_PlayerWhirlwind::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
+{
+	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+
+	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility, true);
+}
+
 void UARGA_PlayerWhirlwind::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (USkeletalMeshComponent* SkelMesh = Player->GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = SkelMesh->GetAnimInstance())
+		{
+			AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
+		}
+	}
 }
 
 void UARGA_PlayerWhirlwind::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -61,5 +84,14 @@ void UARGA_PlayerWhirlwind::InputReleased(const FGameplayAbilitySpecHandle Handl
 
 void UARGA_PlayerWhirlwind::OnCompleteCallback()
 {
-	K2_EndAbility();
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = false;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+}
+
+void UARGA_PlayerWhirlwind::OnInterruptedCallback()
+{
+	bool bReplicatedEndAbility = true;
+	bool bWasCancelled = true;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
 }
