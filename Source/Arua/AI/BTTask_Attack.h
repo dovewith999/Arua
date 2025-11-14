@@ -17,5 +17,9 @@ public:
 	UBTTask_Attack();
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	UPROPERTY(EditAnywhere, Category = "BTVariable")
+	int AttackType = 0;
+	int32 TestAttackNum = 0;
 	
 };
