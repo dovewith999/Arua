@@ -464,6 +464,12 @@ void AARCharacterPlayer::SetupGASInputComponent()
 	{
 		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
+		// null 체크
+		if (InputIds.IsEmpty())
+		{
+			return;
+		}
+
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[AttackAction]);
 		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillWhirlwindAction]);
 		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
