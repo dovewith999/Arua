@@ -33,6 +33,12 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 		bIsIdle = WalkSpeed < MovingThreshould;
 		bIsWalk = Cast<AARCharacterPlayer>(Owner)->GetWalkState();
 		bIsRun = Cast<AARCharacterPlayer>(Owner)->GetRunState();
+		if (Cast<AARCharacterPlayer>(Owner)->GetIsWeaponChanged())
+		{
+			WeaponType = Cast<AARCharacterPlayer>(Owner)->GetWeapon()->GetWeaponType();
+			Cast<AARCharacterPlayer>(Owner)->SetIsWeaponChanged(false);
+			bIsWeaponChanged = true;
+		}
 
 		// 이동 방향
 		FVector VelocityDirection = Velocity.GetSafeNormal();

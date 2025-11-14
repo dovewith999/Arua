@@ -55,10 +55,16 @@ public:
 	FORCEINLINE bool GetWalkState() { return bIsWalking; }
 
 	FORCEINLINE class UARComboActionData* GetComboActionData() const { return ComboActionData; }
+	FORCEINLINE bool GetIsWeaponChanged() { return IsWeaponChanged; }
+	FORCEINLINE void SetIsWeaponChanged(bool change) { IsWeaponChanged = change; }
+	FORCEINLINE class AARWeaponBase* GetWeapon() { return CurrentWeapon; }
+
 
 	virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 
 	virtual void PossessedBy(AController* NewController) override;
+
+	
 
 public:
 	void BeginLockOn();
@@ -192,10 +198,16 @@ protected:
 
 	// 무기 교체 섹션.
 protected:
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AARWeaponBase> CurrentWeapon;
 
-	void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	EWeaponType WeaponType;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Weapon)
+	uint8 IsWeaponChanged : 1;
+
+	/*void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
 	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
 
 private:

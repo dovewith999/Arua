@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "DataTables/ARWeaponData.h"
 #include "ARCharacterAnimInstance.generated.h"
 
 /**
@@ -52,6 +53,11 @@ protected:
 	uint8 bIsWalk : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	uint8 bIsWeaponChanged : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	float Angle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+	EWeaponType WeaponType;
 };
