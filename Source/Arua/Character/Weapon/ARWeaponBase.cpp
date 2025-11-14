@@ -8,7 +8,9 @@
 AARWeaponBase::AARWeaponBase()
 {
 	WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+
 	RootComponent = WeaponStaticMesh;
+	WeaponStaticMesh->SetSimulatePhysics(false);
 }
 
 void AARWeaponBase::BeginPlay()
@@ -24,20 +26,52 @@ void AARWeaponBase::BeginPlay()
 
 void AARWeaponBase::AttachToSocket(class ACharacter* Character, FName SocketName)
 {
-	USkeletalMeshComponent* CharacterMesh = Character->GetMesh();
-	if (Character)
+	if (Character->GetMesh())
 	{
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-		{
-			AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-		}
+		//if (!Character)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Character is NULL"));
+		//	return;
+		//}
+
+		//UE_LOG(LogTemp, Log, TEXT("Character OK"));
+
+		//// Mesh
+		//if (!Character->GetMesh())
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Character->GetMesh() is NULL!"));
+		//	return;
+		//}
+
+		//// Socket
+		//if (!Character->GetMesh()->DoesSocketExist(SocketName))
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Socket %s does NOT exist!"), *SocketName.ToString());
+		//	return;
+		//}
+
+		//// Root
+		//if (!RootComponent)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Weapon RootComponent is NULL!"));
+		//	return;
+		//}
+
+		//UE_LOG(LogTemp, Log, TEXT("Attach OK!"));
+
+		//AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this, Character, SocketName]()
+			{
+				AttachToComponent(Character->GetMesh(),
+					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					SocketName);
+			});
 
 
 	}
 }
 
-void AARWeaponBase::DetachToCharacter()
+void AARWeaponBase::DetachFromCharacter()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 }
@@ -52,6 +86,8 @@ void AARWeaponBase::InitializeFromData()
 	{
 		WeaponStaticMesh->SetStaticMesh(WeaponMesh);
 	}
+
+	WeaponType = Row->WeaponType;
 }
 
 
