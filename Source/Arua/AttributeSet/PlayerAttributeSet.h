@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ARAttributeSetBase.h"
-
 #include "PlayerAttributeSet.generated.h"
 
 /**
@@ -18,8 +17,19 @@ class ARUA_API UPlayerAttributeSet : public UARAttributeSetBase
 public:
 	UPlayerAttributeSet();
 
+	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, ChargeCount)
+	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, MaxChargeCount)
+
+//public:
+//	void SetChargeCount(float InNewVal);
 
 public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+private:
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|ChargeCount", meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData ChargeCount;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|ChargeCount", meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData MaxChargeCount;
 };
