@@ -20,7 +20,10 @@ UARGA_PlayerWhirlwind::UARGA_PlayerWhirlwind()
 
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Skill_Whirlwind);
-
+	
+	// 활성화 중에 Block 되는 Ability Tag
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Player_State_Skill_Whirlwind);
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Player_State_Skill_ChargeAttack);
 }
 
 void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
