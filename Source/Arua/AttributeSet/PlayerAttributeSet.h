@@ -19,9 +19,9 @@ public:
 
 	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, ChargeCount)
 	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, MaxChargeCount)
+	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, Stemina)
+	ATTRIBUTE_ACCESSORS_BASIC(UPlayerAttributeSet, MaxStemina)
 
-//public:
-//	void SetChargeCount(float InNewVal);
 
 public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
@@ -32,4 +32,10 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Attributes|ChargeCount", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData MaxChargeCount;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|Stemina", meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData Stemina;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes|Stemina", meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData MaxStemina;
 };

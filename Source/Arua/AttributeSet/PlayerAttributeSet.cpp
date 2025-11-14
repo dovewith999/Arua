@@ -11,16 +11,12 @@ UPlayerAttributeSet::UPlayerAttributeSet()
 	ChargeCount.SetCurrentValue(0.f);
 	MaxChargeCount.SetBaseValue(2.f);
 	MaxChargeCount.SetCurrentValue(2.f);	
-}
 
-//void UPlayerAttributeSet::SetChargeCount(float InNewVal)
-//{
-//	float NewVal = FMath::Max(0.f, NewVal); 
-//
-//	// Attribute Data의 기본값과 현재 값을 모두 설정
-//	ChargeCount.SetBaseValue(NewVal);
-//	ChargeCount.SetCurrentValue(NewVal);
-//}
+	Stemina.SetBaseValue(100.f);
+	Stemina.SetCurrentValue(100.f);
+	MaxStemina.SetBaseValue(100.f);
+	MaxStemina.SetCurrentValue(100.f);
+}
 
 void UPlayerAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
