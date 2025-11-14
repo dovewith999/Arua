@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "AruaTypes/Arua_EnumTypes.h"
 #include "ItemContextMenuWidget.generated.h"
 
 /**
@@ -42,9 +41,6 @@ protected:
 	// [취소] 이벤트
 	UFUNCTION()
 	void OnCancelClicked();
-
-	// 아이템 수량 선택 팝업 위젯 설정 함수
-	void SetUpItemQuantityPopupWidget(class UItemQuantityPopupWidget* PopUpWidget, EItemPopUpAction InAction);
 
 protected:
 	// 아이템 이름

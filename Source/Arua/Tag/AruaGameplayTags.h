@@ -21,7 +21,6 @@ namespace AruaGamePlayTags
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_LockOnDodge)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Whirlwind)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ChargeAttack)
-	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AddChargeCount)
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그

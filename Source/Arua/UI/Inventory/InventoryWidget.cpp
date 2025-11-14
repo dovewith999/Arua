@@ -29,10 +29,6 @@ void UInventoryWidget::InitializeInventory(UInventoryComponent* InInventory)
 		Inventory->OnInventoryUpdated.AddDynamic(this, &UInventoryWidget::OnInventoryUpdated);
 	}
 
-	// 한 행/열의 슬롯 수 초기화
-	SlotsPerRow = Inventory->SlotsPerRow;
-	SlotsPerColumn = Inventory->SlotsPerColumn;
-
 	// 슬롯 위젯 재생성
 	RefreshGrid();
 }
@@ -92,9 +88,9 @@ void UInventoryWidget::RefreshGrid()
 		}
 	}
 
-	// 현재 페이지의 시작 슬롯 인덱스
+	// 한 페이지에 표시할 최대 슬롯 수
 	const int32 MaxSlotsToShow = SlotsPerRow * SlotsPerColumn;
-	
+
 	// 그리드 초기화
 	InventoryGridPanel->ClearChildren();
 

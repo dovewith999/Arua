@@ -26,71 +26,14 @@ void UInventoryComponent::BeginPlay()
 	}
 }
 
-//int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
-//{
-//	// 예외 처리
-//	if (!ItemDef || Amount <= 0) return 0;
-//
-//	// 추가할 아이템 수량으로 추가해야 할 아이템 수량 초기화
-//	// 여러 슬롯에 나눠 추가될 수 있기 떄문에, 차감하는 방식으로 구현
-//	int32 Remaining = Amount;
-//	int32 Added = 0;
-//
-//	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
-//	for (FInventorySlot& InventorySlot : Slots)
-//	{
-//		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
-//		if (InventorySlot.ItemDefinition == ItemDef && !InventorySlot.IsFull())
-//		{
-//			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가해야 할 아이템 수량 차감
-//			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가한 개수 저장
-//			//Added += InventorySlot.AddQuantity(Amount - Added);
-//
-//			Remaining -= InventorySlot.AddQuantity(Remaining);
-//			if (Remaining <= 0) return 0;
-//			//if (Added >= Amount) return Added;
-//		}
-//	}
-//
-//	// 새 슬롯 생성
-//	if (Remaining > 0)
-//	{
-//		// 인벤토리 슬롯 배열에서 비어있는 슬롯을 확보
-//		for (FInventorySlot& InventorySlot : Slots)
-//		{
-//			if (InventorySlot.IsEmpty())
-//			{
-//				// 해당 슬롯의 아이템 정의를 추가하는 아이템으로 초기화
-//				InventorySlot.ItemDefinition = ItemDef;
-//
-//				// 해당 슬롯의 수량을 초기화. 추가하려는 아이템의 최대 수량을 넘지 않도록 Min 계산
-//				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
-//				InventorySlot.Quantity = AddAmount;
-//
-//				// 추가해야 할 아이템 수량 차감
-//				Remaining -= AddAmount;
-//				if (Remaining <= 0) return 0;
-//			}
-//		}
-//	}
-//
-//	// 하나라도 아이템을 추가한 경우
-//	if (Amount != Remaining)
-//	{
-//		// 인벤토리 업데이트 이벤트 브로드캐스트
-//		OnInventoryUpdated.Broadcast();
-//	}
-//
-//	// 추가한 수량만큼 반환
-//	return Amount - Remaining;
-//}
-
 int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 {
 	// 예외 처리
 	if (!ItemDef || Amount <= 0) return 0;
 
-	// 추가한 아이템 개수
+	// 추가할 아이템 수량으로 추가해야 할 아이템 수량 초기화
+	// 여러 슬롯에 나눠 추가될 수 있기 떄문에, 차감하는 방식으로 구현
+	int32 Remaining = Amount;
 	int32 Added = 0;
 
 	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
@@ -99,19 +42,18 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
 		if (InventorySlot.ItemDefinition == ItemDef && !InventorySlot.IsFull())
 		{
-			// 해당 슬롯에 추가하고 추가한 개수만큼 저장
-			Added += InventorySlot.AddQuantity(Amount - Added);
-			if (Added >= Amount)
-			{
-				// 인벤토리 업데이트 이벤트 브로드캐스트
-				OnInventoryUpdated.Broadcast();
-				return Added;
-			}
+			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가해야 할 아이템 수량 차감
+			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가한 개수 저장
+			//Added += InventorySlot.AddQuantity(Amount - Added);
+
+			Remaining -= InventorySlot.AddQuantity(Remaining);
+			if (Remaining <= 0) return 0;
+			//if (Added >= Amount) return Added;
 		}
 	}
 
 	// 새 슬롯 생성
-	if (Added < Amount)
+	if (Remaining > 0)
 	{
 		// 인벤토리 슬롯 배열에서 비어있는 슬롯을 확보
 		for (FInventorySlot& InventorySlot : Slots)
@@ -122,32 +64,26 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 				InventorySlot.ItemDefinition = ItemDef;
 
 				// 해당 슬롯의 수량을 초기화. 추가하려는 아이템의 최대 수량을 넘지 않도록 Min 계산
-				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Amount - Added);
+				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
 				InventorySlot.Quantity = AddAmount;
 
 				// 추가해야 할 아이템 수량 차감
-				Added += AddAmount;
-				if (Added >= Amount)
-				{
-					// 인벤토리 업데이트 이벤트 브로드캐스트
-					OnInventoryUpdated.Broadcast();
-					return Added;
-				}
+				Remaining -= AddAmount;
+				if (Remaining <= 0) return 0;
 			}
 		}
 	}
 
 	// 하나라도 아이템을 추가한 경우
-	if (Added > 0)
+	if (Amount != Remaining)
 	{
 		// 인벤토리 업데이트 이벤트 브로드캐스트
 		OnInventoryUpdated.Broadcast();
 	}
 
 	// 추가한 수량만큼 반환
-	return Added;
+	return Amount - Remaining;
 }
-
 
 void UInventoryComponent::UseItem(int32 SlotIndex)
 {

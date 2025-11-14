@@ -5,12 +5,10 @@
 #include "Components/Inventory/InventoryComponent.h"
 #include "AruaTypes/Arua_EnumTypes.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "UI/Inventory/ItemContextMenuWidget.h"
-#include "UI/Inventory/ItemToolTipWidget.h"
-
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "UI/Inventory/ItemContextMenuWidget.h"
 
 void UInventorySlotWidget::SetupSlot(UInventoryComponent* InInventory, int32 InSlotIndex)
 {
@@ -37,6 +35,7 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 		}
 	}
 
+
 	// 해당 슬롯의 아이템 데이터 가져오기
 	const FInventorySlot InventorySlot = Inventory->Slots[SlotIndex];
 
@@ -61,6 +60,7 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 			// 아이템의 수량이 1보다 크면 수량 표시
 			if (InventorySlot.Quantity > 1)
 			{
+				//QuantityText->SetText( FText::AsNumber(InventorySlot.Quantity));
 				QuantityText->SetText(FText::FromString(TEXT("x") + FText::AsNumber(InventorySlot.Quantity).ToString()));
 			}
 			else
@@ -68,66 +68,92 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 				QuantityText->SetText(FText::GetEmpty());
 			}
 		}
+
+
+		// #3: 아이템 툴팁 표시
+		// 아이템 이름, 아이템 설명, 아이템 정보(스탯 및 적용 수치)
+		const FText& ItemName = InventorySlot.ItemDefinition->ItemName;
+		const FText& ItemDescription = InventorySlot.ItemDefinition->ItemDescription;
+		FString StatString;
+
+
+		// #3-1: 아이템 정보 확보하기
+		// 아이템 분류별로 아이템 정보를 저장
+		switch (InventorySlot.ItemDefinition->ItemCategory)
+		{
+			// 장비 아이템의 경우, 공격력/방어력 등을 표시
+		case EAR_ItemCategory::Equipment:
+			break;
+
+			// 소모품 아이템의 경우, 회복량 정보를 표시
+		case EAR_ItemCategory::Consumable:
+			break;
+
+			// 그 외 카테고리는 추가 아이템 정보 표시를 안 함
+		default: break;
+		}
+
+		// 확보한 아이템 정보 문자열 저장, 없는 경우 기본값으로 저장
+		FText StatText = StatString.IsEmpty() ? FText::GetEmpty() : FText::FromString(StatString);
+
+
+		// #3-2: 아이템 설명이 없는 경우, 아이템 이름과 아이템 정보만 표시
+		if (ItemDescription.IsEmpty())
+		{
+			if (StatText.IsEmpty())
+			{
+				// 아이템 이름
+				SetToolTipText(ItemName);
+			}
+			else
+			{
+				// 아이템 이름 + 아이템 정보
+				FText ToolTip = FText::Format(FText::FromString(TEXT("{0}{1}")), ItemName, StatText);
+				SetToolTipText(ToolTip);
+			}
+		}
+		// #3-3: 아이템 설명이 있는 경우, 아이템 정보 여부에 따라 툴팁 표시
+		else
+		{
+			if (StatText.IsEmpty())
+			{
+				// 아이템 이름 + 아이템 설명
+				FText ToolTip = FText::Format(FText::FromString(TEXT("{0}\n{1}")), ItemName, ItemDescription);
+				SetToolTipText(ToolTip);
+			}
+			else
+			{
+				// 아이템 이름 + 아이템 설명 + 아이템 정보
+				FText ToolTip = FText::Format(FText::FromString(TEXT("{0}\n{1}{2}")), ItemName, ItemDescription, StatText);
+				SetToolTipText(ToolTip);
+			}
+		}
+	}
+	// 해당 슬롯의 아이템 데이터가 없는 경우 모두 빈 값으로 초기화
+	else
+	{
+		if (ItemIconImage)
+		{
+			ItemIconImage->SetBrushFromTexture(nullptr);
+		}
+		if (QuantityText)
+		{
+			QuantityText->SetText(FText::GetEmpty());
+		}
+		SetToolTipText(FText::GetEmpty());
 	}
 }
 
 void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-
-	if (ItemToolTipWidgetClass)
-	{
-		if (!ItemToolTipWidgetInstance)
-		{
-			// 아이템 툴팁 위젯 생성 및 표시
-			ItemToolTipWidgetInstance = CreateWidget<UItemToolTipWidget>(GetWorld(), ItemToolTipWidgetClass);
-			if (ItemToolTipWidgetInstance)
-			{
-				// 위젯 초기화 및 화면에 추가
-				ItemToolTipWidgetInstance->InitializeToolTip(Inventory, SlotIndex);
-				ItemToolTipWidgetInstance->AddToViewport();
-
-				// 위젯의 원점을 0으로 조정
-				ItemToolTipWidgetInstance->SetAlignmentInViewport(FVector2D(0.f, 0.f));
-
-				// 슬롯의 화면(스크린) 좌표 기준 좌상단 위치/크기 가져오기
-				const FVector2D SlotAbsPos = InGeometry.GetAbsolutePosition();
-				const FVector2D SlotAbsSize = InGeometry.GetAbsoluteSize();
-
-				// 슬롯의 위젯 크기만큼 더한 위치로 설정
-				FVector2D ToolTipPos = SlotAbsPos + FVector2D(SlotAbsSize.X, 0.f);
-
-				// 아이템 툴팁 위젯 위치 설정
-				ItemToolTipWidgetInstance->SetPositionInViewport(ToolTipPos, true);
-
-				ItemToolTipWidgetInstance->SetVisibility(ESlateVisibility::Visible);
-			}
-		}
-	}
-
 	// 마우스가 슬롯 위에 오버 시, 추가 효과 (ex. 하이라이트)
-	if (ItemHighlightImage)
-	{
-		ItemHighlightImage->SetColorAndOpacity(FLinearColor(FVector4f(1.f, 1.f, 1.f, 1.f)));
-	}
 }
 
 void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
-
-	// 아이템 툴팁 위젯 제거
-	if (ItemToolTipWidgetInstance)
-	{
-		ItemToolTipWidgetInstance->RemoveFromParent();
-		ItemToolTipWidgetInstance = nullptr;
-	}
-
 	// 마우스가 슬롯 위를 떠날 때 처리
-	if (ItemHighlightImage)
-	{
-		ItemHighlightImage->SetColorAndOpacity(FLinearColor(FVector4f(1.f, 1.f, 1.f, 0.f)));
-	}
 }
 
 FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -149,49 +175,19 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		// 예외 처리
-		if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex) || Inventory->Slots[SlotIndex].IsEmpty() || !ItemContextMenuWidgetClass)
+		if (Inventory && Inventory->Slots.IsValidIndex(SlotIndex) && !Inventory->Slots[SlotIndex].IsEmpty() && ItemContextMenuWidgetClass)
 		{
-			return Reply;
-		}
-
-		// 아이템 콘텍스트 메뉴 위젯 생성
-		if (ItemContextMenuWidgetInstance)
-		{
-			ItemContextMenuWidgetInstance->RemoveFromParent();
-			ItemContextMenuWidgetInstance = nullptr;
-		}
-
-		ItemContextMenuWidgetInstance = CreateWidget<UItemContextMenuWidget>(GetWorld(), ItemContextMenuWidgetClass);
-		if (ItemContextMenuWidgetInstance)
-		{
-			// 위젯 초기화 및 화면에 추가
-			ItemContextMenuWidgetInstance->InitializeMenu(Inventory, SlotIndex);
-			ItemContextMenuWidgetInstance->AddToViewport();
-
-			// 마우스 커서 위치
-			float MouseX = 0.f;
-			float MouseY = 0.f;
-
-			// 플레이어 컨트롤러로부터 마우스 위치 가져오기
-			APlayerController* PC = GetWorld()->GetFirstPlayerController();
-			if (PC && PC->GetMousePosition(MouseX, MouseY))
+			// 아이템 콘텍스트 메뉴 위젯 생성
+			UItemContextMenuWidget* ItemContextMenuWidget = CreateWidget<UItemContextMenuWidget>(GetWorld(), ItemContextMenuWidgetClass);
+			if (ItemContextMenuWidget)
 			{
-				// 마우스 위치 저장
-				FVector2D MenuPosition(MouseX, MouseY);
+				// 위젯 초기화
+				//ItemContextMenuWidget->InitializeMenu(Inventory, SlotIndex);
 
-				// 위젯의 원점을 0으로 조정
-				ItemContextMenuWidgetInstance->SetAlignmentInViewport(FVector2D(0.f, 0.f));
-
-				// 마우스 커서를 고려해서 오프셋 설정
-				const FVector2D Offset(1.f, 1.f);
-
-				// 위젯의 뷰포트 위치 설정
-				ItemContextMenuWidgetInstance->SetPositionInViewport(MenuPosition + Offset, true);
+				// 마우스 커서 위치에 그림
+				ItemContextMenuWidget->AddToViewport();
 			}
-
-			ItemContextMenuWidgetInstance->SetVisibility(ESlateVisibility::Visible);
 		}
-
 		return FReply::Handled();
 	}
 
@@ -212,9 +208,10 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	{
 		DragOp->Payload = this;
 		DragOp->DefaultDragVisual = this; // 현재 위젯을 드래그 비주얼로 사용
-		DragOp->Pivot = EDragPivot::CenterCenter;
+		DragOp->Pivot = EDragPivot::BottomRight;
 		OutOperation = DragOp;
 	}
+
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -225,18 +222,13 @@ bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 	// 드롭(놓을)할 슬롯 위젯 가져오기
 	if (UInventorySlotWidget* SourceWidget = Cast<UInventorySlotWidget>(InOperation->Payload))
 	{
-		// 슬롯 위젯 이동
-		Inventory->MoveItem(SourceWidget->SlotIndex, SlotIndex);
-		return true;
-
-
-		//// 같은 인벤토리여야 이동 가능
-		//if (SourceWidget->Inventory == Inventory)
-		//{
-		//	// 슬롯 위젯 이동
-		//	Inventory->MoveItem(SourceWidget->SlotIndex, SlotIndex);
-		//	return true;
-		//}
+		// 같은 인벤토리여야 이동 가능
+		if (SourceWidget->Inventory == Inventory)
+		{
+			// 슬롯 위젯 이동
+			Inventory->MoveItem(SourceWidget->SlotIndex, SlotIndex);
+			return true;
+		}
 	}
 
 	return false;

@@ -73,8 +73,9 @@ void UItemContextMenuWidget::OnBundleUseClicked()
 	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
 	if (PopUp)
 	{
-		// 아이템 수량 선택 팝업 위젯 설정
-		SetUpItemQuantityPopupWidget(PopUp, EItemPopUpAction::BundleUse);
+		// 아이템 묶음 사용으로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::BundleUse);
+		PopUp->AddToViewport();
 	}
 
 	RemoveFromParent();
@@ -103,8 +104,9 @@ void UItemContextMenuWidget::OnSplitClicked()
 	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
 	if (PopUp)
 	{
-		// 아이템 수량 선택 팝업 위젯 설정
-		SetUpItemQuantityPopupWidget(PopUp, EItemPopUpAction::Split);
+		// 아이템 나누기로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::Split);
+		PopUp->AddToViewport();
 	}
 
 	RemoveFromParent();
@@ -123,8 +125,9 @@ void UItemContextMenuWidget::OnRemoveClicked()
 	UItemQuantityPopupWidget* PopUp = CreateWidget<UItemQuantityPopupWidget>(GetWorld(), ItemQuantityPopupWidgetClass);
 	if (PopUp)
 	{
-		// 아이템 수량 선택 팝업 위젯 설정
-		SetUpItemQuantityPopupWidget(PopUp, EItemPopUpAction::Remove);
+		// 아이템 묶음 사용으로 팝업 위젯 초기화 후 그림
+		PopUp->InitializePopUp(Inventory, SlotIndex, EItemPopUpAction::Remove);
+		PopUp->AddToViewport();
 	}
 
 	RemoveFromParent();
@@ -133,33 +136,4 @@ void UItemContextMenuWidget::OnRemoveClicked()
 void UItemContextMenuWidget::OnCancelClicked()
 {
 	RemoveFromParent();
-}
-
-void UItemContextMenuWidget::SetUpItemQuantityPopupWidget(UItemQuantityPopupWidget* PopUpWidget, EItemPopUpAction InAction)
-{
-	// 위젯 초기화 및 화면에 추가
-	PopUpWidget->InitializePopUp(Inventory, SlotIndex, InAction);
-	PopUpWidget->AddToViewport();
-
-	// 화면 위치
-	int32 ViewportX = 0;
-	int32 ViewportY = 0;
-
-	// 플레이어 컨트롤러로부터 뷰포트 크기 가져오기
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	if (PC)
-	{
-		PC->GetViewportSize(ViewportX, ViewportY);
-	}
-
-	// 뷰포트 크기의 절반을 사용하여 중심 위치를 계산
-	FVector2D CenterPosition(static_cast<float>(ViewportX) * 0.5f, static_cast<float>(ViewportY) * 0.5f);
-
-	// 위젯의 원점을 중앙에 정렬
-	PopUpWidget->SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
-
-	// 위젯 위치 설정
-	PopUpWidget->SetPositionInViewport(CenterPosition, true);
-
-	PopUpWidget->SetVisibility(ESlateVisibility::Visible);
 }

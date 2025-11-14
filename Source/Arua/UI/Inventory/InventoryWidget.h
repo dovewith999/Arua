@@ -59,11 +59,11 @@ protected:
 
 	// 한 행의 슬롯 수 (열 개수)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	int32 SlotsPerRow;
+	int32 SlotsPerRow = 5;
 
 	// 한 열의 슬롯 수 (행 개수)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	int32 SlotsPerColumn;
+	int32 SlotsPerColumn = 4;
 
 	// 빈 슬롯을 표시할지 여부
 	// 빈 슬롯도 위젯을 생성해 배경을 표시하고 싶다면 true로 설정

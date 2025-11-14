@@ -219,10 +219,6 @@ void AARCharacterPlayer::BeginLockOn()
 {
 	// 캐릭터가 이동 방향으로 자동 회전하지 않도록 설정
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
-	ASC->TryActivateAbilitiesByTag(TagContainer);
 }
 
 void AARCharacterPlayer::FinishLockOn()
@@ -433,6 +429,9 @@ void AARCharacterPlayer::LockOnToggle(const FInputActionValue& Value)
 	{
 		BeginLockOn();
 
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(AruaGamePlayTags::Ability_LockOn);
+		ASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 }
 

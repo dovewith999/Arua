@@ -26,12 +26,3 @@ enum class EAR_EquipmentSlotType : uint8
 	Armor			UMETA(DisplayName = "방어구"),
 	Accessory		UMETA(DisplayName = "장신구"),
 };
-
-// 아이템 팝업 시 수행할 액션 열거형
-UENUM(BlueprintType)
-enum class EItemPopUpAction : uint8
-{
-	BundleUse	UMETA(DisplayName = "묶음 사용"),
-	Split		UMETA(DisplayName = "나누기"),
-	Remove		UMETA(DisplayName = "제거")
-};

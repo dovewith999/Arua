@@ -14,7 +14,6 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_LockOnDodge, "Ability.LockOnDodge")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Whirlwind, "Ability.Whirlwind")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChargeAttack, "Ability.ChargeAttack")
-	UE_DEFINE_GAMEPLAY_TAG(Ability_AddChargeCount, "Ability.AddChargeCount")
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
