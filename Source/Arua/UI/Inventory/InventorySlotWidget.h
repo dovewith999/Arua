@@ -47,7 +47,13 @@ protected:
 	// 슬롯 인덱스
 	int32 SlotIndex;
 
-	// 우클릭 메뉴 위젯 클래스 (아이템 사용 관련 콘텍스트)
+	// 아이템 콘텍스트 메뉴 위젯 클래스 (아이템 사용 관련 콘텍스트)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UItemContextMenuWidget> ItemContextMenuWidgetClass;
+
+private:
+	// 아이템 콘텍스트 메뉴 위젯 인스턴스
+	UPROPERTY()
+	TObjectPtr<class UItemContextMenuWidget> ItemContextMenuWidgetInstance;
+
 };

@@ -5,10 +5,11 @@
 #include "Components/Inventory/InventoryComponent.h"
 #include "AruaTypes/Arua_EnumTypes.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UI/Inventory/ItemContextMenuWidget.h"
+
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 void UInventorySlotWidget::SetupSlot(UInventoryComponent* InInventory, int32 InSlotIndex)
 {
@@ -175,19 +176,49 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		// 예외 처리
-		if (Inventory && Inventory->Slots.IsValidIndex(SlotIndex) && !Inventory->Slots[SlotIndex].IsEmpty() && ItemContextMenuWidgetClass)
+		if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex) || Inventory->Slots[SlotIndex].IsEmpty() || !ItemContextMenuWidgetClass)
 		{
-			// 아이템 콘텍스트 메뉴 위젯 생성
-			UItemContextMenuWidget* ItemContextMenuWidget = CreateWidget<UItemContextMenuWidget>(GetWorld(), ItemContextMenuWidgetClass);
-			if (ItemContextMenuWidget)
-			{
-				// 위젯 초기화
-				//ItemContextMenuWidget->InitializeMenu(Inventory, SlotIndex);
-
-				// 마우스 커서 위치에 그림
-				ItemContextMenuWidget->AddToViewport();
-			}
+			return Reply;
 		}
+
+		// 아이템 콘텍스트 메뉴 위젯 생성
+		if (ItemContextMenuWidgetInstance)
+		{
+			ItemContextMenuWidgetInstance->RemoveFromParent();
+			ItemContextMenuWidgetInstance = nullptr;
+		}
+
+		ItemContextMenuWidgetInstance = CreateWidget<UItemContextMenuWidget>(GetWorld(), ItemContextMenuWidgetClass);
+		if (ItemContextMenuWidgetInstance)
+		{
+			// 위젯 초기화 및 화면에 추가
+			ItemContextMenuWidgetInstance->InitializeMenu(Inventory, SlotIndex);
+			ItemContextMenuWidgetInstance->AddToViewport();
+
+			// 마우스 커서 위치
+			float MouseX = 0.f;
+			float MouseY = 0.f;
+
+			// 플레이어 컨트롤러로부터 마우스 위치 가져오기
+			APlayerController* PC = GetWorld()->GetFirstPlayerController();
+			if (PC && PC->GetMousePosition(MouseX, MouseY))
+			{
+				// 마우스 위치 저장
+				FVector2D MenuPosition(MouseX, MouseY);
+
+				// 위젯의 원점을 0으로 조정
+				ItemContextMenuWidgetInstance->SetAlignmentInViewport(FVector2D(0.f, 0.f));
+
+				// 마우스 커서를 고려해서 오프셋 설정
+				const FVector2D Offset(1.f, 1.f);
+
+				// 위젯의 뷰포트 위치 설정
+				ItemContextMenuWidgetInstance->SetPositionInViewport(MenuPosition + Offset, true);
+			}
+
+			ItemContextMenuWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+		}
+
 		return FReply::Handled();
 	}
 
@@ -211,7 +242,6 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 		DragOp->Pivot = EDragPivot::BottomRight;
 		OutOperation = DragOp;
 	}
-
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
