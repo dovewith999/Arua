@@ -72,12 +72,9 @@ void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Ha
 
 	if (PlayerAttributeSet)
 	{
-		// ChargeCount 값을 float에서 int로 가져옵니다. (필요하다면 FMath::RoundToInt 사용)
 		int32 ChargeCount = FMath::RoundToInt(PlayerAttributeSet->GetChargeCount());
 
-		// 2. ChargeCount를 사용하여 동적으로 섹션 이름 생성
-		// FName SectionName = FString::Printf(TEXT("Attack%d"), ChargeCount); 
-		// FName으로 변환할 때 FString을 사용하는 것이 더 안전합니다.
+		// ChargeCount를 사용하여 동적으로 섹션 이름 생성
 		FString SectionNameString = FString::Printf(TEXT("Attack%d"), ChargeCount + 1);
 		FName SectionName = FName(*SectionNameString);
 
@@ -86,8 +83,6 @@ void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Ha
 			StartOffsetEffect();
 		}
 
-		// 3. 생성된 동적 섹션 이름으로 점프 실행
-		// MontageJumpToSection(FName("Attack1")); 대신 SectionName을 사용합니다.
 		MontageJumpToSection(SectionName);
 	}
 	else
@@ -198,13 +193,13 @@ void UARGA_PlayerChargeAttack::UpdateOffsetEffect()
 
 	if (TimeRatio <= 0.5f)
 	{
-		// 0.0 -> 0.3까지 상승 (LerpAlpha는 0.0f -> 1.0f로 조정)
+		// 0.0 -> 0.5까지 상승 (LerpAlpha는 0.0f -> 1.0f로 조정)
 		float LerpAlpha = TimeRatio * 2.0f;
 		NewOffsetValue = FMath::Lerp(0.0f, 0.3f, LerpAlpha);
 	}
 	else // TimeRatio > 0.5f
 	{
-		// 0.3 -> 0.0까지 하강 (LerpAlpha는 0.0f -> 1.0f로 조정)
+		// 0.5 -> 0.0까지 하강 (LerpAlpha는 0.0f -> 1.0f로 조정)
 		float LerpAlpha = (TimeRatio - 0.5f) * 2.0f;
 		NewOffsetValue = FMath::Lerp(0.3f, 0.0f, LerpAlpha);
 	}
