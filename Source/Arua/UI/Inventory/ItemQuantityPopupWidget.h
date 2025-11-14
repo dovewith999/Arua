@@ -4,16 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "AruaTypes/Arua_EnumTypes.h"
 #include "ItemQuantityPopupWidget.generated.h"
-
-// 아이템 팝업 시 수행할 액션 열거형
-UENUM(BlueprintType)
-enum class EItemPopUpAction : uint8
-{
-	BundleUse	UMETA(DisplayName = "묶음 사용"),
-	Split		UMETA(DisplayName = "나누기"),
-	Remove		UMETA(DisplayName = "제거")
-};
 
 /**
  * 여러 개 아이템을 사용할 때, 나눌 때, 제거할 때 수량을 선택하는 팝업 위젯
@@ -38,6 +30,10 @@ protected:
 	// 취소 버튼 이벤트
 	UFUNCTION()
 	void OnCancelCliked();
+
+	// 현재 선택 수량 갱신 이벤트
+	UFUNCTION()
+	void OnQuantityLabelChangeed(float InValue);
 
 protected:
 	// 팝업 제목 텍스트 (ex. 아이템 사용, 아이템 나누기 등)

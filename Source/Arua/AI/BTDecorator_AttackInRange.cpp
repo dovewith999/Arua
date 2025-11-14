@@ -53,5 +53,34 @@ bool UBTDecorator_AttackInRange::CalculateRawConditionValue(UBehaviorTreeCompone
 
 	// 캐릭터와의 거리가 공격 가능 범위 안에 있는지 확인 후 결과 반환.
 	Result = (DistanceToTarget <= (AttackRange * 1.1));
+
+
+	//근거리 공격과 원거리 공격 중 랜덤하게 선택하여 공격
+	if (Result == true)
+	{
+		int32 RandomNum = FMath::RandRange(0, 1);
+
+		if (RandomNum == 0)
+		{
+			UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+			if (BlackboardComp)
+			{
+				FName Type = FName("AttackNear");
+				BlackboardComp->SetValueAsName(FName("PatternType"), Type);
+			}
+		}
+		else
+		{
+			UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+			if (BlackboardComp)
+			{
+				FName Type = FName("AttackFar");
+				BlackboardComp->SetValueAsName(FName("PatternType"), Type);
+			}
+		}
+	}
+
+
+
 	return Result;
 }
