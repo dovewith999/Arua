@@ -7,33 +7,20 @@
 // Sets default values
 AARWeaponBase::AARWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	RootComponent = WeaponMesh;
-
-	AttachSocketName = "hand_rSocket";
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> IdleByWeaponRef(TEXT(""));
-	if (IdleByWeaponRef.Object)
-	{
-		IdleByWeapon = IdleByWeaponRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> WalkByWeaponRef(TEXT(""));
-	if (IdleByWeaponRef.Object)
-	{
-		IdleByWeapon = IdleByWeaponRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> RunByWeaponRef(TEXT(""));
-	if (RunByWeaponRef.Object)
-	{
-		IdleByWeapon = RunByWeaponRef.Object;
-	}
-
+	WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	RootComponent = WeaponStaticMesh;
 }
+
+void AARWeaponBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (WeaponDataTable && WeaponName != NAME_None)
+	{
+		InitializeFromData();
+	}
+}
+
 
 void AARWeaponBase::AttachToSocket(class ACharacter* Character, FName SocketName)
 {
@@ -45,14 +32,26 @@ void AARWeaponBase::AttachToSocket(class ACharacter* Character, FName SocketName
 		{
 			AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
 		}
+
+
 	}
-
-
 }
 
 void AARWeaponBase::DetachToCharacter()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+}
+
+void AARWeaponBase::InitializeFromData()
+{
+	const FARWeaponData* Row = WeaponDataTable->FindRow<FARWeaponData>(WeaponName, TEXT("Weapon Initialize"));
+
+	WeaponData = *Row;
+
+	if (UStaticMesh* WeaponMesh = Row->WeaponMeshAsset.LoadSynchronous())
+	{
+		WeaponStaticMesh->SetStaticMesh(WeaponMesh);
+	}
 }
 
 
