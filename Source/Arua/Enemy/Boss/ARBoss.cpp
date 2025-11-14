@@ -128,6 +128,7 @@ void AARBoss::PossessedBy(AController* NewController)
 			const_cast<UAttributeSet*>(ASC->GetAttributeSet(UMonsterAttributeSet::StaticClass()))
 		);
 
+
 		UE_LOG(LogTemp, Error, TEXT("AttributeSet is NULL in constructor"));
 
 	}
@@ -143,7 +144,7 @@ void AARBoss::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-		//DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
 
 }
 
