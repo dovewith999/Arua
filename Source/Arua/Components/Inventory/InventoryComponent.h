@@ -97,6 +97,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 MaxSlots = 60;
 
+	// 한 행의 슬롯 수 (열 개수)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
+	int32 SlotsPerRow = 5;
+
+	// 한 열의 슬롯 수 (행 개수)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
+	int32 SlotsPerColumn = 4;
+
 	// 인벤토리 슬롯 배열
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<FInventorySlot> Slots;
