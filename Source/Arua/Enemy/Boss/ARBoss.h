@@ -52,7 +52,7 @@ protected:
 	//BP에서 설정하기
 
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
-	float BossTurnSpeed = 10.0f;
+	float BossTurnSpeed = 20.0f;
 
 
 
