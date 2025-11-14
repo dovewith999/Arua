@@ -40,6 +40,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> QuantityText;
 
+	// 아이템 슬롯 하이트라이트 이미지
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> ItemHighlightImage;
+
 	// 슬롯이 속한 인벤토리
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
@@ -51,9 +55,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UItemContextMenuWidget> ItemContextMenuWidgetClass;
 
+	// 아이템 툴팁 위젯 클래스
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class UItemToolTipWidget> ItemToolTipWidgetClass;
+
 private:
 	// 아이템 콘텍스트 메뉴 위젯 인스턴스
 	UPROPERTY()
 	TObjectPtr<class UItemContextMenuWidget> ItemContextMenuWidgetInstance;
+
+	// 아이템 툴팁 위젯 인스턴스
+	UPROPERTY()
+	TObjectPtr<class UItemToolTipWidget> ItemToolTipWidgetInstance;
 
 };
