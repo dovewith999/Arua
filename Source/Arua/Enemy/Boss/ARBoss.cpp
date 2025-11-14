@@ -53,6 +53,13 @@ AARBoss::AARBoss()
 		MontageComboAttackPawLeft_TailRight = MontageComboAttackPawLeft_TailRightRef.Object;
 	}
 
+	//토네이도 공격 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackShootTornadoRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_MakeTornado.AM_MakeTornado"));
+	if (MontageAttackShootTornadoRef.Succeeded())
+	{
+		MontageAttackShootTornado = MontageAttackShootTornadoRef.Object;
+	}
+
 	//왼쪽 회전 에셋 지정
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTurnLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Turn_Left.AM_Turn_Left"));
 	if (MontageTurnLeftRef.Succeeded())
@@ -76,15 +83,6 @@ AARBoss::AARBoss()
 	AIControllerClass = AARAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-
-	//if (AttributeSet)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("AttributeSet created in constructor: %s"), *AttributeSet->GetName());
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("AttributeSet is NULL in constructor"));
-	//}
 }
 
 //GAS
@@ -128,6 +126,7 @@ void AARBoss::PossessedBy(AController* NewController)
 			const_cast<UAttributeSet*>(ASC->GetAttributeSet(UMonsterAttributeSet::StaticClass()))
 		);
 
+
 		UE_LOG(LogTemp, Error, TEXT("AttributeSet is NULL in constructor"));
 
 	}
@@ -143,7 +142,7 @@ void AARBoss::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-		//DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
 
 }
 
@@ -212,6 +211,28 @@ void AARBoss::ComboAttackPawLeft_TailRight()
 		if (BB)
 		{
 			BB->SetValueAsFloat(BBKEY_WAITTIME, ComboAttackPawLeft_TailRightTime);
+		}
+	}
+
+}
+
+void AARBoss::AttackShootTornado()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageAttackShootTornado);
+
+	}
+
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_WAITTIME, AttackShootTornadoTime);
 		}
 	}
 

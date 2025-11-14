@@ -20,5 +20,12 @@ public:
 protected:
 	// 데코레이터가 실행될 때 호출되는 함수.
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
+
+	UPROPERTY(EditAnywhere, Category = BossPatternType, meta = (AllowPrivateAccess = "true"))
+	FName PatternType = TEXT("d");
+
+
+
+
 };
 

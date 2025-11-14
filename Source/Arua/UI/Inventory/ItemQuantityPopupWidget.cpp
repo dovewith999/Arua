@@ -76,7 +76,7 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 	if (QuantityLabel)
 	{
 		// 현재 수량 / 최대 수량
-		QuantityLabel->SetText(FText::Format(FText::FromString(TEXT("{0} / {1}")), FText::AsNumber(MaxQuantity), FText::AsNumber(MaxQuantity)));
+		QuantityLabel->SetText(FText::Format(FText::FromString(TEXT("{0} / {1}")), FText::AsNumber(1), FText::AsNumber(MaxQuantity)));
 	}
 
 
@@ -86,12 +86,15 @@ void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory,
 		// 스핀박스 기본/최소/최대 값 설정
 		QuantitySpinBox->SetMinValue(1.f);
 		QuantitySpinBox->SetMaxValue(static_cast<float>(MaxQuantity));
-		QuantitySpinBox->SetValue(1.f);
+		QuantitySpinBox->SetValue(static_cast<float>(MaxQuantity / 2));
 
 		// 슬라이더를 통한 최소/최대 값 설정
 		QuantitySpinBox->SetDelta(1.f); // 숫자 이동값 정도
 		QuantitySpinBox->SetMinSliderValue(1.f);
 		QuantitySpinBox->SetMaxSliderValue(static_cast<float>(MaxQuantity));
+
+		// 스핀박스의 값이 변할 때 마다 현재 선택 수량 갱신 이벤트 바인딩
+		QuantitySpinBox->OnValueChanged.AddDynamic(this, &UItemQuantityPopupWidget::OnQuantityLabelChangeed);
 	}
 }
 
@@ -149,4 +152,16 @@ void UItemQuantityPopupWidget::OnConfirmCliked()
 void UItemQuantityPopupWidget::OnCancelCliked()
 {
 	RemoveFromParent();
+}
+
+void UItemQuantityPopupWidget::OnQuantityLabelChangeed(float InValue)
+{
+	// 슬롯의 아이템 데이터 가져오기
+	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+
+	if (QuantityLabel)
+	{
+		// 현재 수량 / 최대 수량 갱신
+		QuantityLabel->SetText(FText::Format(FText::FromString(TEXT("{0} / {1}")), FText::AsNumber(InValue), FText::AsNumber(InventorySlot.Quantity)));
+	}
 }
