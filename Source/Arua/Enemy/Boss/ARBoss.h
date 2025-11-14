@@ -23,23 +23,38 @@ public:
 	void AttackFireBreathSwipe();
 	void AttackPawLeft();
 	void ComboAttackPawLeft_TailRight();
+	void AttackShootTornado();
 	void TurnLeft();
 	void TurnRight();
 
 
 	//getter, setter
-	FORCEINLINE float GetBossAttackRange() { return BossAttackRange; }
-	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
-
 	FORCEINLINE float GetAttackFireBreathSwipeTime() { return AttackFireBreathSwipeTime; }
 	FORCEINLINE float GetAttackPawLeftTime() { return AttackPawLeftTime; }
 	FORCEINLINE float GetComboAttackPawLeft_TailRightTime() { return ComboAttackPawLeft_TailRightTime; }
-
+	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
+	FORCEINLINE float GetBossAttackRange() const { return BossAttackRange; }
 
 	virtual void BeginPlay() override;
 
+
+
 	//GAS 관련 함수
 	virtual void PossessedBy(AController* NewController) override;
+
+protected:
+	//Decorator, Task 관련 변수
+	//반지름 기준 (기본 크기 50cm, 0.5m)
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
+	float BossAttackRange = 50.0f * 8 * 2;
+	//기본 공격 범위 :  50*5*2 로 할듯.
+	//범위 공격 : 50.0f * 8 * 2;
+	//BP에서 설정하기
+
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
+	float BossTurnSpeed = 10.0f;
+
+
 
 	//GA 관련 변수
 protected:
@@ -47,38 +62,37 @@ protected:
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
 
 	//Montage 관련 변수
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackFireBreathSwipe;
 
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackPawLeft;
 
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageComboAttackPawLeft_TailRight;
+
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageAttackShootTornado;
 public:
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageTurnLeft;
 
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageTurnRight;
+
+
 protected:
-	//Decorator, Task 관련 변수
 
-	//반지름 기준 (기본 크기 50cm, 0.5m)
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossAttackRange = 50.0 * 9.0f * 2; /*현재 scale 2배 해놔서, 공격 범위도 2배임*/
-
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
-	float BossTurnSpeed = 10.0f;
-
-
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float AttackFireBreathSwipeTime = 4.0f;
 
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float AttackPawLeftTime = 1.8f;
 
-	UPROPERTY(EditAnywhere, Category = CharacterControl, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float ComboAttackPawLeft_TailRightTime = 3.1f;
+
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
+	float AttackShootTornadoTime = 1.066f * 3;
 
 };

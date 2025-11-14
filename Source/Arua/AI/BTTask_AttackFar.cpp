@@ -1,17 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTTask_Attack.h"
+#include "AI/BTTask_AttackFar.h"
 #include "AIController.h"
 #include "Enemy/Boss/ARBoss.h"
 
-UBTTask_Attack::UBTTask_Attack()
+UBTTask_AttackFar::UBTTask_AttackFar()
 {
-	NodeName = TEXT("AttackNear");
-
+	NodeName = TEXT("AttackFar");
 }
 
-EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_AttackFar::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -27,12 +26,9 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	int32 RandomNum = FMath::RandRange(0, 1);
+	AIPawn->AttackShootTornado();
 
-	if (RandomNum == 0)
-		AIPawn->AttackPawLeft();
-	else
-		AIPawn->ComboAttackPawLeft_TailRight();
+
 
 
 	return EBTNodeResult::Succeeded;

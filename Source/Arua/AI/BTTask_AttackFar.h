@@ -4,22 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_Attack.generated.h"
+#include "BTTask_AttackFar.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API UBTTask_Attack : public UBTTaskNode
+class ARUA_API UBTTask_AttackFar : public UBTTaskNode
 {
 	GENERATED_BODY()
+	
 public:
-	UBTTask_Attack();
+	UBTTask_AttackFar();
+
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-	UPROPERTY(EditAnywhere, Category = "BTVariable")
-	int AttackType = 0;
-	int32 TestAttackNum = 0;
-	
+
+
 };
