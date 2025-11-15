@@ -59,6 +59,10 @@ private:
     // 효과가 완료되었을 때 호출되는 정리 함수
     void FinishOffsetEffect();
 
+protected:
+    UPROPERTY()
+    bool bInputReleaseHandled = false;
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> ChargeAttackMontage;

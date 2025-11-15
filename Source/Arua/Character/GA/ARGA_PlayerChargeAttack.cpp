@@ -21,10 +21,16 @@ UARGA_PlayerChargeAttack::UARGA_PlayerChargeAttack()
 
 	// 활성화 시 Owner에게 부여되는 Tag
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Skill_ChargeAttack);
+
+	// 활성화 중에 Block 되는 Ability Tag
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Ability_Whirlwind);
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Ability_ChargeAttack);
 }
 
 void UARGA_PlayerChargeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate ChargeAttack"));
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
@@ -38,6 +44,8 @@ void UARGA_PlayerChargeAttack::ActivateAbility(const FGameplayAbilitySpecHandle 
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
+
+	bInputReleaseHandled = false;
 
 	UAbilityTask_PlayMontageAndWait* PlayWhirlwindTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayChargeAttack"), ChargeAttackMontage);
 	PlayWhirlwindTask->OnCompleted.AddDynamic(this, &UARGA_PlayerChargeAttack::OnCompleteCallback);
@@ -67,6 +75,15 @@ void UARGA_PlayerChargeAttack::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	if (bInputReleaseHandled)
+	{
+		return;
+	}
+		
+	bInputReleaseHandled = true;
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Ability Input Released"));
+
 	const UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(
 		Player->GetAbilitySystemComponent()->GetAttributeSet(UPlayerAttributeSet::StaticClass()));
 

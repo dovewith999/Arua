@@ -44,6 +44,10 @@ protected:
         const FGameplayAbilityActorInfo* ActorInfo, 
         const FGameplayAbilityActivationInfo ActivationInfo) override;
 
+protected:
+    UPROPERTY()
+    bool bInputReleaseHandled = false;
+
 private:
     UFUNCTION()
     void OnCompleteCallback();

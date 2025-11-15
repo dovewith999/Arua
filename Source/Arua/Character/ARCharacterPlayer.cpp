@@ -483,19 +483,31 @@ void AARCharacterPlayer::SetupGASInputComponent()
 		}
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[AttackAction]);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillWhirlwindAction]);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
+
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Started, this, &AARCharacterPlayer::GASInputHoldStart, InputIds[SkillWhirlwindAction]);
+		//EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
 		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
 
-		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillChargeAttackAction]);
-		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
+		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Started, this, &AARCharacterPlayer::GASInputHoldStart, InputIds[SkillChargeAttackAction]);
+		//EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
 		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
+	}
+}
+
+void AARCharacterPlayer::GASInputHoldStart(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec && !Spec->IsActive())
+	{
+		Spec->InputPressed = true;
+		ASC->TryActivateAbility(Spec->Handle);
 	}
 }
 
 void AARCharacterPlayer::GASInputPressed(int32 InputId)
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+
 	if (Spec)
 	{
 		Spec->InputPressed = true;

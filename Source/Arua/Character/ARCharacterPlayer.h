@@ -183,6 +183,7 @@ protected:
 
 protected:
 	void SetupGASInputComponent();
+	void GASInputHoldStart(int32 InputId);
 	void GASInputPressed(int32 InputId);
 	void GASInputReleased(int32 InputId);
 

@@ -22,12 +22,15 @@ UARGA_PlayerWhirlwind::UARGA_PlayerWhirlwind()
 	ActivationOwnedTags.AddTag(AruaGamePlayTags::Player_State_Skill_Whirlwind);
 	
 	// 활성화 중에 Block 되는 Ability Tag
-	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Player_State_Skill_Whirlwind);
-	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Player_State_Skill_ChargeAttack);
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Ability_Whirlwind);
+	BlockAbilitiesWithTag.AddTag(AruaGamePlayTags::Ability_ChargeAttack);
 }
 
 void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate Whirlwind"));
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
@@ -36,7 +39,7 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	//Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
+	bInputReleaseHandled = false;
 
 	UAbilityTask_PlayMontageAndWait* PlayWhirlwindTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayWhirlwind"), Player->GetSkillMontage(AruaGamePlayTags::Ability_Whirlwind));
 	PlayWhirlwindTask->OnCompleted.AddDynamic(this, &UARGA_PlayerWhirlwind::OnCompleteCallback);
@@ -62,18 +65,17 @@ void UARGA_PlayerWhirlwind::CancelAbility(const FGameplayAbilitySpecHandle Handl
 void UARGA_PlayerWhirlwind::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	if (USkeletalMeshComponent* SkelMesh = Player->GetMesh())
-	{
-		if (UAnimInstance* AnimInstance = SkelMesh->GetAnimInstance())
-		{
-			AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
-		}
-	}
 }
 
 void UARGA_PlayerWhirlwind::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	if (bInputReleaseHandled)
+	{
+		return;
+	}
+
+	bInputReleaseHandled = true;
+
 	MontageJumpToSection(FName("End_Attack"));
 
 	if (USkeletalMeshComponent* SkelMesh = Player->GetMesh())
