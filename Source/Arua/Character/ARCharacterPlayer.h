@@ -208,8 +208,11 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Weapon)
 	uint8 IsWeaponChanged : 1;
 
-	/*void EquipWeapon(class AARWeaponBase* Weapon, FName SocketName);
-	void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<class AARWeaponBase> StartWeaponClass;
+
+	void EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName);
+	//void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용

@@ -20,7 +20,7 @@ public:
 	// 무기를 장착하는 함수
 	virtual void AttachToSocket(class ACharacter* Character, FName SocketName);
 	// 무기를 해제하는 함수
-	virtual void DetachToCharacter();
+	virtual void DetachFromCharacter();
 
 	virtual void InitializeFromData();
 

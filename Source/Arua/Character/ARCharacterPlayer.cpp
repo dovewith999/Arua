@@ -142,6 +142,20 @@ AARCharacterPlayer::AARCharacterPlayer()
 		ComboActionData = ComboActionDataRef.Object;
 	}
 
+	//if (StartWeaponClass)
+	//{
+	//	CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+	//
+	//	if (CurrentWeapon)
+	//	{
+	//		EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
+	//	}
+	//}
+	//else {
+	//	UE_LOG(LogTemp, Log, TEXT("StartWeaponClass"));
+	//}
+
+	
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -156,6 +170,17 @@ void AARCharacterPlayer::BeginPlay()
 	bIsRunning = false;
 	bIsWalking = false;
 	bIsRolling = false;
+
+	if (StartWeaponClass)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+
+		if (CurrentWeapon)
+		{
+			EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
+			
+		}
+	}
 }
 
 
@@ -535,19 +560,28 @@ void AARCharacterPlayer::GASInputReleased(int32 InputId)
 	}
 }
 
-//void AARCharacterPlayer::EquipWeapon(AARWeaponBase* Weapon, FName SocketName)
-//{
-//	if (Weapon && GetMesh())
-//	{
-//		CurrentWeapon = Weapon;
-//
-//		Weapon->AttachToSocket(this,SocketName);
-//		if (UAnimInstance* AnimInst = GetMesh()->GetAnimInstance())
-//		{
-//			//GetMesh()->SetAnimInstanceClass();
-//		}
-//	}
-//}
+void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName)
+{
+	if (EWeapon && GetMesh())
+	{
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->DetachFromCharacter();
+		}
+
+		CurrentWeapon = EWeapon;
+		
+
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->AttachToSocket(this, SocketName);
+			SetIsWeaponChanged(true);
+			WeaponType = CurrentWeapon->GetWeaponType();
+		}
+		
+	}
+	
+}
 
 //void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)
 //{
