@@ -28,8 +28,7 @@ UARGA_PlayerWhirlwind::UARGA_PlayerWhirlwind()
 
 void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate Whirlwind"));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate Whirlwind"));
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -65,6 +64,14 @@ void UARGA_PlayerWhirlwind::CancelAbility(const FGameplayAbilitySpecHandle Handl
 void UARGA_PlayerWhirlwind::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (USkeletalMeshComponent* SkelMesh = Player->GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = SkelMesh->GetAnimInstance())
+		{
+			AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
+		}
+	}
 }
 
 void UARGA_PlayerWhirlwind::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)

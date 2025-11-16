@@ -29,7 +29,7 @@ UARGA_PlayerChargeAttack::UARGA_PlayerChargeAttack()
 
 void UARGA_PlayerChargeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate ChargeAttack"));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate ChargeAttack"));
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -67,22 +67,19 @@ void UARGA_PlayerChargeAttack::EndAbility(const FGameplayAbilitySpecHandle Handl
 	UPlayerAttributeSet* PlayerAttributeSet = const_cast<UPlayerAttributeSet*>(Cast<UPlayerAttributeSet>(
 		Player->GetAbilitySystemComponent()->GetAttributeSet(UPlayerAttributeSet::StaticClass())));
 
-	//const UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(
-	//	Player->GetAbilitySystemComponent()->GetAttributeSet(UPlayerAttributeSet::StaticClass()));
-
 	PlayerAttributeSet->SetChargeCount(0.f);
 }
 
 void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Ability Input Released"));
+
 	if (bInputReleaseHandled)
 	{
 		return;
 	}
 		
 	bInputReleaseHandled = true;
-
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Ability Input Released"));
 
 	const UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(
 		Player->GetAbilitySystemComponent()->GetAttributeSet(UPlayerAttributeSet::StaticClass()));
@@ -167,7 +164,7 @@ void UARGA_PlayerChargeAttack::StartOffsetEffect()
 		// 기존 타이머가 있다면 해제하고 CurrentOffsetTime 초기화
 		if (OffsetTimerHandle.IsValid())
 		{
-			// 기존 타이머를 클리어합니다. (활성화 여부와 상관없이 안전하게 초기화)
+			// 기존 타이머를 클리어 (활성화 여부와 상관없이 안전하게 초기화)
 			GetWorld()->GetTimerManager().ClearTimer(OffsetTimerHandle);
 		}
 
@@ -188,24 +185,24 @@ void UARGA_PlayerChargeAttack::StartOffsetEffect()
 
 void UARGA_PlayerChargeAttack::UpdateOffsetEffect()
 {
-	// 매 프레임의 DeltaTime 대신, 타이머 설정 시 사용한 간격(0.01초)을 사용합니다.
+	// 매 프레임의 DeltaTime 대신, 타이머 설정 시 사용한 간격(0.01초)을 사용
 	const float TickInterval = 0.01f;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Timer Update")); // 화면출력
 
-	// 현재 진행 시간을 누적합니다.
+	// 현재 진행 시간을 누적
 	CurrentOffsetTime += TickInterval;
 
 	// 전체 지속 시간에 대한 현재 진행 비율 (0.0 -> 1.0)
 	float TimeRatio = CurrentOffsetTime / OffsetDuration;
 
-	// 만약 TimeRatio가 1.0을 초과하면 애니메이션을 종료하고 강제로 1.0으로 설정합니다.
+	// 만약 TimeRatio가 1.0을 초과하면 애니메이션을 종료하고 강제로 1.0으로 설정
 	if (TimeRatio >= 1.0f)
 	{
 		TimeRatio = 1.0f;
 	}
 
-	// 0.0 -> 0.5f -> 0.0f 로직 구현 (삼각파 형태로 변경)
+	// 0.0 -> 0.5f -> 0.0f 로직 구현
 	float NewOffsetValue = 0.0f;
 
 	if (TimeRatio <= 0.5f)
@@ -220,8 +217,6 @@ void UARGA_PlayerChargeAttack::UpdateOffsetEffect()
 		float LerpAlpha = (TimeRatio - 0.5f) * 2.0f;
 		NewOffsetValue = FMath::Lerp(0.3f, 0.0f, LerpAlpha);
 	}
-
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("NewOffSetValue : %f"), NewOffsetValue)); // 화면출력
 
 	// 머티리얼 파라미터 업데이트
 	UVOffsetMID->SetScalarParameterValue(FName("Offset"), NewOffsetValue);
@@ -240,15 +235,14 @@ void UARGA_PlayerChargeAttack::FinishOffsetEffect()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("FinishOffsetEffect")); // 화면출력
 
-	// 최종적으로 0.0f로 설정하여 혹시 모를 잔상을 없앱니다.
 	if (UVOffsetMID)
 	{
 		UVOffsetMID->SetScalarParameterValue(FName("Offset"), 0.0f);
 	}
 
-	// 타이머를 해제합니다.
+	// 타이머를 해제.
 	GetWorld()->GetTimerManager().ClearTimer(OffsetTimerHandle);
 
-	// 타이머 핸들을 비유효(Invalid) 상태로 만듭니다.
+	// 타이머 핸들을 비유효(Invalid) 상태로 만듦.
 	OffsetTimerHandle.Invalidate();
 }
