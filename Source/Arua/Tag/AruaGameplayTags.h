@@ -50,6 +50,9 @@ namespace AruaGamePlayTags
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Tag)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_AttackHit)
 
+	/* Quest Tags */
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(QuestItem);
+
 	/*Weapon Tag*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Weapon_None)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Weapon_Sword)
