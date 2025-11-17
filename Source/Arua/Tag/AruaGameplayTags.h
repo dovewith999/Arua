@@ -49,4 +49,7 @@ namespace AruaGamePlayTags
 	/*Player Hit Tag*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Tag)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_AttackHit)
+
+	/* Quest Tags */
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(QuestItem);
 }
