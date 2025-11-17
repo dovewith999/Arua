@@ -47,4 +47,8 @@ namespace AruaGamePlayTags
 	/*Weapon Tag*/
 	UE_DEFINE_GAMEPLAY_TAG(Character_Weapon_None,"Character.Weapon.None")
 	UE_DEFINE_GAMEPLAY_TAG(Character_Weapon_Sword,"Character.Weapon.Sword")
+
+	/*Gameplay Cue Tags*/
+	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Monster_Hit, "GameplayCue.Monster.Hit")
+	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack, "GameplayCue.Player.Attack")
 }

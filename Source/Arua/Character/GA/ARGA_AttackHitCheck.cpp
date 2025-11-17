@@ -91,7 +91,34 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 			}
 		}
 
+		else
+		{
+			ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+			ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 
+			if (TargetCharacter && Instigator)
+			{
+				// GameplayCue 파라미터 설정
+				FGameplayCueParameters CueParams;
+				CueParams.Instigator = Instigator;
+				CueParams.EffectCauser = Instigator;
+				CueParams.Location = HitResult.ImpactPoint;
+				CueParams.Normal = HitResult.ImpactNormal;
+				CueParams.SourceObject = HitResult.GetActor();
+
+				// 몬스터 ASC 가져오기
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+
+				if (TargetASC)
+				{
+					// 몬스터 Hit Cue 실행
+					TargetASC->ExecuteGameplayCue(
+						AruaGamePlayTags::GameplayCue_Monster_Hit,
+						CueParams
+					);
+				}
+			}
+		}
 	}
 
 	bool bReplicatedEndAbility = true;
