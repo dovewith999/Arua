@@ -67,6 +67,13 @@ AARBoss::AARBoss()
 		MontageAttackStump = MontageAttackStumpRef.Object;
 	}
 
+	//소환하는 폭발 효과 에셋 지정
+	static ConstructorHelpers::FClassFinder<AActor> SpawnExplodeRef(TEXT("/Game/Blueprints/Enemy/Boss/BP_Explode.BP_Explode_C"));
+	if (SpawnExplodeRef.Succeeded())
+	{
+		SpawnExplode = SpawnExplodeRef.Class;
+	}
+
 
 	//왼쪽 회전 에셋 지정
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTurnLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Turn_Left.AM_Turn_Left"));
@@ -266,7 +273,10 @@ void AARBoss::AttackStump()
 		{
 			BB->SetValueAsFloat(BBKEY_WAITTIME, AttackStumpTime);
 		}
+		//SpawnActor(SpawnExplode, 500.0f); 
+		//animnotify 에서 call 해서 eventgrpah에서 사용중이여서 굳이 호출할 필요가 없음.
 	}
+
 }
 
 void AARBoss::TurnLeft()
@@ -289,3 +299,26 @@ void AARBoss::TurnRight()
 	}
 }
 
+void AARBoss::SpawnBossActor(TSubclassOf<AActor> ActorToSpawn, float Distance, float SetZAxis)
+{
+	if (!ActorToSpawn) return;
+
+	FVector BossLocation = GetActorLocation();
+
+	FVector Forward = GetActorForwardVector();
+
+	FVector SpawnLocation = BossLocation + Forward * Distance;
+
+	SpawnLocation.Z += SetZAxis;
+
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+
+	GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnLocation, SpawnRotation, Params);
+
+
+}
