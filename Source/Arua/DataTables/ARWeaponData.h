@@ -28,34 +28,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Data)
 	FText DisplayName;
 
-	// 무기 타입
+	// 무기 태그
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
-	EWeaponType WeaponType;
-
+	FName WeaponTag;
 
 	// 무기 스태틱 메시
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Data)
 	TSoftObjectPtr<UStaticMesh> WeaponMeshAsset;
 
-	// Idle 애니메이션
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-	TSoftObjectPtr<UAnimSequence> IdleAnimation;
+	/*UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Data)
+	TSoftObjectPtr<class UAnimMontage> WeaponEquipMontageData;
 
-	// 락온이 되지 않았을 때 걷기 애니메이션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-	TSoftObjectPtr<UAnimSequence> NotLockOnWalkAnimation;
-
-	// 락온이 되었을 때 걷기 모션
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-	TSoftObjectPtr<UBlendSpace> LockOnWalkAnimation;
-	
-	// 공격 애님 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-	TSoftObjectPtr<UAnimMontage> AttackMontage;
-
-	// 스페이스바 몽타주 - 구르기나 슬라이드
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
-	TSoftObjectPtr<UAnimMontage> SpaceBarAnimMontage;
+	TSoftObjectPtr<class UAnimInstance> AnimInstanceByWeaponData;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	float AttackPower;

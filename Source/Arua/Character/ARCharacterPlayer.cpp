@@ -51,6 +51,14 @@ AARCharacterPlayer::AARCharacterPlayer()
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	}
 
+	// 테스트 영역 시작
+	/*static ConstructorHelpers::FObjectFinder<UAnimMontage> WeaponEquipMontageRef(TEXT("/Game/Animation/Player/AM_WeaponEquip.AM_WeaponEquip"));
+	if (WeaponEquipMontageRef.Object)
+	{
+		WeaponEquipMontage = WeaponEquipMontageRef.Object;
+	}*/
+	// 테스트 영역 끝
+
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -90.0f), FRotator(0.0f, -90.0f, 0.0f));
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -68,7 +76,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 	//	FName("hand_rSocket")
 	//);
 
-	if (CurrentWeapon)
+	/*if (CurrentWeapon)
 	{
 		CurrentWeapon->AttachToSocket(this, TEXT("hand_rSocket"));
 		WeaponType = CurrentWeapon->GetWeaponType();
@@ -77,7 +85,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 	else {
 		WeaponType = EWeaponType::None;
 		SetIsWeaponChanged(false);
-	}
+	}*/
 
 	// 퀘스트 컴포넌트 CDO 초기화
 	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
@@ -142,20 +150,12 @@ AARCharacterPlayer::AARCharacterPlayer()
 		ComboActionData = ComboActionDataRef.Object;
 	}
 
-	//if (StartWeaponClass)
-	//{
-	//	CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
-	//
-	//	if (CurrentWeapon)
-	//	{
-	//		EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
-	//	}
-	//}
-	//else {
-	//	UE_LOG(LogTemp, Log, TEXT("StartWeaponClass"));
-	//}
+	static ConstructorHelpers::FObjectFinder<UInputAction> WeaponChangeActionRef(TEXT("/Game/Input/IA_Weapon.IA_Weapon"));
+	if (nullptr != WeaponChangeActionRef.Object)
+	{
+		WeaponChangeAction = WeaponChangeActionRef.Object;
+	}
 
-	
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -178,9 +178,11 @@ void AARCharacterPlayer::BeginPlay()
 		if (CurrentWeapon)
 		{
 			EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
-			
+			//SetIsWeaponChanged(true);
 		}
 	}
+
+	/*WeaponType = EWeaponType::None;*/
 }
 
 
@@ -198,6 +200,7 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AARCharacterPlayer::LockOnToggle);
 	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
+	EnhancedInputComponent->BindAction(WeaponChangeAction, ETriggerEvent::Started, this, &AARCharacterPlayer::WeaponChange);
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
 
 	SetupGASInputComponent();
@@ -466,6 +469,52 @@ void AARCharacterPlayer::RollCompleted()
 	bIsRolling = false;
 }
 
+void AARCharacterPlayer::WeaponChange()
+{
+	if ((GetCharacterMovement()->Velocity.Size2D())> KINDA_SMALL_NUMBER || GetIsWeaponChanged())
+	{
+			return;
+	}
+
+	FTimerHandle TimerHandle;
+	FTimerHandle AnimTimerHandle;
+	FName SectionName;
+	//SetIsWeaponChanged(true);
+	if (CurrentWeapon == nullptr)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+
+		if (CurrentWeapon)
+		{
+			EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
+			/*GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+			GetMesh()->SetAnimInstanceClass(SwordAnimClass.LoadSynchronous());*/
+			//SectionName = TEXT("WeaponEquip");
+		}
+	}
+	else 
+	{
+		//float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
+		//GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);
+		//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
+		CurrentWeapon->DetachFromCharacter();
+		CurrentWeapon->Destroy();
+		
+		CurrentWeapon = nullptr;
+		WeaponTag = FGameplayTag::RequestGameplayTag("Character.Weapon.None");
+		//WeaponType = EWeaponType::None;
+		//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		//GetMesh()->SetAnimInstanceClass(NoneAnimClass.LoadSynchronous());
+		//SectionName = TEXT("WeaponUnarm");
+	}
+	
+
+	/*float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
+	GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);*/
+	//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
+	
+}
+
 void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 {
 	FHitResult HitResult;
@@ -558,13 +607,16 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 		}
 
 		CurrentWeapon = EWeapon;
-		
+
 
 		if (CurrentWeapon)
 		{
 			CurrentWeapon->AttachToSocket(this, SocketName);
-			SetIsWeaponChanged(true);
-			WeaponType = CurrentWeapon->GetWeaponType();
+			//SetIsWeaponChanged(true);
+			ASC->RemoveLooseGameplayTag(WeaponTag);
+			ASC->AddLooseGameplayTag(EWeapon->WeaponTag);
+					
+			WeaponTag = EWeapon->WeaponTag;
 		}
 		
 	}
@@ -577,7 +629,7 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 //	{
 //		CurrentWeapon = nullptr;
 //
-//		Weapon->DetachToCharacter();
+//		Weapon->DetachFromCharacter();
 //	}
 //}
 

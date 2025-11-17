@@ -13,6 +13,7 @@ UARGA_Attack::UARGA_Attack()
 
 void UARGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ARCharacter = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());

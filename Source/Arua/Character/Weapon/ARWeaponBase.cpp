@@ -11,6 +11,7 @@ AARWeaponBase::AARWeaponBase()
 
 	RootComponent = WeaponStaticMesh;
 	WeaponStaticMesh->SetSimulatePhysics(false);
+	this->SetActorEnableCollision(false);
 }
 
 void AARWeaponBase::BeginPlay()
@@ -82,12 +83,28 @@ void AARWeaponBase::InitializeFromData()
 
 	WeaponData = *Row;
 
+	// 스태틱메시 초기화
 	if (UStaticMesh* WeaponMesh = Row->WeaponMeshAsset.LoadSynchronous())
 	{
 		WeaponStaticMesh->SetStaticMesh(WeaponMesh);
 	}
 
-	WeaponType = Row->WeaponType;
+	FName TagName = Row->WeaponTag;
+	WeaponTag = FGameplayTag::RequestGameplayTag(TagName);
+
+	
+
+	/*if (UAnimMontage* WeaponEquipMontageTemp = Row->WeaponEquipMontageData.LoadSynchronous())
+	{
+		WeaponEquipMontage = WeaponEquipMontageTemp;
+	}
+
+	if (UAnimInstance* AnimInstanceByWeaponTempRef = Row->AnimInstanceByWeaponData.LoadSynchronous())
+	{
+		AnimInstanceByWeapon = AnimInstanceByWeaponTempRef;
+	}*/
+
+
 }
 
 
