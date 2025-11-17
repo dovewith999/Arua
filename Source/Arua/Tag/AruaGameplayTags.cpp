@@ -23,6 +23,7 @@ namespace AruaGamePlayTags
 	/*Damage Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Base, "Data.Damage.Base")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Multiplier, "Data.Damage.Multiplier")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Heal_Consumable, "Data.Heal.Consumable")
 
 	/*Event Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
