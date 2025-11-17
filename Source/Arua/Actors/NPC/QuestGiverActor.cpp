@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Actors/NPC/QuestGiverActor.h"
@@ -17,6 +17,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UI/Dialog/DialogWidget.h"
 #include "UI/Quest/QuestSelectWidget.h"
+#include "Components/Interact/ARInteractComponent.h"
 
 static const FString QuestGiverActorContext(TEXT("QuestGiver_OnAccept"));
 TMap<TWeakObjectPtr<APlayerController>, TArray<FWidgetVisibilityRecord>> AQuestGiverActor::CachedWidgetStates;
@@ -25,72 +26,76 @@ AQuestGiverActor::AQuestGiverActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// »óÈ£ÀÛ¿ë Äİ¸®Àü ¹Ú½º CDO »ı¼º
+	//// ìƒí˜¸ì‘ìš© ì½œë¦¬ì „ ë°•ìŠ¤ CDO ìƒì„±
 	InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
 	InteractionVolume->SetBoxExtent(FVector(100, 100, 100));
 	RootComponent = InteractionVolume;
 
-	// UI Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ® CDO »ı¼º
+	// UI ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ CDO ìƒì„±
 	UICameraActor = CreateDefaultSubobject<UCameraComponent>(TEXT("UICameraActor"));
 	UICameraActor->SetupAttachment(RootComponent);
 
-	// NPC À§Á¬ ÄÄÆ÷³ÍÆ® COD »ı¼º
+	// NPC ìœ„ì ¯ ì»´í¬ë„ŒíŠ¸ COD ìƒì„±
 	NPCWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NPCWidgetComponent"));
 	NPCWidgetComponent->SetupAttachment(RootComponent);
+	
+	// InterctComponent CDO ìƒì„±
+	InteractComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractComponent"));
+	InteractComponent->SetInteractCollision(InteractionVolume, FString("í€˜ìŠ¤íŠ¸ íŒ"));
 }
 
 void AQuestGiverActor::Interact(APawn* InInteractor)
 {
-	// ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ °¡Á®¿À±â ¹× ÀúÀå
+	// í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸° ë° ì €ì¥
 	PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PC || !InInteractor || bInteracting || !UICameraActor)
 	{
 		return;
 	}
 
-	// »óÈ£ÀÛ¿ë ÇÃ·¹ÀÌ¾î ÃÊ±âÈ­
+	// ìƒí˜¸ì‘ìš© í”Œë ˆì´ì–´ ì´ˆê¸°í™”
 	InteractorPawn = InInteractor;
 
-	// #1: ÇÃ·¹ÀÌ¾î Ä«¸Ş¶ó -> UI Ä«¸Ş¶ó·Î ÀüÈ¯
+	// #1: í”Œë ˆì´ì–´ ì¹´ë©”ë¼ -> UI ì¹´ë©”ë¼ë¡œ ì „í™˜
 	OriginalViewTarget = PC->GetViewTarget();
 	PC->SetViewTargetWithBlend(this, ViewTargetBlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
 
-	// #2: UI »óÈ£ÀÛ¿ë ¸ğµå ¼³Á¤ (ÀÔ·Â µî)
+	// #2: UI ìƒí˜¸ì‘ìš© ëª¨ë“œ ì„¤ì • (ì…ë ¥ ë“±)
 	ApplyUIInteractionMode();
 
-	// #3: Dialog À§Á¬ »ı¼º ¹× Ç¥½Ã
+	// #3: Dialog ìœ„ì ¯ ìƒì„± ë° í‘œì‹œ
 	if (DialogWidgetClass && !DialogWidgetInstance)
 	{
 		DialogWidgetInstance = CreateWidget<UDialogWidget>(PC, DialogWidgetClass);
 		if (DialogWidgetInstance)
 		{
-			// ´ÙÀÌ¾ó·Î±× À§Á¬ ±×¸®±â
+			// ë‹¤ì´ì–¼ë¡œê·¸ ìœ„ì ¯ ê·¸ë¦¬ê¸°
 			DialogWidgetInstance->AddToViewport();
 
-			// ´ÙÀÌ¾ó·Î±× Å° ÀÔ·Â ÀÌº¥Æ®¿Í »óÈ£ÀÛ¿ë Á¾·á ÇÔ¼ö ¹ÙÀÎµù
+			// ë‹¤ì´ì–¼ë¡œê·¸ í‚¤ ì…ë ¥ ì´ë²¤íŠ¸ì™€ ìƒí˜¸ì‘ìš© ì¢…ë£Œ í•¨ìˆ˜ ë°”ì¸ë”©
 			DialogWidgetInstance->OnRequestInput.AddDynamic(this, &AQuestGiverActor::UnInteract);
 		}
 	}
 
-	// #4: Äù½ºÆ® ¼±ÅÃ À§Á¬ »ı¼º ¹× Ç¥½Ã
+	// #4: í€˜ìŠ¤íŠ¸ ì„ íƒ ìœ„ì ¯ ìƒì„± ë° í‘œì‹œ
 	if (QuestSelectWidgetClass && !QuestSelectWidgetInstance)
 	{
 		QuestSelectWidgetInstance = CreateWidget<UQuestSelectWidget>(PC, QuestSelectWidgetClass);
 		if (QuestSelectWidgetInstance)
 		{
-			// Äù½ºÆ® ¸®½ºÆ® ÃÊ±âÈ­
+			// í€˜ìŠ¤íŠ¸ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
 			QuestSelectWidgetInstance->InitQuestList(InInteractor, ProvidedQuestIDs, QuestDataTables);
 
-			// Äù½ºÆ® ¼±ÅÃ À§Á¬ ±×¸®±â
+			// í€˜ìŠ¤íŠ¸ ì„ íƒ ìœ„ì ¯ ê·¸ë¦¬ê¸°
 			QuestSelectWidgetInstance->AddToViewport();
 
-			// Äù½ºÆ® ¼ö¶ô/º¸»ó ¼ö·É ¹ÙÀÎµù
+			// í€˜ìŠ¤íŠ¸ ìˆ˜ë½/ë³´ìƒ ìˆ˜ë ¹ ë°”ì¸ë”©
 			QuestSelectWidgetInstance->OnQuestAccepted.AddDynamic(this, &AQuestGiverActor::HandleQuestAccepted);
 			QuestSelectWidgetInstance->OnQuestTurnInRequested.AddDynamic(this, &AQuestGiverActor::HandleQuestTurnIn);
 		}
 	}
 
-	// #5: »óÈ£ÀÛ¿ë »óÅÂ ÇÃ·¡±× È°¼ºÈ­
+	// #5: ìƒí˜¸ì‘ìš© ìƒíƒœ í”Œë˜ê·¸ í™œì„±í™”
 	GetWorld()->GetTimerManager().SetTimer(ViewTargetBlendTimer,
 		FTimerDelegate::CreateWeakLambda(this, [this]()
 			{
@@ -110,27 +115,27 @@ void AQuestGiverActor::UnInteract()
 {
 	if (!PC || !bInteracting || !UICameraActor) return;
 
-	// #1: UI Ä«¸Ş¶ó -> ÇÃ·¹ÀÌ¾î Ä«¸Ş¶ó·Î ÀüÈ¯
+	// #1: UI ì¹´ë©”ë¼ -> í”Œë ˆì´ì–´ ì¹´ë©”ë¼ë¡œ ì „í™˜
 	PC->SetViewTargetWithBlend(OriginalViewTarget, ViewTargetBlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
 
-	// #2: Dialog À§Á¬ Á¤¸®
+	// #2: Dialog ìœ„ì ¯ ì •ë¦¬
 	if (DialogWidgetInstance)
 	{
 		DialogWidgetInstance->RemoveFromParent();
 		DialogWidgetInstance = nullptr;
 	}
 
-	// #3: Äù½ºÆ® ¼±ÅÃ À§Á¬ Á¤¸®
+	// #3: í€˜ìŠ¤íŠ¸ ì„ íƒ ìœ„ì ¯ ì •ë¦¬
 	if (QuestSelectWidgetInstance)
 	{
 		QuestSelectWidgetInstance->RemoveFromParent();
 		QuestSelectWidgetInstance = nullptr;
 	}
 
-	// #4: °ÔÀÓ ¸ğµå ¼³Á¤ (ÀÔ·Â µî)
+	// #4: ê²Œì„ ëª¨ë“œ ì„¤ì • (ì…ë ¥ ë“±)
 	RestoreGameplayMode();
 
-	// #5: »óÅÂ ÃÊ±âÈ­
+	// #5: ìƒíƒœ ì´ˆê¸°í™”
 	GetWorld()->GetTimerManager().SetTimer(ViewTargetBlendTimer,
 		FTimerDelegate::CreateWeakLambda(this, [this]()
 			{
@@ -148,18 +153,18 @@ void AQuestGiverActor::HandleQuestAccepted(FName QuestID)
 {
 	if (!InteractorPawn) return;
 
-	// ÇÃ·¹ÀÌ¾îÀÇ Äù½ºÆ® ÄÄÆ÷³ÍÆ®¿¡ Äù½ºÆ® µ¥ÀÌÅÍ Àü´Ş(µî·Ï)
+	// í”Œë ˆì´ì–´ì˜ í€˜ìŠ¤íŠ¸ ì»´í¬ë„ŒíŠ¸ì— í€˜ìŠ¤íŠ¸ ë°ì´í„° ì „ë‹¬(ë“±ë¡)
 	if (FQuestData* Row = QuestDataTables->FindRow<FQuestData>(QuestID, QuestGiverActorContext))
 	{
-		// ÇÃ·¹ÀÌ¾îÀÇ Äù½ºÆ® ÄÄÆ÷³ÍÆ® Ã£±â
+		// í”Œë ˆì´ì–´ì˜ í€˜ìŠ¤íŠ¸ ì»´í¬ë„ŒíŠ¸ ì°¾ê¸°
 		if (UQuestComponent* QuestComponent = InteractorPawn->FindComponentByClass<UQuestComponent>())
 		{
-			// Äù½ºÆ® µ¥ÀÌÅÍ Àü´Ş(µî·Ï)
+			// í€˜ìŠ¤íŠ¸ ë°ì´í„° ì „ë‹¬(ë“±ë¡)
 			QuestComponent->AcceptQuest(*Row);
 		}
 	}
 
-	// ÀÌ NPC¿¡¼­ Á¦°øÇÏ´Â Äù½ºÆ® ¸®½ºÆ®¿¡¼­ ¼ö¶ôÇÑ Äù½ºÆ® Á¦°Å
+	// ì´ NPCì—ì„œ ì œê³µí•˜ëŠ” í€˜ìŠ¤íŠ¸ ë¦¬ìŠ¤íŠ¸ì—ì„œ ìˆ˜ë½í•œ í€˜ìŠ¤íŠ¸ ì œê±°
 	//ProvidedQuestIDs.Remove(QuestID);
 }
 
@@ -171,11 +176,11 @@ void AQuestGiverActor::HandleQuestTurnIn(FName QuestID)
 	{
 		if (QuestComp->TurnInQuest(QuestID))
 		{
-			// º¸»ó Áö±Ş/»óÅÂ º¯°æÀº ÄÄÆ÷³ÍÆ®°¡ Ã³¸®, ¿©±â¼­´Â ¾È³»¸¸
+			// ë³´ìƒ ì§€ê¸‰/ìƒíƒœ ë³€ê²½ì€ ì»´í¬ë„ŒíŠ¸ê°€ ì²˜ë¦¬, ì—¬ê¸°ì„œëŠ” ì•ˆë‚´ë§Œ
 			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan,
-				FString::Printf(TEXT("[º¸»ó ¼ö·É ¿Ï·á] %s"), *QuestID.ToString()));
+				FString::Printf(TEXT("[ë³´ìƒ ìˆ˜ë ¹ ì™„ë£Œ] %s"), *QuestID.ToString()));
 
-			// ÀÌ NPC¿¡¼­ Á¦°øÇÏ´Â Äù½ºÆ® ¸®½ºÆ®¿¡¼­ ¼ö¶ôÇÑ Äù½ºÆ® Á¦°Å
+			// ì´ NPCì—ì„œ ì œê³µí•˜ëŠ” í€˜ìŠ¤íŠ¸ ë¦¬ìŠ¤íŠ¸ì—ì„œ ìˆ˜ë½í•œ í€˜ìŠ¤íŠ¸ ì œê±°
 			ProvidedQuestIDs.Remove(QuestID);
 		}
 	}
@@ -188,22 +193,22 @@ void AQuestGiverActor::BeginPlay()
 
 TArray<FQuestData> AQuestGiverActor::GetProvidedQuests() const
 {
-	// ÀÌ NPC°¡ Á¦°øÇÒ QuestID ¸®½ºÆ®
+	// ì´ NPCê°€ ì œê³µí•  QuestID ë¦¬ìŠ¤íŠ¸
 	TArray<FQuestData> ProvidedQuests;
 
-	// Äù½ºÆ® µ¥ÀÌÅÍ Å×ÀÌºíÀÌ ¾øÀ¸¸é ¹İÈ¯
+	// í€˜ìŠ¤íŠ¸ ë°ì´í„° í…Œì´ë¸”ì´ ì—†ìœ¼ë©´ ë°˜í™˜
 	if (!QuestDataTables)
 	{
 		return ProvidedQuests;
 	}
 
-	// ProvidedQuestIDs°¡ ºñ¾îÀÖ´Â °æ¿ì
+	// ProvidedQuestIDsê°€ ë¹„ì–´ìˆëŠ” ê²½ìš°
 	if (ProvidedQuestIDs.Num() == 0)
 	{
 		static const FString ContextString(TEXT("QuestGiver_GetAll"));
 		TArray<FName> RowNames = QuestDataTables->GetRowNames();
 
-		// DataTableÀÇ ¸ğµç ÇàÀ» QuestID ¸®½ºÆ®¿¡ Ãß°¡
+		// DataTableì˜ ëª¨ë“  í–‰ì„ QuestID ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
 		for (const FName& QuestID : RowNames)
 		{
 			FQuestData* Data = QuestDataTables->FindRow<FQuestData>(QuestID, ContextString);
@@ -217,7 +222,7 @@ TArray<FQuestData> AQuestGiverActor::GetProvidedQuests() const
 	{
 		static const FString ContextString(TEXT("QuestGiver_GetProvided"));
 
-		// Á¦°øÇÒ QuestID ¸®½ºÆ®¸¸ QuestID ¸®½ºÆ®¿¡ Ãß°¡
+		// ì œê³µí•  QuestID ë¦¬ìŠ¤íŠ¸ë§Œ QuestID ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
 		for (const FName& QuestID : ProvidedQuestIDs)
 		{
 			FQuestData* Data = QuestDataTables->FindRow<FQuestData>(QuestID, ContextString);
@@ -235,35 +240,35 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 {
 	if (!InteractorPawn || !PC) return;
 
-	// »óÈ£ÀÛ¿ë ÇÃ·¹ÀÌ¾î ¸Ş½Ã ºñÈ°¼ºÈ­
+	// ìƒí˜¸ì‘ìš© í”Œë ˆì´ì–´ ë©”ì‹œ ë¹„í™œì„±í™”
 	USkeletalMeshComponent* Mesh = InteractorPawn->FindComponentByClass<USkeletalMeshComponent>();
 	if (Mesh)
 	{
 		Mesh->SetVisibility(false, true);
 	}
 
-	// Ä¿¼­ È°¼ºÈ­ ¹× ÄÁÆ®·Ñ·¯ ÀÔ·Â ºñÈ°¼ºÈ­
+	// ì»¤ì„œ í™œì„±í™” ë° ì»¨íŠ¸ë¡¤ëŸ¬ ì…ë ¥ ë¹„í™œì„±í™”
 	PC->bShowMouseCursor = true;
 	PC->SetIgnoreLookInput(true);
 	PC->SetIgnoreMoveInput(true);
 	PC->bEnableClickEvents = true;
 	PC->bEnableMouseOverEvents = true;
 
-	/* ÇÃ·¹ÀÌ¾î HUD ºñ°¡½ÃÈ­ */
+	/* í”Œë ˆì´ì–´ HUD ë¹„ê°€ì‹œí™” */
 	TArray<FWidgetVisibilityRecord> Records;
 	TArray<UUserWidget*> AllWidgets;
 
-	// ¿ùµå ÀüÃ¼¿¡¼­ À§Á¬ Å¬·¡½º¸¦ Ã£¾Æ¼­ ÀúÀå
+	// ì›”ë“œ ì „ì²´ì—ì„œ ìœ„ì ¯ í´ë˜ìŠ¤ë¥¼ ì°¾ì•„ì„œ ì €ì¥
 	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(PC->GetWorld(), AllWidgets, UUserWidget::StaticClass(), false);
 
 	for (UUserWidget* Widget : AllWidgets)
 	{
 		if (!Widget) continue;
 
-		// ¼ÒÀ¯ ÇÃ·¹ÀÌ¾î°¡ µ¿ÀÏÇÑÁö È®ÀÎ
+		// ì†Œìœ  í”Œë ˆì´ì–´ê°€ ë™ì¼í•œì§€ í™•ì¸
 		if (Widget->GetOwningPlayer() && Widget->GetOwningPlayer()->IsA(PC->GetClass()))
 		{
-			// À§Á¬ °¡½ÃÈ­ ±â·Ï ±¸Á¶Ã¼¿¡ °¡½ÃÈ­ Á¤º¸ ÀúÀå
+			// ìœ„ì ¯ ê°€ì‹œí™” ê¸°ë¡ êµ¬ì¡°ì²´ì— ê°€ì‹œí™” ì •ë³´ ì €ì¥
 			FWidgetVisibilityRecord Rec;
 			Rec.Widget = Widget;
 			Rec.PrevVisibility = Widget->GetVisibility();
@@ -272,14 +277,14 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 		}
 	}
 
-	// °¡½ÃÈ­°¡ º¯°æµÈ À§Á¬ÀÌ ÀÖ´Â °æ¿ì
+	// ê°€ì‹œí™”ê°€ ë³€ê²½ëœ ìœ„ì ¯ì´ ìˆëŠ” ê²½ìš°
 	if (Records.Num() > 0)
 	{
-		// º¯°æ À§Á¬ °»½Å (ÀÌµ¿À¸·Î ÃÖÀûÈ­)
+		// ë³€ê²½ ìœ„ì ¯ ê°±ì‹  (ì´ë™ìœ¼ë¡œ ìµœì í™”)
 		CachedWidgetStates.Add(PC, MoveTemp(Records));
 	}
 
-	// ÀÔ·Â ¸ğµå UI Only·Î ¼³Á¤ ¹× ´ÙÀÌ¾ó·Î±× À§Á¬À¸·Î Æ÷Ä¿½Ì
+	// ì…ë ¥ ëª¨ë“œ UI Onlyë¡œ ì„¤ì • ë° ë‹¤ì´ì–¼ë¡œê·¸ ìœ„ì ¯ìœ¼ë¡œ í¬ì»¤ì‹±
 	FInputModeGameAndUI Mode;
 	Mode.SetWidgetToFocus(DialogWidgetInstance ? DialogWidgetInstance->TakeWidget() : TSharedPtr<SWidget>());
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
@@ -291,21 +296,21 @@ void AQuestGiverActor::RestoreGameplayMode()
 {
 	if (!InteractorPawn || !PC) return;
 
-	// »óÈ£ÀÛ¿ë ÇÃ·¹ÀÌ¾î ¸Ş½Ã È°¼ºÈ­
+	// ìƒí˜¸ì‘ìš© í”Œë ˆì´ì–´ ë©”ì‹œ í™œì„±í™”
 	USkeletalMeshComponent* Mesh = InteractorPawn->FindComponentByClass<USkeletalMeshComponent>();
 	if (Mesh)
 	{
 		Mesh->SetVisibility(true, true);
 	}
 
-	// Ä¿¼­ ºñÈ°¼ºÈ­ ¹× ÄÁÆ®·Ñ·¯ ÀÔ·Â È°¼ºÈ­
+	// ì»¤ì„œ ë¹„í™œì„±í™” ë° ì»¨íŠ¸ë¡¤ëŸ¬ ì…ë ¥ í™œì„±í™”
 	PC->bShowMouseCursor = false;
 	PC->SetIgnoreLookInput(false);
 	PC->SetIgnoreMoveInput(false);
 	PC->bEnableClickEvents = false;
 	PC->bEnableMouseOverEvents = false;
 
-	/* ÇÃ·¹ÀÌ¾î HUD ºñ°¡½ÃÈ­ */
+	/* í”Œë ˆì´ì–´ HUD ë¹„ê°€ì‹œí™” */
 	TArray<FWidgetVisibilityRecord>* Found = CachedWidgetStates.Find(PC);
 	if (!Found) return;
 
@@ -314,15 +319,15 @@ void AQuestGiverActor::RestoreGameplayMode()
 		if (Rec.Widget.IsValid())
 		{
 			UUserWidget* W = Rec.Widget.Get();
-			// À§Á¬ÀÌ ¿©ÀüÈ÷ Á¸ÀçÇÏ¸é ÀÌÀü »óÅÂ·Î º¹¿ø
+			// ìœ„ì ¯ì´ ì—¬ì „íˆ ì¡´ì¬í•˜ë©´ ì´ì „ ìƒíƒœë¡œ ë³µì›
 			W->SetVisibility(Rec.PrevVisibility);
 		}
-		// ¸¸¾à À§Á¬ÀÌ ÆÄ±«µÇ¾úÀ¸¸é ¹«½Ã
+		// ë§Œì•½ ìœ„ì ¯ì´ íŒŒê´´ë˜ì—ˆìœ¼ë©´ ë¬´ì‹œ
 	}
 
 	CachedWidgetStates.Remove(PC);
 
-	// ÀÔ·Â ¸ğµå °ÔÀÓ ¸ğµå·Î º¹±Í
+	// ì…ë ¥ ëª¨ë“œ ê²Œì„ ëª¨ë“œë¡œ ë³µê·€
 	FInputModeGameOnly Mode;
 	PC->SetInputMode(Mode);
 }

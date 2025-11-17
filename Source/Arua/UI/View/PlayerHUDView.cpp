@@ -4,6 +4,7 @@
 #include "PlayerHUDView.h"
 #include "HpBarView.h"
 #include "BossHpBarView.h"
+#include "InteractImage.h"
 
 UPlayerHUDView::UPlayerHUDView()
 {
@@ -33,6 +34,12 @@ void UPlayerHUDView::SetBossViewModel(UViewModelBase* InViewModel)
 void UPlayerHUDView::TurnOffBossHpBar()
 {
 	BossHpBar->SetVisibility(ESlateVisibility::Hidden);
+	InteractImage->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPlayerHUDView::SetCanInteract(bool InCanInteract, FName InObjectName)
+{
+	InteractImage->SetVisibility(InCanInteract == true ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void UPlayerHUDView::NativeConstruct()

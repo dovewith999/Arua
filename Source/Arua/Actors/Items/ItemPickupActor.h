@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,8 +7,8 @@
 #include "ItemPickupActor.generated.h"
 
 /*
-* ¿ùµå¿¡ ¹èÄ¡µÇ´Â ¾ÆÀÌÅÛ ÇÈ¾÷ ¾×ÅÍ
-* ÇÃ·¹ÀÌ¾î°¡ »óÈ£ÀÛ¿ëÇÏ¸é ÀÎº¥Åä¸®¿¡ ¾ÆÀÌÅÛÀ» Ãß°¡ÇÏ°í ÀÚ±â ÀÚ½ÅÀ» Á¦°Å
+* ì›”ë“œì— ë°°ì¹˜ë˜ëŠ” ì•„ì´í…œ í”½ì—… ì•¡í„°
+* í”Œë ˆì´ì–´ê°€ ìƒí˜¸ì‘ìš©í•˜ë©´ ì¸ë²¤í† ë¦¬ì— ì•„ì´í…œì„ ì¶”ê°€í•˜ê³  ìê¸° ìì‹ ì„ ì œê±°
 */
 UCLASS()
 class ARUA_API AItemPickupActor : public AActor
@@ -21,29 +21,33 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// ¾ÆÀÌÅÛ »óÈ£ÀÛ¿ë ÇÔ¼ö
-	/* ÇÃ·¹ÀÌ¾î¿Í »óÈ£ÀÛ¿ëÇÏ¿© ¾ÆÀÌÅÛÀ» ÀÎº¥Åä¸®¿¡ Ãß°¡ ÈÄ, ¾×ÅÍ Á¦°Å */
+	// ì•„ì´í…œ ìƒí˜¸ì‘ìš© í•¨ìˆ˜
+	/* í”Œë ˆì´ì–´ì™€ ìƒí˜¸ì‘ìš©í•˜ì—¬ ì•„ì´í…œì„ ì¸ë²¤í† ë¦¬ì— ì¶”ê°€ í›„, ì•¡í„° ì œê±° */
 	UFUNCTION(BlueprintCallable, Category = "ItemActor")
 	void Interact(APawn* Interactor);
 
-	// Ãæµ¹ ¿À¹ö·¦ ÇÔ¼ö (ÇÃ·¹ÀÌ¾î¿¡°Ô ÇÈ¾÷ ¸Ş½ÃÁö Àü´ŞÀ» ±¸ÇöÇÒ °æ¿ì)
+	// ì¶©ëŒ ì˜¤ë²„ë© í•¨ìˆ˜ (í”Œë ˆì´ì–´ì—ê²Œ í”½ì—… ë©”ì‹œì§€ ì „ë‹¬ì„ êµ¬í˜„í•  ê²½ìš°)
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
-	// ¾ÆÀÌÅÛ ¸Ş½Ã
+	// ì•„ì´í…œ ë©”ì‹œ
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	TObjectPtr<class UStaticMeshComponent> ItemMesh;
 
-	// ¾ÆÀÌÅÛ »óÈ£ÀÛ¿ë Äİ¸®Àü
+	// ì•„ì´í…œ ìƒí˜¸ì‘ìš© ì½œë¦¬ì „
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	TObjectPtr<class UBoxComponent> InteractionCollision;
 
-	// ¾ÆÀÌÅÛ Á¤ÀÇ (¾ÆÀÌÅÛ µ¥ÀÌÅÍ ¿¡¼Â)
+	// ì•„ì´í…œ ì •ì˜ (ì•„ì´í…œ ë°ì´í„° ì—ì…‹)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	TObjectPtr<class UDA_ItemDefinition> ItemDefinition;
 
-	// ¼ö·®
+	// ìˆ˜ëŸ‰
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	int32 Quantity;
+
+
+protected:
+
 };
