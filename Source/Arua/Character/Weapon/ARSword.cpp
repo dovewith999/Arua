@@ -5,7 +5,7 @@
 
 AARSword::AARSword()
 {
-	this->SetActorEnableCollision(false);
+	
 }
 
 void AARSword::InitializeFromData()

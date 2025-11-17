@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DataTables/ARWeaponData.h"
+#include "NativeGameplayTags.h"
 #include "ARWeaponBase.generated.h"
 
 
@@ -24,7 +25,7 @@ public:
 
 	virtual void InitializeFromData();
 
-	FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; } 
+	//FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; } 
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,44 +45,14 @@ public:
 
 	// 무기 타입
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
-	EWeaponType WeaponType;
+	FGameplayTag WeaponTag;
 
-	//// 무기 스태틱 메시
-	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = Weapon)
-	//class UStaticMeshComponent* WeaponMesh;
-	// 
-	//// 무기를 붙일 소켓
-	///*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = Weapon)
-	//FName AttachSocketName;*/
+	// 무기 장착 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> WeaponEquipMontage;
 
-	//// Idle 애니메이션
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UAnimSequenceBase> IdleByWeapon;
-
-	//// 락온이 되지 않았을 때 걷기 모션
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UAnimSequenceBase> WalkByWeapon;
-
-	//// 달리기 모션 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UAnimSequenceBase> RunByWeapon;
-
-	//// 어택 몽타주
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UAnimMontage>AttackAnimByWeapon;
-
-	//// 락온 시 걷기 모션
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	//TObjectPtr<class UBlendSpace> LockOnWalkByWeapon;
-
-	////
-
-	//// 콤보 액션을 위한 액션 데이터
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<class UARComboActionData> ComboActionDataByWeapon;
-
-	
-
-
+	// 무기에 따른 AnimBp
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimInstance> AnimInstanceByWeapon;
 	
 };

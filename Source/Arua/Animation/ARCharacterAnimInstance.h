@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "DataTables/ARWeaponData.h"
+#include "GameplayTagContainer.h"
 #include "ARCharacterAnimInstance.generated.h"
 
 /**
@@ -52,12 +53,27 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsWalk : 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 	uint8 bIsWeaponChanged : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	float Angle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-	EWeaponType WeaponType;
+	FGameplayTag CurrentWeaponTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Character)
+	int32 StateMachineIndex;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Character)
+	uint8 bASCInitialized : 1;
+
+protected:
+	UFUNCTION()
+	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
+
+	UFUNCTION()
+	int32 GetWeaponLayerIndex() const;
+
+
 };

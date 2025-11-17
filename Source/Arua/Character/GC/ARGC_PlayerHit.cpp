@@ -100,32 +100,6 @@ bool UARGC_PlayerHit::OnExecute_Implementation(AActor* Target, const FGameplayCu
         }
     }
     return false;
-   /* if (!Target) return false;*/
-
-    /*const FGameplayTag FrontTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
-    const FGameplayTag BackTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
-    const FGameplayTag LeftTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
-    const FGameplayTag RightTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
-
-    const FGameplayTagContainer& TargetTags = Parameters.AggregatedTargetTags;
-    AnimInstance->Montage_Play(HitActionMontage, 1.0f);
-    if (TargetTags.HasTagExact(FrontTag))
-    {
-        AnimInstance->Montage_JumpToSection("Front", HitActionMontage);
-    }
-    else if (TargetTags.HasTagExact(BackTag))
-    {
-        AnimInstance->Montage_JumpToSection("Back", HitActionMontage);
-    }
-    else if (TargetTags.HasTagExact(LeftTag))
-    {
-        AnimInstance->Montage_JumpToSection("Right", HitActionMontage);
-    }
-    else if (TargetTags.HasTagExact(RightTag))
-    {
-        AnimInstance->Montage_JumpToSection("Left", HitActionMontage);
-    }
-
-    return true;*/
+   
 
 }

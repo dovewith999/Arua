@@ -55,16 +55,14 @@ public:
 	FORCEINLINE bool GetWalkState() { return bIsWalking; }
 
 	FORCEINLINE class UARComboActionData* GetComboActionData() const { return ComboActionData; }
-	FORCEINLINE bool GetIsWeaponChanged() { return IsWeaponChanged; }
-	FORCEINLINE void SetIsWeaponChanged(bool change) { IsWeaponChanged = change; }
+	FORCEINLINE bool GetIsWeaponChanged() { return bIsWeaponChanged; }
+	FORCEINLINE void SetIsWeaponChanged(bool change) { bIsWeaponChanged = change; }
 	FORCEINLINE class AARWeaponBase* GetWeapon() { return CurrentWeapon; }
 
 
 	virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 
 	virtual void PossessedBy(AController* NewController) override;
-
-	
 
 public:
 	void BeginLockOn();
@@ -140,6 +138,7 @@ protected:
 	virtual void Roll(const FInputActionValue& Value);
 	void LockOnToggle(const FInputActionValue& Value);
 	void RollCompleted();
+	void WeaponChange();
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
@@ -206,16 +205,29 @@ protected:
 	TObjectPtr<class AARWeaponBase> CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
-	EWeaponType WeaponType;
+	FGameplayTag WeaponTag;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Weapon)
-	uint8 IsWeaponChanged : 1;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = Weapon)
+	uint8 bIsWeaponChanged : 1;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<class AARWeaponBase> StartWeaponClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> WeaponChangeAction;
+
 	void EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName);
-	//void UnequipWeapon(class AARWeaponBase*& WeaponSlot);*/
+	//void UnequipWeapon(class AARWeaponBase*& WeaponSlot);
+
+	/*UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	TSoftClassPtr<UAnimInstance> NoneAnimClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	TSoftClassPtr<UAnimInstance> SwordAnimClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> WeaponEquipMontage;*/
+
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
