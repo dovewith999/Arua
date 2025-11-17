@@ -92,9 +92,6 @@ void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SetIsFocusable(true);     // 포커스 가능
-	SetKeyboardFocus();       // 처음 열릴 때 포커스
-
 	// 위젯이 생성되면 그리드 재생성
 	RefreshGrid();
 }
@@ -107,6 +104,16 @@ void UInventoryWidget::NativeDestruct()
 		Inventory->OnInventoryUpdated.RemoveDynamic(this, &UInventoryWidget::OnInventoryUpdated);
 	}
 
+	// 관리가 필요한 자식 위젯들 모두 제거
+	for (TWeakObjectPtr<UUserWidget>& PopupPtr : ChildWidgets)
+	{
+		if (UUserWidget* Popup = PopupPtr.Get())
+		{
+			Popup->RemoveFromParent();
+		}
+	}
+	ChildWidgets.Empty();
+
 	Super::NativeDestruct();
 }
 
@@ -114,13 +121,6 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 {
 	// 키 입력 이벤트 확인
 	const FKey PressedKey = InKeyEvent.GetKey();
-
-	// 키 입력 이벤트 델리게이트 브로드캐스트
-	if (PressedKey == EKeys::Escape)
-	{
-		OnRequestInputInInventoryWidget.Broadcast();
-		return FReply::Handled();
-	}
 
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }

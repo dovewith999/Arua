@@ -25,6 +25,7 @@ AItemPickupActor::AItemPickupActor()
 	// 충돌 컴포넌트 초기화
 	InteractionCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionCollision"));
 	InteractionCollision->SetupAttachment(RootComponent);
+	InteractionCollision->SetBoxExtent(FVector(40.f, 40.f, 100.f));
 	InteractionCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	InteractionCollision->SetCollisionObjectType(ECC_WorldDynamic);
 	InteractionCollision->SetCollisionResponseToAllChannels(ECR_Ignore);

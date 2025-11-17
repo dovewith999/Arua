@@ -8,6 +8,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UI/Inventory/ItemContextMenuWidget.h"
 #include "UI/Inventory/ItemToolTipWidget.h"
+#include "UI/Inventory/InventoryWidget.h"
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -72,7 +73,7 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 		{
 			if (InventorySlot.Quantity > 1)
 			{
-				QuantityText->SetText(FText::FromString(TEXT("x") + FString::FromInt(InventorySlot.Quantity)));
+				QuantityText->SetText(FText::FromString(TEXT("x ") + FString::FromInt(InventorySlot.Quantity)));
 			}
 			else
 			{

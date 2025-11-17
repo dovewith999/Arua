@@ -7,9 +7,6 @@
 #include "AruaTypes/Arua_EnumTypes.h"
 #include "InventoryWidget.generated.h"
 
-// 키 입력 델리게이트
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestInputInInventoryWidget);
-
 /**
  * 인벤토리 UI를 표시하는 위젯
  */
@@ -46,18 +43,12 @@ protected:
 	// 마우스 버튼 콜백 함수
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-
 	// 인벤토리 변경 시 호출되는 함수
 	UFUNCTION()
 	void OnInventoryUpdated();
 
 	// 그리드(슬롯 위젯) 재생성 함수
 	void RefreshGrid();
-
-public:
-	// 키 입력 델리게이트 변수
-	UPROPERTY(BlueprintAssignable)
-	FOnRequestInputInInventoryWidget OnRequestInputInInventoryWidget;
 
 protected:
 	// 아이템 슬롯을 배치할 그리드
@@ -87,4 +78,8 @@ protected:
 	// 현재 연결된 인벤토리 컴포넌트
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
+
+	// 관리가 필요한 자식 위젯들
+	UPROPERTY()
+	TArray<TWeakObjectPtr<class UUserWidget>> ChildWidgets;
 };
