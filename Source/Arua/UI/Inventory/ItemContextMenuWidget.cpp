@@ -8,13 +8,19 @@
 #include "Components/Button.h"
 #include "Components/Inventory/InventoryComponent.h"
 
-void UItemContextMenuWidget::InitializeMenu(UInventoryComponent* InInventory, int32 InSlotIndex)
+void UItemContextMenuWidget::InitializeMenu(UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex)
 {
+	if (!InInventory) return;
+
 	Inventory = InInventory;
+	Category = InCategory;
 	SlotIndex = InSlotIndex;
 
-	// 슬롯의 아이템 데이터 가져오기
-	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	// 해당 슬롯 데이터 가져오기
+	const FInventorySlot& InventorySlot = SlotsRef[SlotIndex];
 
 	// 아이템 이름 설정
 	if (ItemName && InventorySlot.ItemDefinition)
@@ -55,7 +61,7 @@ void UItemContextMenuWidget::OnUseClicked()
 	// 아이템 사용 후, 위젯 제거
 	if (Inventory)
 	{
-		Inventory->UseItem(SlotIndex);
+		Inventory->UseItem(Category, SlotIndex, 1);
 	}
 	RemoveFromParent();
 }
@@ -89,8 +95,11 @@ void UItemContextMenuWidget::OnSplitClicked()
 		return;
 	}
 
-	// 나누려는 슬롯의 아이템 데이터 가져오기
-	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	// 해당 슬롯 데이터 가져오기
+	const FInventorySlot& InventorySlot = SlotsRef[SlotIndex];
 
 	// 나눌 수 있는 수량이 없다면 아무 동작 없이 메뉴 닫기
 	if (InventorySlot.Quantity <= 1)
@@ -138,7 +147,7 @@ void UItemContextMenuWidget::OnCancelClicked()
 void UItemContextMenuWidget::SetUpItemQuantityPopupWidget(UItemQuantityPopupWidget* PopUpWidget, EItemPopUpAction InAction)
 {
 	// 위젯 초기화 및 화면에 추가
-	PopUpWidget->InitializePopUp(Inventory, SlotIndex, InAction);
+	PopUpWidget->InitializePopUp(Inventory, Category, SlotIndex, InAction);
 	PopUpWidget->AddToViewport();
 
 	// 화면 위치

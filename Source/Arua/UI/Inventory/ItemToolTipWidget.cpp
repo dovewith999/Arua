@@ -9,16 +9,22 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
-void UItemToolTipWidget::InitializeToolTip(UInventoryComponent* InInventory, int32 InSlotIndex)
+void UItemToolTipWidget::InitializeToolTip(UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex)
 {
 	// 예외 처리
-	if (!InInventory || !InInventory->Slots.IsValidIndex(InSlotIndex) || !InInventory->Slots[InSlotIndex].ItemDefinition) return;
+	if (!InInventory) return;
 
 	Inventory = InInventory;
+	Category = InCategory;
 	SlotIndex = InSlotIndex;
 
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	if (!SlotsRef.IsValidIndex(SlotIndex) || !SlotsRef[SlotIndex].ItemDefinition) return;
+
 	// 해당 슬롯의 아이템 정의 데이터 가져오기
-	const UDA_ItemDefinition* ItemDefinition = Inventory->Slots[SlotIndex].ItemDefinition;
+	const UDA_ItemDefinition* ItemDefinition = SlotsRef[SlotIndex].ItemDefinition;
 	if (!ItemDefinition) return;
 
 	// #1: 아이템 이름 설정

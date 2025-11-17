@@ -21,9 +21,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InitializeInventory(class UInventoryComponent* InInventory);
 
-	// 인벤토리 카테고리를 변경하고 페이지를 리셋하는 함수
+	// 현재 카테고리 설정 함수, 그리드 리셋
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetCategory(EAR_ItemCategory NewCategory);
+
+	// 같은 카테고리의 다음 페이지로 이동하는 함수
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void NextPage();
+
+	// 같은 카테고리의 이전 페이지로 이동하는 함수
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void PrevPage();
 
 protected:
 	virtual void NativeConstruct() override;
@@ -33,40 +41,35 @@ protected:
 	UFUNCTION()
 	void OnInventoryUpdated();
 
-	// 슬롯 위젯을 재생성하는 함수
+	// 그리드(슬롯 위젯) 재생성 함수
 	void RefreshGrid();
 
 protected:
-	// 아이템 슬롯을 배치할 UniformGridPanel
+	// 아이템 슬롯을 배치할 그리드
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UUniformGridPanel> InventoryGridPanel;
+	TObjectPtr<class UUniformGridPanel> SlotGrid;
+
+	// 다음 페이지 전환 버튼
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> NextPageButton;
+
+	// 이전 페이지 전환 버튼
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> PrevPageButton;
 
 	// 슬롯 위젯 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UInventorySlotWidget> SlotWidgetClass;
 
-	// 빈 슬롯 위젯 클래스
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<class UInventorySlotWidget> EmptySlotWidgetClass;
+	// 현재 선택된 카테고리
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	EAR_ItemCategory CurrentCategory = EAR_ItemCategory::Equipment;
+
+	// 현재 페이지 인덱스
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	int32 CurrentPageIndex = 0;
 
 	// 현재 연결된 인벤토리 컴포넌트
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
-
-	// 현재 선택된 카테고리
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EAR_ItemCategory CurrentCategory = EAR_ItemCategory::Equipment;
-
-	// 한 행의 슬롯 수 (열 개수)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	int32 SlotsPerRow;
-
-	// 한 열의 슬롯 수 (행 개수)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	int32 SlotsPerColumn;
-
-	// 빈 슬롯을 표시할지 여부
-	// 빈 슬롯도 위젯을 생성해 배경을 표시하고 싶다면 true로 설정
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	bool bFillEmptySlots = true;
 };

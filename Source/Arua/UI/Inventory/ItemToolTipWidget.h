@@ -17,7 +17,7 @@ class ARUA_API UItemToolTipWidget : public UUserWidget
 public:
 	// 아이템 툴팁 초기화 함수
 	UFUNCTION(BlueprintCallable, Category = "ToolTip")
-	void InitializeToolTip(class UInventoryComponent* InInventory, int32 InSlotIndex);
+	void InitializeToolTip(class UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex);
 
 	// 툴팁 텍스트 갱신 함수
 	FText SetToolTip(const class UDA_ItemDefinition* InItemDefinition);
@@ -47,6 +47,9 @@ private:
 	// 연동된 인벤토리
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
+
+	// 연동된 인벤토리 슬롯 카테고리
+	EAR_ItemCategory Category;
 
 	// 연동된 인벤토리 슬롯 인덱스
 	int32 SlotIndex;
