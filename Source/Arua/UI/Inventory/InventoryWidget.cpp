@@ -92,6 +92,9 @@ void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetIsFocusable(true);     // 포커스 가능
+	SetKeyboardFocus();       // 처음 열릴 때 포커스
+
 	// 위젯이 생성되면 그리드 재생성
 	RefreshGrid();
 }
@@ -105,6 +108,29 @@ void UInventoryWidget::NativeDestruct()
 	}
 
 	Super::NativeDestruct();
+}
+
+FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	// 키 입력 이벤트 확인
+	const FKey PressedKey = InKeyEvent.GetKey();
+
+	// 키 입력 이벤트 델리게이트 브로드캐스트
+	if (PressedKey == EKeys::Escape)
+	{
+		OnRequestInputInInventoryWidget.Broadcast();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
+FReply UInventoryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	// 마우스 클릭 시 키보드 포커스를 다시 이 위젯으로 설정
+	SetKeyboardFocus();
+
+	return FReply::Handled();
 }
 
 void UInventoryWidget::OnInventoryUpdated()
