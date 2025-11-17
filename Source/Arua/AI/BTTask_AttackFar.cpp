@@ -26,12 +26,17 @@ EBTNodeResult::Type UBTTask_AttackFar::ExecuteTask(UBehaviorTreeComponent& Owner
 		return EBTNodeResult::Failed;
 	}
 
-	AIPawn->AttackShootTornado();
+	int32 RandomNum = FMath::RandRange(0, 1);//
 
-
-
+	if (RandomNum == 0)
+	{
+		AIPawn->AttackShootTornado();
+	}
+	else
+	{
+		AIPawn->AttackStump();
+	}
 
 	return EBTNodeResult::Succeeded;
-
 
 }

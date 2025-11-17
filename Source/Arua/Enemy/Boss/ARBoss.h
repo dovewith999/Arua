@@ -24,6 +24,7 @@ public:
 	void AttackPawLeft();
 	void ComboAttackPawLeft_TailRight();
 	void AttackShootTornado();
+	void AttackStump();
 	void TurnLeft();
 	void TurnRight();
 
@@ -54,6 +55,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 20.0f;
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnBossActor(TSubclassOf<AActor> ActorToSpawn, float Distance, float SetZAxis);
+
 	//토네이도 쏘는 이벤트
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnTornado();
@@ -75,6 +79,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackShootTornado;
+
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageAttackStump;
+
+
 public:
 	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageTurnLeft;
@@ -95,6 +104,15 @@ protected:
 	float ComboAttackPawLeft_TailRightTime = 3.1f;
 
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
-	float AttackShootTornadoTime = 1.066f * 3;
+	float AttackShootTornadoTime = 1.066f * 2;
+
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
+	float AttackStumpTime = 2.46f;
+
+
+	//소환물 관련 변수
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<AActor> SpawnExplode;
 
 };
