@@ -11,16 +11,22 @@
 #include "Components/SpinBox.h"
 #include "Components/Button.h"
 
-void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory, int32 InSlotIndex, EItemPopUpAction InAction)
+void UItemQuantityPopupWidget::InitializePopUp(UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex, EItemPopUpAction InAction)
 {
+	if (!InInventory) return;
+
 	Inventory = InInventory;
+	Category = InCategory;
 	SlotIndex = InSlotIndex;
 	Action = InAction;
 
-	if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex)) return;
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
 
-	// 슬롯의 아이템 데이터 가져오기
-	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+	if (!SlotsRef.IsValidIndex(SlotIndex)) return;
+
+	// 해당 슬롯 데이터 가져오기
+	const FInventorySlot& InventorySlot = SlotsRef[SlotIndex];
 
 	// #1: 팝업 제목 설정하기
 	FText Title;
@@ -116,7 +122,7 @@ void UItemQuantityPopupWidget::NativeConstruct()
 void UItemQuantityPopupWidget::OnConfirmCliked()
 {
 	// 예외 처리
-	if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex) || !QuantitySpinBox)
+	if (!Inventory || !QuantitySpinBox)
 	{
 		RemoveFromParent();
 		return;
@@ -130,17 +136,17 @@ void UItemQuantityPopupWidget::OnConfirmCliked()
 	{
 		// 아이템 묶음 사용
 	case EItemPopUpAction::BundleUse:
-		Inventory->BundleUseItem(SlotIndex, Amount);
+		Inventory->UseItem(Category, SlotIndex, Amount);
 		break;
 
 		// 아이템 나누기
 	case EItemPopUpAction::Split:
-		Inventory->SplitStack(SlotIndex, Amount);
+		Inventory->SplitStack(Category, SlotIndex, Amount);
 		break;
 
 		// 아이템 제거
 	case EItemPopUpAction::Remove:
-		Inventory->RemoveItem(SlotIndex, Amount);
+		Inventory->RemoveItem(Category, SlotIndex, Amount);
 		break;
 
 	default: break;
@@ -156,8 +162,13 @@ void UItemQuantityPopupWidget::OnCancelCliked()
 
 void UItemQuantityPopupWidget::OnQuantityLabelChangeed(float InValue)
 {
-	// 슬롯의 아이템 데이터 가져오기
-	const FInventorySlot& InventorySlot = Inventory->Slots[SlotIndex];
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	if (!SlotsRef.IsValidIndex(SlotIndex)) return;
+
+	// 해당 슬롯 데이터 가져오기
+	const FInventorySlot& InventorySlot = SlotsRef[SlotIndex];
 
 	if (QuantityLabel)
 	{

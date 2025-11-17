@@ -3,7 +3,6 @@
 
 #include "Components/Inventory/InventoryComponent.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "GameFramework/Actor.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -12,95 +11,57 @@ UInventoryComponent::UInventoryComponent()
 	// 재화 초기화
 	Golds = 0;
 
-	// 인벤토리 슬롯 배열 공간 초기화 (reserve)
-	Slots.SetNumZeroed(MaxSlots);
+	// 인벤토리 슬롯 배열 초기화 (공간 확보)
+	EquipmentSlots.SetNum(MaxEquipmentSlots);
+	ConsumableSlots.SetNum(MaxConsumableSlots);
+	QuestSlots.SetNum(MaxQuestSlots);
 }
 
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (auto& i : TestStartItems)
+	// 테스트 아이템 추가
+	for (UDA_ItemDefinition* ItemDef : TestStartItems)
 	{
-		AddItem(i, 1);;
+		if (ItemDef)
+		{
+			AddItem(ItemDef, 1);
+		}
 	}
 }
-
-//int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
-//{
-//	// 예외 처리
-//	if (!ItemDef || Amount <= 0) return 0;
-//
-//	// 추가할 아이템 수량으로 추가해야 할 아이템 수량 초기화
-//	// 여러 슬롯에 나눠 추가될 수 있기 떄문에, 차감하는 방식으로 구현
-//	int32 Remaining = Amount;
-//	int32 Added = 0;
-//
-//	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
-//	for (FInventorySlot& InventorySlot : Slots)
-//	{
-//		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
-//		if (InventorySlot.ItemDefinition == ItemDef && !InventorySlot.IsFull())
-//		{
-//			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가해야 할 아이템 수량 차감
-//			// 해당 슬롯에 추가할 수 있는 만큼 추가 후, 추가한 개수 저장
-//			//Added += InventorySlot.AddQuantity(Amount - Added);
-//
-//			Remaining -= InventorySlot.AddQuantity(Remaining);
-//			if (Remaining <= 0) return 0;
-//			//if (Added >= Amount) return Added;
-//		}
-//	}
-//
-//	// 새 슬롯 생성
-//	if (Remaining > 0)
-//	{
-//		// 인벤토리 슬롯 배열에서 비어있는 슬롯을 확보
-//		for (FInventorySlot& InventorySlot : Slots)
-//		{
-//			if (InventorySlot.IsEmpty())
-//			{
-//				// 해당 슬롯의 아이템 정의를 추가하는 아이템으로 초기화
-//				InventorySlot.ItemDefinition = ItemDef;
-//
-//				// 해당 슬롯의 수량을 초기화. 추가하려는 아이템의 최대 수량을 넘지 않도록 Min 계산
-//				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
-//				InventorySlot.Quantity = AddAmount;
-//
-//				// 추가해야 할 아이템 수량 차감
-//				Remaining -= AddAmount;
-//				if (Remaining <= 0) return 0;
-//			}
-//		}
-//	}
-//
-//	// 하나라도 아이템을 추가한 경우
-//	if (Amount != Remaining)
-//	{
-//		// 인벤토리 업데이트 이벤트 브로드캐스트
-//		OnInventoryUpdated.Broadcast();
-//	}
-//
-//	// 추가한 수량만큼 반환
-//	return Amount - Remaining;
-//}
 
 int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 {
 	// 예외 처리
 	if (!ItemDef || Amount <= 0) return 0;
 
+	// 추가하려는 아이템 카테고리 가져오기
+	const EAR_ItemCategory Category = ItemDef->ItemCategory;
+
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+
 	// 추가한 아이템 개수
 	int32 Added = 0;
 
-	// 인벤토리 슬롯 배열을 순회하며 아이템을 추가할 슬롯을 확보
-	for (FInventorySlot& InventorySlot : Slots)
+	// 먼저 기존의 같은 아이템 중첩 시도
+	// ex. 빨간 물약(x2) -> 빨간 물약(x6)
+	for (FInventorySlot& Slot : SlotsRef)
 	{
-		// 해당 슬롯이 추가하려는 아이템과 같고, 최대 수량이 아닌 경우
-		if (InventorySlot.ItemDefinition == ItemDef && !InventorySlot.IsFull())
+		// 같은 아이템이고, 최대 스택이 아닌 경우
+		if (Slot.ItemDefinition == ItemDef && !Slot.IsFull())
 		{
-			// 해당 슬롯에 추가하고 추가한 개수만큼 저장
-			Added += InventorySlot.AddQuantity(Amount - Added);
+			// 추가해야 하는 남은 아이템 개수
+			const int32 Remaining = Amount - Added;
+
+			// 해당 슬롯에 더 쌓을 수 있는 개수, 추가해야 하는 남은 아이템 개수 Min 검사
+			const int32 Addable = FMath::Min(ItemDef->MaxStackSize - Slot.Quantity, Remaining);
+
+			// 추가하는 수만큼 갱신
+			Slot.Quantity += Addable;
+			Added += Addable;
+
 			if (Added >= Amount)
 			{
 				// 인벤토리 업데이트 이벤트 브로드캐스트
@@ -110,29 +71,27 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 		}
 	}
 
-	// 새 슬롯 생성
-	if (Added < Amount)
+	// 빈 슬롯에 추가
+	for (FInventorySlot& Slot : SlotsRef)
 	{
-		// 인벤토리 슬롯 배열에서 비어있는 슬롯을 확보
-		for (FInventorySlot& InventorySlot : Slots)
+		if (Slot.IsEmpty())
 		{
-			if (InventorySlot.IsEmpty())
+			// 해당 빈 슬롯의 아이템 정의를 추가하려는 아이템으로 정의
+			Slot.ItemDefinition = ItemDef;
+
+			// 아이템 정의의 최대 스택 수량을 기준으로 추가할 아이템 개수 Min 계산
+			const int32 Remaining = Amount - Added;
+			const int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Remaining);
+
+			// 추가하는 수만큼 갱신
+			Slot.Quantity = AddAmount;
+			Added += AddAmount;
+
+			if (Added >= Amount)
 			{
-				// 해당 슬롯의 아이템 정의를 추가하는 아이템으로 초기화
-				InventorySlot.ItemDefinition = ItemDef;
-
-				// 해당 슬롯의 수량을 초기화. 추가하려는 아이템의 최대 수량을 넘지 않도록 Min 계산
-				int32 AddAmount = FMath::Min(ItemDef->MaxStackSize, Amount - Added);
-				InventorySlot.Quantity = AddAmount;
-
-				// 추가해야 할 아이템 수량 차감
-				Added += AddAmount;
-				if (Added >= Amount)
-				{
-					// 인벤토리 업데이트 이벤트 브로드캐스트
-					OnInventoryUpdated.Broadcast();
-					return Added;
-				}
+				// 인벤토리 업데이트 이벤트 브로드캐스트
+				OnInventoryUpdated.Broadcast();
+				return Added;
 			}
 		}
 	}
@@ -149,149 +108,144 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 }
 
 
-void UInventoryComponent::UseItem(int32 SlotIndex)
+void UInventoryComponent::UseItem(EAR_ItemCategory Category, int32 SlotIndex, int32 Amount)
 {
-	// 사용하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 사용 실패
-	if (!Slots.IsValidIndex(SlotIndex)) return;
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+	if (!SlotsRef.IsValidIndex(SlotIndex)) return;
 
-	// 사용하려는 인벤토리 슬롯의 아이템 데이터 가져오기
-	FInventorySlot& InventorySlot = Slots[SlotIndex];
-	if (InventorySlot.IsEmpty()) return;
+	// 사용하려는 슬롯의 슬롯 데이터 가져오기
+	FInventorySlot& Slot = SlotsRef[SlotIndex];
+	if (!Slot.ItemDefinition || Slot.IsEmpty()) return;
 
-	if (InventorySlot.ItemDefinition)
-	{
-		// 사용자에게 아이템 효과 적용
-		InventorySlot.ItemDefinition->ApplyEffect(GetOwner());
-	}
+	// 실제 사용할 개수(추가 개수 vs 남은 개수 중 최소)
+	int32 UseCount = FMath::Min(Amount, Slot.Quantity);
 
-	// 아이템 사용 후, 수량 감소
-	InventorySlot.Quantity -= 1;
-
-	// 아이템 수량이 0이면, 해당 슬롯을 빈 슬롯으로 초기화
-	if (InventorySlot.Quantity <= 0)
-	{
-		InventorySlot.ItemDefinition = nullptr;
-		InventorySlot.Quantity = 0;
-	}
-
-	// 인벤토리 업데이트 이벤트 브로드캐스트
-	OnInventoryUpdated.Broadcast();
-}
-
-void UInventoryComponent::BundleUseItem(int32 SlotIndex, int32 Amount)
-{
-	// 사용하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 사용 실패
-	if (!Slots.IsValidIndex(SlotIndex) || Amount <= 0) return;
-
-	// 사용하려는 인벤토리 슬롯의 아이템 데이터 가져오기
-	FInventorySlot& InventorySlot = Slots[SlotIndex];
-	if (InventorySlot.IsEmpty()) return;
-
-	// 사용할 개수를 초기화
-	int32 UseCount = FMath::Min(Amount, InventorySlot.Quantity);
-
-	// 사용 개수만큼 반복적으로 아이템 사용
+	// 사용하려는 개수만큼 아이템 반복 사용
 	for (int32 i = 0; i < UseCount; ++i)
 	{
-		if (InventorySlot.IsEmpty()) break;
+		// 슬롯이 도중에 비워졌으면 방어
+		if (Slot.IsEmpty() || !Slot.ItemDefinition) break;
 
-		// 아이템 효과 적용
-		if (InventorySlot.ItemDefinition)
-		{
-			InventorySlot.ItemDefinition->ApplyEffect(GetOwner());
-		}
+		Slot.ItemDefinition->ApplyEffect(GetOwner());
+		Slot.Quantity--;
+	}
 
-		// 개수 차감
-		InventorySlot.Quantity -= 1;
-
-		// 아이템 수량이 0이면, 해당 슬롯을 빈 슬롯으로 초기화
-		if (InventorySlot.Quantity <= 0)
-		{
-			InventorySlot.ItemDefinition = nullptr;
-			InventorySlot.Quantity = 0;
-			break;
-		}
+	// 아이템 남은 개수가 0이면 빈 슬롯으로 초기화
+	if (Slot.Quantity <= 0)
+	{
+		Slot.ItemDefinition = nullptr;
+		Slot.Quantity = 0;
 	}
 
 	// 최종적으로 한번만 인벤토리 업데이트 이벤트 브로드캐스트
 	OnInventoryUpdated.Broadcast();
 }
 
-int32 UInventoryComponent::SplitStack(int32 SlotIndex, int32 SplitAmount)
+int32 UInventoryComponent::SplitStack(EAR_ItemCategory Category, int32 SlotIndex, int32 SplitAmount)
 {
-	// 나누려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 분리 실패
-	if (!Slots.IsValidIndex(SlotIndex)) return -1;
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+	if (!SlotsRef.IsValidIndex(SlotIndex)) return -1;
 
-	// 나누려는 인벤토리 슬롯의 아이템 데이터 가져오기
-	FInventorySlot& Source = Slots[SlotIndex];
-	if (Source.IsEmpty() || SplitAmount <= 0 || SplitAmount >= Source.Quantity) return -1;
+	// 나누려는 슬롯의 슬롯 데이터 가져오기
+	FInventorySlot& FromSlot = SlotsRef[SlotIndex];
+	if (!FromSlot.ItemDefinition || FromSlot.IsEmpty()) return -1;
+	if (SplitAmount <= 0 || SplitAmount >= FromSlot.Quantity) return -1;
 
-	// 나눈 후 저장할 수 있는 슬롯 확보
-	for (int32 i = 0; i < Slots.Num(); ++i)
+	// 새 스택을 넣을 빈 슬롯 찾기
+	int32 EmptyIndex = -1;
+	for (int32 i = 0; i < SlotsRef.Num(); ++i)
 	{
-		if (Slots[i].IsEmpty())
+		// 원본 슬롯은 스킵
+		if (i == SlotIndex) continue;
+
+		if (SlotsRef[i].IsEmpty())
 		{
-			// 해당 슬롯의 아이템과 수량을 초기화
-			Slots[i].ItemDefinition = Source.ItemDefinition;
-			Slots[i].Quantity = SplitAmount;
-
-			// 나눈 수량만큼 나눈 슬롯에서 차감
-			Source.Quantity -= SplitAmount;
-
-			// 인벤토리 업데이트 이벤트 브로드캐스트
-			OnInventoryUpdated.Broadcast();
-
-			// 나눠서 저장한 슬롯 반환
-			return i;
+			EmptyIndex = i;
+			break;
 		}
 	}
 
-	return -1;
+	// 빈 슬롯을 못 찾았으면 실패
+	if (EmptyIndex == -1)
+	{
+		return -1;
+	}
+
+	// 새 슬롯 설정
+	FInventorySlot& NewSlot = SlotsRef[EmptyIndex];
+	NewSlot.ItemDefinition = FromSlot.ItemDefinition;
+	NewSlot.Quantity = SplitAmount;
+
+	// 원본 수량 감소
+	FromSlot.Quantity -= SplitAmount;
+
+	// 원본이 이론상 0이 될 수 없지만, 예외 처리
+	if (FromSlot.Quantity <= 0)
+	{
+		FromSlot.ItemDefinition = nullptr;
+		FromSlot.Quantity = 0;
+	}
+
+	// 인벤토리 업데이트 이벤트 브로드캐스트
+	OnInventoryUpdated.Broadcast();
+
+	// 새로 생성된 슬롯 인데스 반환
+	return EmptyIndex;
 }
 
-void UInventoryComponent::RemoveItem(int32 SlotIndex, int32 RemoveAmount)
+void UInventoryComponent::RemoveItem(EAR_ItemCategory Category, int32 SlotIndex, int32 RemoveAmount)
 {
-	// 제거하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 제거 실패
-	if (!Slots.IsValidIndex(SlotIndex)) return;
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+	if (!SlotsRef.IsValidIndex(SlotIndex)) return;
 
-	// 제거하려는 인벤토리 슬롯의 아이템 데이터 가져오기
-	FInventorySlot& InventorySlot = Slots[SlotIndex];
-	if (InventorySlot.IsEmpty()) return;
+	// 제거하려는 슬롯의 슬롯 데이터 가져오기
+	FInventorySlot& Slot = SlotsRef[SlotIndex];
+	if (!Slot.ItemDefinition || Slot.IsEmpty()) return;
 
-	// 모두 지우는 경우, 해당 슬롯을 빈 슬롯으로 초기화
-	if (RemoveAmount <= 0 || RemoveAmount >= InventorySlot.Quantity)
+	// 모두 제거하는 경우, 빈 슬롯으로 전환
+	if (RemoveAmount <= 0 || RemoveAmount >= Slot.Quantity)
 	{
-		InventorySlot.ItemDefinition = nullptr;
-		InventorySlot.Quantity = 0;
+		Slot.ItemDefinition = nullptr;
+		Slot.Quantity = 0;
 	}
 	else
 	{
-		InventorySlot.Quantity -= RemoveAmount;
+		Slot.Quantity -= RemoveAmount;
 	}
 
 	// 인벤토리 업데이트 이벤트 브로드캐스트
 	OnInventoryUpdated.Broadcast();
 }
 
-void UInventoryComponent::MoveItem(int32 FromIndex, int32 ToIndex)
+void UInventoryComponent::MoveItem(EAR_ItemCategory Category, int32 FromIndex, int32 ToIndex)
 {
-	// 이동 시작/종료하려는 인덱스의 인벤토리 슬롯이 유효하지 않거나 두 인덱스가 같으면 이동 실패
-	if (!Slots.IsValidIndex(FromIndex) || !Slots.IsValidIndex(ToIndex) || FromIndex == ToIndex) return;
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+	if (!SlotsRef.IsValidIndex(FromIndex) || !SlotsRef.IsValidIndex(ToIndex) || FromIndex == ToIndex) return;
+
+	// 두 슬롯을 스왑
+	SlotsRef.Swap(FromIndex, ToIndex);
+
+	// 인벤토리 업데이트 이벤트 브로드캐스트
+	OnInventoryUpdated.Broadcast();
+}
+
+void UInventoryComponent::MergeItem(EAR_ItemCategory Category, int32 FromIndex, int32 ToIndex)
+{
+	// 해당 아이템 카테고리의 인벤토리 슬롯 목록 가져오기
+	TArray<FInventorySlot>& SlotsRef = GetSlotsByCategory(Category);
+	if (!SlotsRef.IsValidIndex(FromIndex) || !SlotsRef.IsValidIndex(ToIndex) || FromIndex == ToIndex) return;
 
 	// 이동 시작/종료하려는 인덱스의 아이템 데이터 가져오기
-	FInventorySlot& From = Slots[FromIndex];
-	FInventorySlot& To = Slots[ToIndex];
+	FInventorySlot& From = SlotsRef[FromIndex];
+	FInventorySlot& To = SlotsRef[ToIndex];
 	if (From.IsEmpty()) return;
 
-	// 이동하려는 인덱스가 비어있는 경우, From의 데이터를 To로 이동
-	if (To.IsEmpty())
-	{
-		To = From;
-		To.ItemDefinition = nullptr;
-		To.Quantity = 0;
-	}
 	// 두 슬롯의 아이템 데이터가 같고, 이동하려는 인덱스의 아이템이 최대 수량이 아닌 경우
-	else if (From.ItemDefinition == To.ItemDefinition && !To.IsFull())
+	if (From.ItemDefinition == To.ItemDefinition && !To.IsFull())
 	{
 		// 이동(추가)시킬 수 있는 수량 확인 후, 추가
 		int32 MoveAmount = FMath::Min(From.Quantity, To.ItemDefinition->MaxStackSize - To.Quantity);
@@ -307,28 +261,11 @@ void UInventoryComponent::MoveItem(int32 FromIndex, int32 ToIndex)
 			From.Quantity = 0;
 		}
 	}
-	// 두 슬롯의 아이템 데이터가 다른 경우, 서로 슬롯을 교체
 	else
 	{
-		Swap(From, To);
+		// 두 슬롯을 스왑
+		SlotsRef.Swap(FromIndex, ToIndex);
 	}
-
-	// 인벤토리 업데이트 이벤트 브로드캐스트
-	OnInventoryUpdated.Broadcast();
-}
-
-void UInventoryComponent::DropItem(int32 SlotIndex)
-{
-	// 드롭(삭제)하려는 인덱스의 인벤토리 슬롯이 유효하지 않으면 드롭(삭제) 실패
-	if (Slots.IsValidIndex(SlotIndex)) return;
-
-	// 드롭(삭제)하려는 인덱스의 아이템 데이터 가져오기
-	FInventorySlot& InventorySlot = Slots[SlotIndex];
-	if (InventorySlot.IsEmpty()) return;
-
-	// 해당 슬롯을 빈 슬롯으로 초기화
-	InventorySlot.ItemDefinition = nullptr;
-	InventorySlot.Quantity = 0;
 
 	// 인벤토리 업데이트 이벤트 브로드캐스트
 	OnInventoryUpdated.Broadcast();
@@ -359,4 +296,37 @@ bool UInventoryComponent::SpendGolds(int32 Amount)
 
 	// 재화(골드) 차감 실패 반환
 	return false;
+}
+
+const TArray<FInventorySlot>& UInventoryComponent::GetSlotsByCategory(EAR_ItemCategory Category) const
+{
+	switch (Category)
+	{
+	case EAR_ItemCategory::Equipment:	return EquipmentSlots;
+	case EAR_ItemCategory::Consumable:	return ConsumableSlots;
+	case EAR_ItemCategory::Quest:		return QuestSlots;
+	default:							return EquipmentSlots;
+	}
+}
+
+TArray<FInventorySlot>& UInventoryComponent::GetSlotsByCategory(EAR_ItemCategory Category)
+{
+	switch (Category)
+	{
+	case EAR_ItemCategory::Equipment:	return EquipmentSlots;
+	case EAR_ItemCategory::Consumable:	return ConsumableSlots;
+	case EAR_ItemCategory::Quest:		return QuestSlots;
+	default:							return EquipmentSlots;
+	}
+}
+
+int32 UInventoryComponent::GetMaxSlotsByCategory(EAR_ItemCategory Category) const
+{
+	switch (Category)
+	{
+	case EAR_ItemCategory::Equipment:	return MaxEquipmentSlots;
+	case EAR_ItemCategory::Consumable:	return MaxConsumableSlots;
+	case EAR_ItemCategory::Quest:		return MaxQuestSlots;
+	default:							return 0;
+	}
 }

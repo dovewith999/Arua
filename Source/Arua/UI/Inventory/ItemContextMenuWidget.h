@@ -18,7 +18,7 @@ class ARUA_API UItemContextMenuWidget : public UUserWidget
 public:
 	// 콘텍스트 메뉴 초기화 함수
 	UFUNCTION(BlueprintCallable, Category = "Menu")
-	void InitializeMenu(class UInventoryComponent* InInventory, int32 InSlotIndex);
+	void InitializeMenu(class UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -71,14 +71,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UButton> OnCancleButton;
 
-	// 연동된 인벤토리
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<class UInventoryComponent> Inventory;
-
 	// 아이템 수량 선택 팝업 위젯 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UItemQuantityPopupWidget> ItemQuantityPopupWidgetClass;
 
-	// 연동된 인벤토리 슬롯 인덱스
+	// 현재 연결된 인벤토리 컴포넌트
+	UPROPERTY()
+	TObjectPtr<class UInventoryComponent> Inventory;
+
+	// 슬롯 카테고리
+	EAR_ItemCategory Category;
+
+	// 슬롯 인덱스
 	int32 SlotIndex;
 };
