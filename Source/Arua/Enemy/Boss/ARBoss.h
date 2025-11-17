@@ -54,7 +54,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 20.0f;
 
-
+	//토네이도 쏘는 이벤트
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnTornado();
 
 	//GA 관련 변수
 protected:

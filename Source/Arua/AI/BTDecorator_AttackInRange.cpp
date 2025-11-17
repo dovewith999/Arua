@@ -58,7 +58,7 @@ bool UBTDecorator_AttackInRange::CalculateRawConditionValue(UBehaviorTreeCompone
 	//근거리 공격과 원거리 공격 중 랜덤하게 선택하여 공격
 	if (Result == true)
 	{
-		int32 RandomNum = FMath::RandRange(0, 1);
+		int32 RandomNum = FMath::RandRange(1, 1);//테스트를 위해 1로 설정
 
 		if (RandomNum == 0)
 		{
