@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/AR_NPCInteractionInterface.h"
 #include "ItemPickupActor.generated.h"
 
 /*
@@ -11,7 +12,7 @@
 * 플레이어가 상호작용하면 인벤토리에 아이템을 추가하고 자기 자신을 제거
 */
 UCLASS()
-class ARUA_API AItemPickupActor : public AActor
+class ARUA_API AItemPickupActor : public AActor, public IAR_NPCInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -49,5 +50,12 @@ protected:
 
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UARInteractComponent> InteractionComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	FString ObjectName;
+
+	// Inherited via IAR_NPCInteractionInterface
+	void PlayInteraction(APawn* InInteractor) override;
 };

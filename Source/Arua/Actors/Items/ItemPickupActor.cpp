@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Actors/Items/ItemPickupActor.h"
@@ -8,19 +8,20 @@
 #include "Components/Inventory/InventoryComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/Interact/ARInteractComponent.h"
 
 AItemPickupActor::AItemPickupActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// ·çÆ® ÄÄÆ÷³ÍÆ® ¼³Á¤
+	// ë£¨íŠ¸ ì»´í¬ë„ŒíŠ¸ ì„¤ì •
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
-	// ¾ÆÀÌÅÛ ¸Ş½Ã ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
+	// ì•„ì´í…œ ë©”ì‹œ ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
 
-	// Ãæµ¹ ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
+	// ì¶©ëŒ ì»´í¬ë„ŒíŠ¸ ì´ˆê¸°í™”
 	InteractionCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionCollision"));
 	InteractionCollision->SetupAttachment(RootComponent);
 	InteractionCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -28,31 +29,38 @@ AItemPickupActor::AItemPickupActor()
 	InteractionCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
 	InteractionCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
-	// Ãæµ¹ ¿À¹ö·¦ ÇÔ¼ö ¹ÙÀÎµù
-	InteractionCollision->OnComponentBeginOverlap.AddDynamic(this, &AItemPickupActor::OnBeginOverlap);
+	// Playerì—ì„œ Traceë¡œ ê°ì§€í•˜ê¸° ìœ„í•œ ì„¤ì •
+	InteractionCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
-	// ±âº» ¼ö·® ÃÊ±âÈ­
+	// ì¶©ëŒ ì˜¤ë²„ë© í•¨ìˆ˜ ë°”ì¸ë”©
+	//InteractionCollision->OnComponentBeginOverlap.AddDynamic(this, &AItemPickupActor::OnBeginOverlap);
+
+	// ê¸°ë³¸ ìˆ˜ëŸ‰ ì´ˆê¸°í™”
 	Quantity = 1;
+
+	InteractionComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractionComponent"));
 }
 
 void AItemPickupActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InteractionComponent->SetInteractCollision(InteractionCollision, ObjectName);
 }
 
 void AItemPickupActor::Interact(APawn* Interactor)
 {
 	if (!Interactor || !ItemDefinition) return;
 
-	// ÇÃ·¹ÀÌ¾îÀÇ ÀÎº¥Åä¸® ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+	// í”Œë ˆì´ì–´ì˜ ì¸ë²¤í† ë¦¬ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
 	UInventoryComponent* InventoryComp = Interactor->FindComponentByClass<UInventoryComponent>();
 	if (InventoryComp)
 	{
-		// ¾ÆÀÌÅÛ Ãß°¡
+		// ì•„ì´í…œ ì¶”ê°€
 		int32 Added = InventoryComp->AddItem(ItemDefinition, Quantity);
 		if (Added > 0)
 		{
-			// ¼º°øÀûÀ¸·Î Ãß°¡µÇ¸é ¾ÆÀÌÅÛ ¾×ÅÍ »èÁ¦
+			// ì„±ê³µì ìœ¼ë¡œ ì¶”ê°€ë˜ë©´ ì•„ì´í…œ ì•¡í„° ì‚­ì œ
 			Destroy();
 		}
 	}
@@ -62,9 +70,14 @@ void AItemPickupActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActo
 {
 	if (APawn* Pawn = Cast<APawn>(OtherActor))
 	{
-		// ÇÃ·¹ÀÌ¾î¿¡°Ô À§Á¬ ¶ç¿ì°í ÇÈ¾÷ ÀÔ·Â ¾×¼Ç ÇÒ´çÇÏ±â?
+		// í”Œë ˆì´ì–´ì—ê²Œ ìœ„ì ¯ ë„ìš°ê³  í”½ì—… ì…ë ¥ ì•¡ì…˜ í• ë‹¹í•˜ê¸°?
 
-		// ¿À¹ö·¦ µÇ¾úÀ» ¶§ ÀÚµ¿À¸·Î ÀÎÅÍ·¢Æ®ÇÏÁö ¾Ê°í, ÇÃ·¹ÀÌ¾î ÀÔ·Â¿¡ ÀÇÇØ È£ÃâµÇµµ·Ï ÇÏ·Á¸é ÀÎÅÍ·¢Æ® ÇÔ¼ö¸¦ È£ÃâÇÏÁö ¾Ê´Â´Ù.
-		// ¿¹: Ä³¸¯ÅÍ°¡ E Å°¸¦ ´­·¶À» ¶§ ÁÖº¯ ¾ÆÀÌÅÛÀ» Ã£µµ·Ï ±¸Çö °¡´É.
+		// ì˜¤ë²„ë© ë˜ì—ˆì„ ë•Œ ìë™ìœ¼ë¡œ ì¸í„°ë™íŠ¸í•˜ì§€ ì•Šê³ , í”Œë ˆì´ì–´ ì…ë ¥ì— ì˜í•´ í˜¸ì¶œë˜ë„ë¡ í•˜ë ¤ë©´ ì¸í„°ë™íŠ¸ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì§€ ì•ŠëŠ”ë‹¤.
+		// ì˜ˆ: ìºë¦­í„°ê°€ E í‚¤ë¥¼ ëˆŒë €ì„ ë•Œ ì£¼ë³€ ì•„ì´í…œì„ ì°¾ë„ë¡ êµ¬í˜„ ê°€ëŠ¥.
 	}
+}
+
+void AItemPickupActor::PlayInteraction(APawn* InInteractor)
+{
+	Interact(InInteractor);
 }
