@@ -4,6 +4,7 @@
 #include "InteractImage.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "UI/ViewModel/ARInteractObjectViewMode.h"
 
 UInteractImage::UInteractImage()
 {
@@ -33,6 +34,8 @@ void UInteractImage::OnViewModelPropertyChanged_Implementation(FName PropertyNam
 {
 	if (PropertyName == "Text" || PropertyName == NAME_None)
 	{
-		Text_Message->SetText(FText::FromString(TEXT("상호작용")));
+		UARInteractObjectViewModel* VM = Cast<UARInteractObjectViewModel>(GetViewModel());
+
+		Text_Message->SetText(FText::FromString(VM->GetName()));
 	}
 }

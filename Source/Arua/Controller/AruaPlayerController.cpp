@@ -39,7 +39,7 @@ void AAruaPlayerController::SetTargetBoss(AARMonsterBase* InTargetMonster)
 
 void AAruaPlayerController::TargetOff()
 {
-	HUD->TurnOffBossHpBar();
+	HUD->InitTurnOff();
 	if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(GetPawn()))
 	{
 		UE_LOG(LogTemp, Log, TEXT("OwnerPlayer is valid"));
@@ -48,7 +48,7 @@ void AAruaPlayerController::TargetOff()
 	}
 }
 
-void AAruaPlayerController::CanInteract(bool InCanInteract, FName InObjectName)
+void AAruaPlayerController::CanInteract(bool InCanInteract, FString InObjectName)
 {
 	HUD->SetCanInteract(InCanInteract, InObjectName);	
 }

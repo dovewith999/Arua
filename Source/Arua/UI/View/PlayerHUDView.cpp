@@ -6,6 +6,9 @@
 #include "BossHpBarView.h"
 #include "InteractImage.h"
 
+#include "UI/Model/InteractObjectData.h"
+#include "UI/ViewModel/ARInteractObjectViewMode.h"
+
 UPlayerHUDView::UPlayerHUDView()
 {
 }
@@ -31,21 +34,29 @@ void UPlayerHUDView::SetBossViewModel(UViewModelBase* InViewModel)
 	BossHpBar->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UPlayerHUDView::TurnOffBossHpBar()
+void UPlayerHUDView::InitTurnOff()
 {
 	BossHpBar->SetVisibility(ESlateVisibility::Hidden);
 	InteractImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPlayerHUDView::SetCanInteract(bool InCanInteract, FName InObjectName)
+void UPlayerHUDView::SetCanInteract(bool InCanInteract, FString InObjectName)
 {
+	InteractModel->SetName(InObjectName);
 	InteractImage->SetVisibility(InCanInteract == true ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void UPlayerHUDView::NativeConstruct()
 {
 	Super::NativeConstruct();
-	TurnOffBossHpBar();
+	InitTurnOff();
+
+#pragma region // InteractImage ViewModel 세팅
+	InteractModel = NewObject<UInteractObjectData>(this);
+	UARInteractObjectViewModel* InteractViewModel = NewObject<UARInteractObjectViewModel>(this);
+	InteractViewModel->Initialize(InteractModel);
+	InteractImage->SetViewModel(InteractViewModel);
+#pragma endregion
 }
 
 void UPlayerHUDView::NativeDestruct()

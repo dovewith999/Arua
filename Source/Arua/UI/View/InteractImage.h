@@ -38,5 +38,7 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> Text_Message;
+
+
 	
 };

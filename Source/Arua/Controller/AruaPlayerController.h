@@ -24,7 +24,7 @@ public:
 public:
 	void SetTargetBoss(class AARMonsterBase* InTargetMonster);
 	void TargetOff();
-	void CanInteract(bool InCanInteract, FName InObjectName = FName(""));
+	void CanInteract(bool InCanInteract, FString InObjectName = FString(""));
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UPlayerHUDView> HUDClass;

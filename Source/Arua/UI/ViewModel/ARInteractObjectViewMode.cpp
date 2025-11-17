@@ -4,16 +4,26 @@
 #include "UI/ViewModel/ARInteractObjectViewMode.h"
 #include "UI/Model/InteractObjectData.h"
 
-void UARInteractObjectViewMode::Initialize(UModelBase* InModel)
+void UARInteractObjectViewModel::Initialize(UModelBase* InModel)
 {
 	Model = Cast<UInteractObjectData>(InModel);
 	if (Model)
 	{
-		Model->OnModelDataChanged.AddUObject(this, &UARInteractObjectViewMode::OnModelDataChanged);
+		Model->OnModelDataChanged.AddUObject(this, &UARInteractObjectViewModel::OnModelDataChanged);
 	}
 }
 
-void UARInteractObjectViewMode::OnModelDataChanged(const FName& PropertyName)
+void UARInteractObjectViewModel::OnModelDataChanged(const FName& PropertyName)
 {
 	NotifyPropertyChanged(PropertyName);
+}
+
+FString UARInteractObjectViewModel::GetName() const
+{
+	if (Model)
+	{
+		return Model->GetName();
+	}
+
+	return FString("");
 }

@@ -10,12 +10,14 @@
  * 
  */
 UCLASS()
-class ARUA_API UARInteractObjectViewMode : public UViewModelBase
+class ARUA_API UARInteractObjectViewModel : public UViewModelBase
 {
 	GENERATED_BODY()
 	
 public:
 	void Initialize(class UModelBase* InModel);
+	FString GetName() const;
+
 
 private:
 	UFUNCTION()

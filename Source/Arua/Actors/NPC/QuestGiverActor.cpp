@@ -41,7 +41,7 @@ AQuestGiverActor::AQuestGiverActor()
 	
 	// InterctComponent CDO 생성
 	InteractComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractComponent"));
-	InteractComponent->SetInteractCollision(InteractionVolume, FString("퀘스트 판"));
+	InteractComponent->SetInteractCollision(InteractionVolume, FString(TEXT("퀘스트 판")));
 }
 
 void AQuestGiverActor::Interact(APawn* InInteractor)

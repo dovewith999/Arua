@@ -48,8 +48,8 @@ protected:
 	TObjectPtr<class UShapeComponent> InteractionCollision;
 
 	UPROPERTY()
-	FName ObjectName;
+	FString ObjectName;
 
 	UPROPERTY()
-	TObjectPtr<class UARInteractObjectViewMode> InteractViewModel;
+	TObjectPtr<class UARInteractObjectViewModel> InteractViewModel;
 };

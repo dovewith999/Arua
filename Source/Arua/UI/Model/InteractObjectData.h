@@ -17,7 +17,7 @@ class ARUA_API UInteractObjectData : public UModelBase
 public:
 	FORCEINLINE FString GetName() const { return Name; }
 	void SetName(const FString& InName);
-
+	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FString Name;

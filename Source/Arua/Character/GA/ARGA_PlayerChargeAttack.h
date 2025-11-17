@@ -69,7 +69,7 @@ private:
 
 #pragma region UVOffsetEffect
     UPROPERTY(EditDefaultsOnly, Category = "Post Process")
-    float OffsetDuration = 0.15f; // 0.0 -> 0.5 -> 0.0 까지 걸리는 총 시간 (0.15초)
+    float OffsetDuration = 0.3f; // 0.0 -> 0.5 -> 0.0 까지 걸리는 총 시간
 
     UPROPERTY()
     UMaterialInstanceDynamic* UVOffsetMID; // Post Process에 할당된 MID 참조
