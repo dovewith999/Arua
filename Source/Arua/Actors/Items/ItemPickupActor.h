@@ -44,6 +44,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	TObjectPtr<class UDA_ItemDefinition> ItemDefinition;
 
+	// 드롭 VFX (나이아가라)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ItemActor")
+	TObjectPtr<class UNiagaraComponent> DropVFX;
+
 	// 수량
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemActor")
 	int32 Quantity;

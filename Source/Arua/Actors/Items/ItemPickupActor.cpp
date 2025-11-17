@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Interact/ARInteractComponent.h"
+#include "NiagaraComponent.h"
 
 AItemPickupActor::AItemPickupActor()
 {
@@ -39,6 +40,10 @@ AItemPickupActor::AItemPickupActor()
 	Quantity = 1;
 
 	InteractionComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractionComponent"));
+
+	// 드롭 VFX 생성
+	DropVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("DropVFX"));
+	DropVFX->SetupAttachment(RootComponent);
 }
 
 void AItemPickupActor::BeginPlay()
