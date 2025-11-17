@@ -62,6 +62,9 @@ AARCharacterPlayer::AARCharacterPlayer()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
+	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
+	MinimapSpringArm->SetupAttachment(RootComponent);
+
 	//Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	//Weapon->SetupAttachment(
 	//	GetMesh(),
@@ -281,12 +284,14 @@ void AARCharacterPlayer::SetInputDirection()
 	// SprintArm 튀는 현상 방지 - 25/11/12 임희섭
 	// 1. 회전 전 SpringArm의 월드 회전 저장
 	FRotator SavedSpringArmRotation = SpringArm->GetComponentRotation();
+	FRotator SavedMinimapSpringArmRotation = MinimapSpringArm->GetComponentRotation();
 
 	FRotator Rot = FRotationMatrix::MakeFromX(TotalDir).Rotator();
 	SetActorRotation(Rot);
 
 	// 2. SpringArm을 저장된 회전으로 즉시 복원 (Controller 회전 유지)
 	SpringArm->SetWorldRotation(SavedSpringArmRotation);
+	MinimapSpringArm->SetWorldRotation(SavedMinimapSpringArmRotation);
 }
 
 FName AARCharacterPlayer::GetLockOnDodgeMontageSection() const

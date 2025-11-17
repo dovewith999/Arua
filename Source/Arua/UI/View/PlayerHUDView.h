@@ -23,6 +23,7 @@ public:
 	void SetViewModelChildWidget(class UViewModelBase* InViewModel); // 자식 위젯의 ViewModel 세팅하기 위한 함수-  25/11/06 임희섭
 	void SetBossViewModel(class UViewModelBase* InViewModel); // Boss HpBar에 현재 타겟의 ViewModel을 세팅하기 위한 함수 - 25/11/06 임희섭 
 	void TurnOffBossHpBar(); 
+	void SetCanInteract(bool InCanInteract, FName InObjectName = FName(""));
 
 protected:
 	// Begin UUserWidget Interface
@@ -47,6 +48,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|BossHpBar", meta = (BindWidget, AllowPrivateAccess = "true"))
 	TObjectPtr<class UBossHpBarView> BossHpBar;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|InteractImage", meta = (BindWidget, AllowPrivateAccess = "true"))
-	//TObjectPtr<class UBossHpBarView> InteractImage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD|InteractImage", meta = (BindWidget, AllowPrivateAccess = "true"))
+	TObjectPtr<class UInteractImage> InteractImage;
 };

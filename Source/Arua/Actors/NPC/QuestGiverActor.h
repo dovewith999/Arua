@@ -8,6 +8,8 @@
 #include "Interface/AR_NPCInteractionInterface.h"
 #include "QuestGiverActor.generated.h"
 
+class InteractComponent;
+
 // 위젯 가시화 기록 구조체
 USTRUCT()
 struct FWidgetVisibilityRecord
@@ -58,7 +60,7 @@ protected:
 	TArray<FQuestData> GetProvidedQuests() const;
 
 protected:
-	// 상호작용 콜리전
+	//// 상호작용 콜리전
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> InteractionVolume;
 
@@ -109,6 +111,9 @@ private:
 
 	// 카메라 전환 타이머 핸들
 	FTimerHandle ViewTargetBlendTimer;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UARInteractComponent> InteractComponent;
 
 private:
 	// 다이얼로그 위젯 인스턴스

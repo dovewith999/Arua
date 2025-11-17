@@ -48,6 +48,11 @@ void AAruaPlayerController::TargetOff()
 	}
 }
 
+void AAruaPlayerController::CanInteract(bool InCanInteract, FName InObjectName)
+{
+	HUD->SetCanInteract(InCanInteract, InObjectName);	
+}
+
 void AAruaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
