@@ -3,6 +3,7 @@
 
 #include "UI/Inventory/ItemContextMenuWidget.h"
 #include "UI/Inventory/ItemQuantityPopupWidget.h"
+#include "UI/Inventory/InventoryWidget.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
