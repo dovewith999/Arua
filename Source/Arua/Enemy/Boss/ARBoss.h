@@ -24,6 +24,7 @@ public:
 	void AttackPawLeft();
 	void ComboAttackPawLeft_TailRight();
 	void AttackShootTornado();
+	void AttackStump();
 	void TurnLeft();
 	void TurnRight();
 
@@ -75,6 +76,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageAttackShootTornado;
+
+	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> MontageAttackStump;
+
+
 public:
 	UPROPERTY(EditAnywhere, Category = BossMontage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> MontageTurnLeft;
@@ -96,5 +102,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float AttackShootTornadoTime = 1.066f * 2;
+
+	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
+	float AttackStumpTime = 2.46f;
 
 };

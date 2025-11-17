@@ -60,6 +60,14 @@ AARBoss::AARBoss()
 		MontageAttackShootTornado = MontageAttackShootTornadoRef.Object;
 	}
 
+	//찍기 공격 에셋 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageAttackStumpRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Stump.AM_Stump"));
+	if (MontageAttackStumpRef.Succeeded())
+	{
+		MontageAttackStump = MontageAttackStumpRef.Object;
+	}
+
+
 	//왼쪽 회전 에셋 지정
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTurnLeftRef(TEXT("/Game/Animation/Enemy/Boss/Elemental_Dragon/AM_Turn_Left.AM_Turn_Left"));
 	if (MontageTurnLeftRef.Succeeded())
@@ -238,6 +246,27 @@ void AARBoss::AttackShootTornado()
 		}
 	}
 
+}
+
+void AARBoss::AttackStump()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(MontageAttackStump);
+
+	}
+
+	AARAIController* AICon = Cast<AARAIController>(GetController());
+	if (AICon)
+	{
+		UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+		if (BB)
+		{
+			BB->SetValueAsFloat(BBKEY_WAITTIME, AttackStumpTime);
+		}
+	}
 }
 
 void AARBoss::TurnLeft()
