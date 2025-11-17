@@ -12,56 +12,67 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
-void UInventorySlotWidget::SetupSlot(UInventoryComponent* InInventory, int32 InSlotIndex)
+void UInventorySlotWidget::SetupSlot(UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex, bool bInEmptySlot)
 {
 	if (!InInventory) return;
 
 	Inventory = InInventory;
+	Category = InCategory;
 	SlotIndex = InSlotIndex;
+	bIsEmptySlot = bInEmptySlot;
+
 	UpdateSlotDisplay();
 }
 
 void UInventorySlotWidget::UpdateSlotDisplay()
 {
-	// 예외 처리: 슬롯이 비어있는 경우
-	if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex))
+	if (!Inventory) return;
+
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	// 해당 슬롯 데이터 가져오기
+	const FInventorySlot& InventorySlot = SlotsRef[SlotIndex];
+
+	// 최대 슬롯 수를 초과했거나 빈 슬롯인 경우 슬롯 위젯을 빈 값으로 초기화
+	if (bIsEmptySlot || !SlotsRef.IsValidIndex(SlotIndex))
 	{
-		// 슬롯이 비어있으면 빈 값으로 초기화
 		if (ItemIconImage)
 		{
-			ItemIconImage->SetBrushFromTexture(nullptr);
+			if (UTexture2D* IconTexture = EmptyItemIcon.LoadSynchronous())
+			{
+				if (IconTexture)
+				{
+					ItemIconImage->SetBrushFromTexture(IconTexture);
+				}
+			}
 		}
 		if (QuantityText)
 		{
 			QuantityText->SetText(FText::GetEmpty());
 		}
+		return;
 	}
-
-	// 해당 슬롯의 아이템 데이터 가져오기
-	const FInventorySlot InventorySlot = Inventory->Slots[SlotIndex];
 
 	// 해당 슬롯의 아이템 데이터가 있는 경우
 	if (InventorySlot.ItemDefinition)
 	{
 		// #1: 아이템 아이콘 이미지 표시
 		// 아이템 데이터의 아이템 아이콘 텍스쳐를 동기 로딩
-		if (UTexture2D* ItemIconTexture = InventorySlot.ItemDefinition->ItemIcon.LoadSynchronous())
+		if (UTexture2D* IconTexture = InventorySlot.ItemDefinition->ItemIcon.LoadSynchronous())
 		{
-			if (ItemIconImage)
+			if (IconTexture)
 			{
-				// 위젯의 아이템 아이콘 이미지에 할당
-				ItemIconImage->SetBrushFromTexture(ItemIconTexture);
+				ItemIconImage->SetBrushFromTexture(IconTexture);
 			}
 		}
-
 
 		// #2: 아이템 수량 표시
 		if (QuantityText)
 		{
-			// 아이템의 수량이 1보다 크면 수량 표시
 			if (InventorySlot.Quantity > 1)
 			{
-				QuantityText->SetText(FText::FromString(TEXT("x") + FText::AsNumber(InventorySlot.Quantity).ToString()));
+				QuantityText->SetText(FText::FromString(TEXT("x") + FString::FromInt(InventorySlot.Quantity)));
 			}
 			else
 			{
@@ -69,13 +80,31 @@ void UInventorySlotWidget::UpdateSlotDisplay()
 			}
 		}
 	}
+	else
+	{
+		if (ItemIconImage)
+		{
+			if (UTexture2D* IconTexture = EmptyItemIcon.LoadSynchronous())
+			{
+				if (IconTexture)
+				{
+					ItemIconImage->SetBrushFromTexture(IconTexture);
+				}
+			}
+		}
+		if (QuantityText)
+		{
+			QuantityText->SetText(FText::GetEmpty());
+		}
+		return;
+	}
 }
 
 void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
-	if (ItemToolTipWidgetClass)
+	if (ItemToolTipWidgetClass && !bIsEmptySlot)
 	{
 		if (!ItemToolTipWidgetInstance)
 		{
@@ -84,7 +113,7 @@ void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const
 			if (ItemToolTipWidgetInstance)
 			{
 				// 위젯 초기화 및 화면에 추가
-				ItemToolTipWidgetInstance->InitializeToolTip(Inventory, SlotIndex);
+				ItemToolTipWidgetInstance->InitializeToolTip(Inventory, Category, SlotIndex);
 				ItemToolTipWidgetInstance->AddToViewport();
 
 				// 위젯의 원점을 0으로 조정
@@ -117,7 +146,7 @@ void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	Super::NativeOnMouseLeave(InMouseEvent);
 
 	// 아이템 툴팁 위젯 제거
-	if (ItemToolTipWidgetInstance)
+	if (ItemToolTipWidgetInstance && !bIsEmptySlot)
 	{
 		ItemToolTipWidgetInstance->RemoveFromParent();
 		ItemToolTipWidgetInstance = nullptr;
@@ -138,18 +167,31 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	// #1: 좌클릭: 드래그 감지
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		// 예외 처리
-		if (Inventory && Inventory->Slots.IsValidIndex(SlotIndex) && !Inventory->Slots[SlotIndex].IsEmpty())
+		if (Inventory && !bIsEmptySlot)
 		{
-			return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+			// 해당 슬롯 카테고리의 참조 배열 가져오기
+			const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+			if (SlotsRef.IsValidIndex(SlotIndex) && !SlotsRef[SlotIndex].IsEmpty())
+			{
+				// 드래그 감지
+				return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+			}
 		}
 	}
 
 	// #2: 우클릭: 컨텍스트 메뉴 위젯 생성 및 표시 (추가 옵션들 [사용], [분리], [삭제] 등)
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
-		// 예외 처리
-		if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex) || Inventory->Slots[SlotIndex].IsEmpty() || !ItemContextMenuWidgetClass)
+		if (!Inventory || bIsEmptySlot)
+		{
+			return Reply;
+		}
+
+		// 해당 슬롯 카테고리의 참조 배열 가져오기
+		const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+		if (!SlotsRef.IsValidIndex(SlotIndex) || SlotsRef[SlotIndex].IsEmpty())
 		{
 			return Reply;
 		}
@@ -165,7 +207,7 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 		if (ItemContextMenuWidgetInstance)
 		{
 			// 위젯 초기화 및 화면에 추가
-			ItemContextMenuWidgetInstance->InitializeMenu(Inventory, SlotIndex);
+			ItemContextMenuWidgetInstance->InitializeMenu(Inventory, Category, SlotIndex);
 			ItemContextMenuWidgetInstance->AddToViewport();
 
 			// 마우스 커서 위치
@@ -203,8 +245,13 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	// 예외 처리
-	if (!Inventory || !Inventory->Slots.IsValidIndex(SlotIndex)) return;
-	if (Inventory->Slots[SlotIndex].IsEmpty()) return;
+	if (!Inventory || bIsEmptySlot) return;
+
+	// 해당 슬롯 카테고리의 참조 배열 가져오기
+	const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+	// 예외 처리
+	if (!SlotsRef.IsValidIndex(SlotIndex) || SlotsRef[SlotIndex].IsEmpty()) return;
 
 	// DragDropOperator 생성
 	UDragDropOperation* DragOp = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
@@ -220,23 +267,28 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	// 예외 처리
-	if (!Inventory) return false;
+	if (!Inventory || !InOperation) return false;
 
 	// 드롭(놓을)할 슬롯 위젯 가져오기
 	if (UInventorySlotWidget* SourceWidget = Cast<UInventorySlotWidget>(InOperation->Payload))
 	{
-		// 슬롯 위젯 이동
-		Inventory->MoveItem(SourceWidget->SlotIndex, SlotIndex);
+		// 동일한 인벤토리 및 카테고리 내에서만 드롭을 허용
+		if (bIsEmptySlot && !Inventory->GetSlotsByCategory(Category).IsValidIndex(SlotIndex)) return false;
+
+		// 해당 슬롯 카테고리의 참조 배열 가져오기
+		const TArray<FInventorySlot>& SlotsRef = Inventory->GetSlotsByCategory(Category);
+
+		// 드롭하는 슬롯이 비어 있으면 이동하고, 그렇지 않으면 아이템 합치기 시도
+		const bool bDestEmpty = !SlotsRef.IsValidIndex(SlotIndex) || SlotsRef[SlotIndex].IsEmpty();
+		if (bDestEmpty)
+		{
+			Inventory->MoveItem(Category, SourceWidget->SlotIndex, SlotIndex);
+		}
+		else
+		{
+			Inventory->MergeItem(Category, SourceWidget->SlotIndex, SlotIndex);
+		}
 		return true;
-
-
-		//// 같은 인벤토리여야 이동 가능
-		//if (SourceWidget->Inventory == Inventory)
-		//{
-		//	// 슬롯 위젯 이동
-		//	Inventory->MoveItem(SourceWidget->SlotIndex, SlotIndex);
-		//	return true;
-		//}
 	}
 
 	return false;

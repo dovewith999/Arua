@@ -18,7 +18,10 @@ class ARUA_API UInventorySlotWidget : public UUserWidget
 public:
 	// 인벤토리 참조와 슬롯 인덱스 설정 및 UI 갱신
 	UFUNCTION(BlueprintCallable, Category = "Slot")
-	void SetupSlot(UInventoryComponent* InInventory, int32 InSlotIndex);
+	void SetupSlot(UInventoryComponent* InInventory, EAR_ItemCategory InCategory, int32 InSlotIndex, bool bInEmptySlot);
+
+	// 이 슬롯이 빈 슬롯인지 반환하는 함수
+	bool GetIsEmptySlot() const { return bIsEmptySlot; }
 
 protected:
 	// 슬롯 UI 갱신 함수
@@ -44,9 +47,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> ItemHighlightImage;
 
-	// 슬롯이 속한 인벤토리
+	// 현재 연결된 인벤토리 컴포넌트
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
+
+	// 슬롯 카테고리
+	EAR_ItemCategory Category;
 
 	// 슬롯 인덱스
 	int32 SlotIndex;
@@ -59,6 +65,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UItemToolTipWidget> ItemToolTipWidgetClass;
 
+	// 빈 슬롯에 표시될 아이콘
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> EmptyItemIcon;
+
 private:
 	// 아이템 콘텍스트 메뉴 위젯 인스턴스
 	UPROPERTY()
@@ -68,4 +78,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UItemToolTipWidget> ItemToolTipWidgetInstance;
 
+	// 빈 슬롯 여부
+	bool bIsEmptySlot = false;
 };
