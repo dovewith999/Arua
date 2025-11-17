@@ -62,11 +62,22 @@ AARCharacterPlayer::AARCharacterPlayer()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
-	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
-	Weapon->SetupAttachment(
-		GetMesh(),
-		FName("hand_rSocket")
-	);
+	//Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
+	//Weapon->SetupAttachment(
+	//	GetMesh(),
+	//	FName("hand_rSocket")
+	//);
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToSocket(this, TEXT("hand_rSocket"));
+		WeaponType = CurrentWeapon->GetWeaponType();
+		SetIsWeaponChanged(true);
+	}
+	else {
+		WeaponType = EWeaponType::None;
+		SetIsWeaponChanged(false);
+	}
 
 	// 퀘스트 컴포넌트 CDO 초기화
 	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
@@ -107,11 +118,11 @@ AARCharacterPlayer::AARCharacterPlayer()
 		AttackAction = InputActionAttackRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponRef(TEXT("/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01"));
+	/*static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponRef(TEXT("/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01"));
 	if (nullptr != WeaponRef.Object)
 	{
 		Weapon->SetStaticMesh(WeaponRef.Object);
-	}
+	}*/
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Game/Animation/Player/AM_SwordComboAttack.AM_SwordComboAttack"));
 	if (ComboActionMontageRef.Object)
@@ -131,6 +142,20 @@ AARCharacterPlayer::AARCharacterPlayer()
 		ComboActionData = ComboActionDataRef.Object;
 	}
 
+	//if (StartWeaponClass)
+	//{
+	//	CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+	//
+	//	if (CurrentWeapon)
+	//	{
+	//		EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
+	//	}
+	//}
+	//else {
+	//	UE_LOG(LogTemp, Log, TEXT("StartWeaponClass"));
+	//}
+
+	
 }
 
 void AARCharacterPlayer::BeginPlay()
@@ -145,6 +170,17 @@ void AARCharacterPlayer::BeginPlay()
 	bIsRunning = false;
 	bIsWalking = false;
 	bIsRolling = false;
+
+	if (StartWeaponClass)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+
+		if (CurrentWeapon)
+		{
+			EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
+			
+		}
+	}
 }
 
 
@@ -472,19 +508,31 @@ void AARCharacterPlayer::SetupGASInputComponent()
 		}
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[AttackAction]);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillWhirlwindAction]);
-		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
+
+		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Started, this, &AARCharacterPlayer::GASInputHoldStart, InputIds[SkillWhirlwindAction]);
+		//EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
 		EnhancedInputComponent->BindAction(SkillWhirlwindAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillWhirlwindAction]);
 
-		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, InputIds[SkillChargeAttackAction]);
-		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
+		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Started, this, &AARCharacterPlayer::GASInputHoldStart, InputIds[SkillChargeAttackAction]);
+		//EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Canceled, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
 		EnhancedInputComponent->BindAction(SkillChargeAttackAction, ETriggerEvent::Completed, this, &AARCharacterPlayer::GASInputReleased, InputIds[SkillChargeAttackAction]);
+	}
+}
+
+void AARCharacterPlayer::GASInputHoldStart(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec && !Spec->IsActive())
+	{
+		Spec->InputPressed = true;
+		ASC->TryActivateAbility(Spec->Handle);
 	}
 }
 
 void AARCharacterPlayer::GASInputPressed(int32 InputId)
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+
 	if (Spec)
 	{
 		Spec->InputPressed = true;
@@ -512,78 +560,29 @@ void AARCharacterPlayer::GASInputReleased(int32 InputId)
 	}
 }
 
-//void AARCharacterPlayer::ReceivePointDamage(float Damage, UDamageType const* DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent* HitComponent, FName BoneName, FVector ShotFromDirection, AController* InstigateBy, AActor* DamageCauser, const FHitResult& HitInfo)
-//{
-//	Super::ReceivePointDamage(Damage, DamageType, HitLocation, HitNormal, HitComponent, BoneName, ShotFromDirection,
-//		InstigateBy, DamageCauser, HitInfo);
-//
-//	if (!DamageCauser) return;
-//
-//	FVector AttackerLocation = DamageCauser->GetActorLocation();
-//	EHitDirection Direction = GetHitDirection(AttackerLocation);
-//
-//	PlayHitReaction(Direction);
-//}
-//
-//EHitDirection AARCharacterPlayer::GetHitDirection(const FVector& AttackerLocation) const
-//{
-//	FVector PlayerLocation = GetActorLocation();
-//	FVector Forward = GetActorForwardVector();
-//	FVector Right = GetActorRightVector();
-//
-//	FVector ToAttacker = (AttackerLocation - PlayerLocation).GetSafeNormal();
-//
-//	float ForwardDot = FVector::DotProduct(Forward, ToAttacker);
-//	float RightDot = FVector::DotProduct(Right, ToAttacker);
-//
-//	if (ForwardDot > 0.7f)
-//		return EHitDirection::Front;
-//	else if (ForwardDot < -0.7f)
-//		return EHitDirection::Back;
-//	else if (RightDot > 0.0f)
-//		return EHitDirection::Right;
-//	else
-//		return EHitDirection::Left;
-//
-//	return EHitDirection();
-//}
-//
-//void AARCharacterPlayer::PlayHitReaction(EHitDirection Direction)
-//{
-//	if (!HitReactMontage) return;
-//
-//	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-//	if (!AnimInstance) return;
-//
-//	FName SectionName;
-//	switch (Direction)
-//	{
-//		case EHitDirection::Front: SectionName = "Hit_Front"; break;
-//		case EHitDirection::Back: SectionName = "Hit_Back"; break;
-//		case EHitDirection::Right: SectionName = "Hit_Right"; break;
-//		case EHitDirection::Left: SectionName = "Hit_Left"; break;
-//	}
-//
-//	AnimInstance->execIsAnyMontagePlaying(HitReactMontage);
-//	AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage);
-//}
+void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName)
+{
+	if (EWeapon && GetMesh())
+	{
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->DetachFromCharacter();
+		}
 
-//void AARCharacterPlayer::EquipWeapon(AARWeaponBase* Weapon, FName SocketName)
-//{
-//	if (Weapon && GetMesh())
-//	{
-//		CurrentWeapon = Weapon;
-//
-//		Weapon->AttachToSocket(this,SocketName);
-//		if (UAnimInstance* AnimInst = GetMesh()->GetAnimInstance())
-//		{
-//			//GetMesh()->SetAnimInstanceClass();
-//		}
-//
-//		
-//	}
-//}
-//
+		CurrentWeapon = EWeapon;
+		
+
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->AttachToSocket(this, SocketName);
+			SetIsWeaponChanged(true);
+			WeaponType = CurrentWeapon->GetWeaponType();
+		}
+		
+	}
+	
+}
+
 //void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)
 //{
 //	if (Weapon)

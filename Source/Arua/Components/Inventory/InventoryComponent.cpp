@@ -101,7 +101,7 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 		{
 			// 해당 슬롯에 추가하고 추가한 개수만큼 저장
 			Added += InventorySlot.AddQuantity(Amount - Added);
-			if (Added >= Amount) 
+			if (Added >= Amount)
 			{
 				// 인벤토리 업데이트 이벤트 브로드캐스트
 				OnInventoryUpdated.Broadcast();
@@ -127,7 +127,7 @@ int32 UInventoryComponent::AddItem(UDA_ItemDefinition* ItemDef, int32 Amount)
 
 				// 추가해야 할 아이템 수량 차감
 				Added += AddAmount;
-				if (Added >= Amount) 
+				if (Added >= Amount)
 				{
 					// 인벤토리 업데이트 이벤트 브로드캐스트
 					OnInventoryUpdated.Broadcast();

@@ -7,52 +7,87 @@
 // Sets default values
 AARWeaponBase::AARWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	RootComponent = WeaponMesh;
-
-	AttachSocketName = "hand_rSocket";
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> IdleByWeaponRef(TEXT(""));
-	if (IdleByWeaponRef.Object)
-	{
-		IdleByWeapon = IdleByWeaponRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> WalkByWeaponRef(TEXT(""));
-	if (IdleByWeaponRef.Object)
-	{
-		IdleByWeapon = IdleByWeaponRef.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> RunByWeaponRef(TEXT(""));
-	if (RunByWeaponRef.Object)
-	{
-		IdleByWeapon = RunByWeaponRef.Object;
-	}
-
+	RootComponent = WeaponStaticMesh;
+	WeaponStaticMesh->SetSimulatePhysics(false);
 }
+
+void AARWeaponBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (WeaponDataTable && WeaponName != NAME_None)
+	{
+		InitializeFromData();
+	}
+}
+
 
 void AARWeaponBase::AttachToSocket(class ACharacter* Character, FName SocketName)
 {
-	USkeletalMeshComponent* CharacterMesh = Character->GetMesh();
-	if (Character)
+	if (Character->GetMesh())
 	{
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-		{
-			AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-		}
+		//if (!Character)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Character is NULL"));
+		//	return;
+		//}
+
+		//UE_LOG(LogTemp, Log, TEXT("Character OK"));
+
+		//// Mesh
+		//if (!Character->GetMesh())
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Character->GetMesh() is NULL!"));
+		//	return;
+		//}
+
+		//// Socket
+		//if (!Character->GetMesh()->DoesSocketExist(SocketName))
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Socket %s does NOT exist!"), *SocketName.ToString());
+		//	return;
+		//}
+
+		//// Root
+		//if (!RootComponent)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Weapon RootComponent is NULL!"));
+		//	return;
+		//}
+
+		//UE_LOG(LogTemp, Log, TEXT("Attach OK!"));
+
+		//AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this, Character, SocketName]()
+			{
+				AttachToComponent(Character->GetMesh(),
+					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					SocketName);
+			});
+
+
 	}
-
-
 }
 
-void AARWeaponBase::DetachToCharacter()
+void AARWeaponBase::DetachFromCharacter()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+}
+
+void AARWeaponBase::InitializeFromData()
+{
+	const FARWeaponData* Row = WeaponDataTable->FindRow<FARWeaponData>(WeaponName, TEXT("Weapon Initialize"));
+
+	WeaponData = *Row;
+
+	if (UStaticMesh* WeaponMesh = Row->WeaponMeshAsset.LoadSynchronous())
+	{
+		WeaponStaticMesh->SetStaticMesh(WeaponMesh);
+	}
+
+	WeaponType = Row->WeaponType;
 }
 
 

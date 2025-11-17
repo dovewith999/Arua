@@ -13,7 +13,6 @@ void AARTA_TraceBase::ConfirmTargetingAndContinue()
 	Super::ConfirmTargeting();
 }
 
-
 FGameplayAbilityTargetDataHandle AARTA_TraceBase:: MakeTargetData() const
 {
 	return FGameplayAbilityTargetDataHandle();

@@ -69,8 +69,8 @@ FGameplayAbilityTargetDataHandle AARTA_TraceArea::MakeTargetData() const
 			DummyHitResult.HitObjectHandle = Overlap.OverlapObjectHandle; // 오버랩된 객체 핸들
 			//DummyHitResult.SetActor() = Overlap.GetActor(); // 오버랩된 액터
 
-			// SingleTargetHit 대신 ActorArray를 사용하는 것이 더 깔끔할 수 있습니다. 
-			// 여기서는 기존의 HitResult 구조를 따르기 위해 SingleTargetHit을 사용합니다.
+			// SingleTargetHit 대신 ActorArray를 사용하는 것이 더 깔끔할 수 있음
+			// 여기서는 기존의 HitResult 구조를 따르기 위해 SingleTargetHit을 사용.
 			FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit(DummyHitResult);
 			DataHandle.Add(TargetData);
 		}
@@ -80,7 +80,7 @@ FGameplayAbilityTargetDataHandle AARTA_TraceArea::MakeTargetData() const
 	if (bShowDebug)
 	{
 		FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-		// 플레이어 위치에 반경 AttackRadius의 구체를 그립니다.
+		// 플레이어 위치에 반경 AttackRadius의 구체를 그림.
 		DrawDebugSphere(GetWorld(), PlayerStartLocation, AttackRadius, 16, DrawColor, false, 5.0f);
 	}
 #endif

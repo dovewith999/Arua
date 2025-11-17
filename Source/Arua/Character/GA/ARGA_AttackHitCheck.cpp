@@ -23,7 +23,6 @@ void UARGA_AttackHitCheck::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	// OptionalObject에서 클래스 정보를 추출
 	const UClass* TargetClass = Cast<UClass>(TriggerEventData->OptionalObject.Get());
 
-	// TargetActorClass를 AGameplayAbilityTargetActor의 자식 클래스로 제한합니다.
 	TSubclassOf<AARTA_TraceBase> TargetActorClass = nullptr;
 
 	if (TargetClass && TargetClass->IsChildOf(AARTA_TraceBase::StaticClass()))
