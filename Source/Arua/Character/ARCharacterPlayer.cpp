@@ -16,7 +16,10 @@
 #include "Character/ARComboActionData.h"
 
 #include "Components/Quest/QuestComponent.h"
+#include "Components/Inventory/InventoryComponent.h"
 #include "Interface/AR_NPCInteractionInterface.h"
+
+#include "UI/Inventory/InventoryWidget.h"
 
 #include "Tag/AruaGameplayTags.h"
 
@@ -92,6 +95,9 @@ AARCharacterPlayer::AARCharacterPlayer()
 
 	// 퀘스트 컴포넌트 CDO 초기화
 	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
+
+	// 인벤토리 컴포넌트 CDO 초기화
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Input/IMC_Default.IMC_Default"));
 	if (nullptr != InputMappingContextRef.Object)
@@ -203,6 +209,7 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AARCharacterPlayer::Roll);
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AARCharacterPlayer::LockOnToggle);
 	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
+	EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::ToggleInventory);
 	EnhancedInputComponent->BindAction(WeaponChangeAction, ETriggerEvent::Started, this, &AARCharacterPlayer::WeaponChange);
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
 
@@ -426,7 +433,7 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 	);*/
 
 	FGameplayTagContainer TagContainer;
-	
+
 
 	if (!ASC)
 	{
@@ -476,9 +483,9 @@ void AARCharacterPlayer::RollCompleted()
 
 void AARCharacterPlayer::WeaponChange()
 {
-	if ((GetCharacterMovement()->Velocity.Size2D())> KINDA_SMALL_NUMBER || GetIsWeaponChanged())
+	if ((GetCharacterMovement()->Velocity.Size2D()) > KINDA_SMALL_NUMBER || GetIsWeaponChanged())
 	{
-			return;
+		return;
 	}
 
 	FTimerHandle TimerHandle;
@@ -497,14 +504,14 @@ void AARCharacterPlayer::WeaponChange()
 			//SectionName = TEXT("WeaponEquip");
 		}
 	}
-	else 
+	else
 	{
 		//float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
 		//GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);
 		//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
 		CurrentWeapon->DetachFromCharacter();
 		CurrentWeapon->Destroy();
-		
+
 		CurrentWeapon = nullptr;
 		WeaponTag = FGameplayTag::RequestGameplayTag("Character.Weapon.None");
 		//WeaponType = EWeaponType::None;
@@ -512,12 +519,12 @@ void AARCharacterPlayer::WeaponChange()
 		//GetMesh()->SetAnimInstanceClass(NoneAnimClass.LoadSynchronous());
 		//SectionName = TEXT("WeaponUnarm");
 	}
-	
+
 
 	/*float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);*/
 	//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
-	
+
 }
 
 void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
@@ -541,6 +548,132 @@ void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 			NPCInteractionInterface->PlayInteraction(this);
 		}
 	}
+}
+
+void AARCharacterPlayer::ToggleInventory()
+{
+	// 쿨타임 중이면 토글 차단
+	if (!bCanToggleInventory) return;
+
+	// 이번에 토글을 수행하므로, 쿨타임 시작
+	bCanToggleInventory = false;
+
+	// 인벤토리 토글 플래그 설정
+	GetWorld()->GetTimerManager().SetTimer(
+		InventoryTimerHandle,
+		this,
+		&AARCharacterPlayer::ResetInventoryToggleCooldown,
+		0.5f,
+		false
+	);
+
+	// 인벤토리 열기
+	if (!InventoryWidgetInstance && !bIsOpenInventory)
+	{
+		if (!InventoryWidgetClass) return;
+
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (!PC) return;
+
+		if (!InventoryWidgetInstance)
+		{
+			// 인벤토리 위젯 인스턴스 생성 및 초기화
+			InventoryWidgetInstance = CreateWidget<UInventoryWidget>(PC, InventoryWidgetClass);
+			if (!InventoryWidgetInstance) return;
+
+			InventoryWidgetInstance->AddToViewport();
+			InventoryWidgetInstance->InitializeInventory(InventoryComponent);
+		}
+
+		// 인벤토리 가시화
+		InventoryWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
+		// 입력 모드 및 커서 설정
+		FInputModeGameAndUI Mode;
+		Mode.SetWidgetToFocus(InventoryWidgetInstance->TakeWidget());
+		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		Mode.SetHideCursorDuringCapture(false);
+		PC->SetInputMode(Mode);
+		PC->bShowMouseCursor = true;
+
+		bIsOpenInventory = true;
+	}
+	// 인벤토리 닫기
+	else if (InventoryWidgetInstance && bIsOpenInventory)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (!PC) return;
+
+		if (InventoryWidgetInstance)
+		{
+			InventoryWidgetInstance->RemoveFromParent();
+			InventoryWidgetInstance = nullptr;
+		}
+
+		// 입력 모드 게임 모드로 복귀
+		FInputModeGameOnly Mode;
+		PC->SetInputMode(Mode);
+		PC->bShowMouseCursor = false;
+
+		bIsOpenInventory = false;
+	}
+
+
+
+
+
+	//// 인벤토리를 연 경우
+	//if (!InventoryWidgetInstance && !bIsOpenInventory)
+	//{
+	//	if (!InventoryWidgetClass) return;
+
+	//	// 인벤토리 위젯 인스턴스 생성 후 저장
+	//	InventoryWidgetInstance = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+	//	if (!InventoryWidgetInstance) return;
+
+	//	InventoryWidgetInstance->AddToViewport();
+	//	InventoryWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
+	//	// 인벤토리 위젯 초기화
+	//	InventoryWidgetInstance->InitializeInventory(InventoryComponent);
+
+	//	// 입력 모드 설정
+	//	APlayerController* PC = Cast<APlayerController>(GetController());
+	//	FInputModeGameAndUI Mode;
+	//	Mode.SetWidgetToFocus(InventoryWidgetInstance ? InventoryWidgetInstance->TakeWidget() : TSharedPtr<SWidget>());
+	//	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	//	Mode.SetHideCursorDuringCapture(false);
+	//	PC->SetInputMode(Mode);
+
+	//	// 커서 활성화
+	//	PC->bShowMouseCursor = true;
+
+	//	return;
+	//}
+
+	//// 인벤토리가 열려 있는 경우 -> 인벤토리 닫기(제거)
+	//if (InventoryWidgetInstance && bIsOpenInventory)
+	//{
+	//	// 인벤토리 상태 플래그 활성화
+	//	GetWorld()->GetTimerManager().SetTimer(InventoryTimerHandle,
+	//		FTimerDelegate::CreateWeakLambda(this, [this]()
+	//			{
+	//				// 인벤토리 오픈 플래그 비활성화
+	//				bIsOpenInventory = false;
+	//			}),
+	//		2.f, false
+	//	);
+
+	//	InventoryWidgetInstance->RemoveFromParent();
+	//	InventoryWidgetInstance = nullptr;
+
+	//	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	//	// 입력 모드 게임 모드로 복귀
+	//	FInputModeGameOnly Mode;
+	//	PC->SetInputMode(Mode);
+	//	PC->bShowMouseCursor = false;
+	//}
 }
 
 void AARCharacterPlayer::SetDead()
@@ -616,6 +749,12 @@ void AARCharacterPlayer::GASInputReleased(int32 InputId)
 	}
 }
 
+void AARCharacterPlayer::ResetInventoryToggleCooldown()
+{
+	// 인벤토리 토글 플래그 활성화
+	bCanToggleInventory = true;
+}
+
 void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName)
 {
 	if (EWeapon && GetMesh())
@@ -634,12 +773,12 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 			//SetIsWeaponChanged(true);
 			ASC->RemoveLooseGameplayTag(WeaponTag);
 			ASC->AddLooseGameplayTag(EWeapon->WeaponTag);
-					
+
 			WeaponTag = EWeapon->WeaponTag;
 		}
-		
+
 	}
-	
+
 }
 
 //void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)

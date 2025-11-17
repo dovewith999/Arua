@@ -109,6 +109,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> LockOnAction;
 
+	// NPC 상호작용 입력 액션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> InteractionAction;
+
+	// 인벤토리 상호작용 입력 액션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> InventoryAction;
+
 #pragma region Skill Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SkillWhirlwindAction;
@@ -116,10 +124,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SkillChargeAttackAction;
 #pragma endregion
-
-	// NPC 상호작용 입력 액션
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> InteractionAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	uint8 bIsRunning : 1;
@@ -142,6 +146,9 @@ protected:
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
+
+	// 인벤토리 토글 입력 콜백 함수
+	void ToggleInventory();
 
 	// 죽음 처리 함수
 	virtual void SetDead() override;
@@ -196,8 +203,37 @@ protected:
 
 	// 퀘스트 섹션
 protected:
+	// 퀘스트 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	TObjectPtr<class UQuestComponent> QuestComponent;
+
+	// 인벤토리 섹션
+protected:
+	UFUNCTION()
+	void ResetInventoryToggleCooldown();
+
+	// 인벤토리 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+	// 인벤토리 위젯 클래스
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
+
+	// 인벤토리 위젯 인스턴스
+	UPROPERTY()
+	TObjectPtr<class UInventoryWidget> InventoryWidgetInstance;
+
+	// 인벤토리 열기/닫기 타이머
+	FTimerHandle InventoryTimerHandle;
+
+	// 인벤토리가 열려있는 상태인지 플래그
+	UPROPERTY()
+	bool bIsOpenInventory = false;
+
+	// 인벤토리를 열기/닫기 할 수 있는 상태
+	UPROPERTY()
+	bool bCanToggleInventory = true;
 
 	// 무기 교체 섹션.
 protected:
