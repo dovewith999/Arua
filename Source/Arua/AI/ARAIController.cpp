@@ -7,6 +7,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "AI/ARAI.h"
 #include "Kismet/GameplayStatics.h"
+#include "Navigation/PathFollowingComponent.h"
+
 
 AARAIController::AARAIController()
 {
@@ -25,6 +27,8 @@ AARAIController::AARAIController()
 	{
 		BTAsset = BTAssetRef.Object;
 	}
+
+	bAllowStrafe = true;
 
 
 }

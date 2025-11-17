@@ -224,6 +224,8 @@ void AARBoss::AttackShootTornado()
 	{
 		AnimInstance->Montage_Play(MontageAttackShootTornado);
 
+		SpawnTornado();
+
 	}
 
 	AARAIController* AICon = Cast<AARAIController>(GetController());
