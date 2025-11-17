@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "DataTables/ARWeaponData.h"
 #include "GameplayTagContainer.h"
+#include "DataAssets/Weapon/DA_WeaponActionMontageData.h"
 #include "ARCharacterAnimInstance.generated.h"
 
 /**
@@ -18,6 +19,13 @@ class ARUA_API UARCharacterAnimInstance : public UAnimInstance
 
 public:
 	UARCharacterAnimInstance();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montages")
+	UDA_WeaponActionMontageData* MontageDataAsset;
+
+	// 몽타주 재생
+	UFUNCTION(BlueprintCallable)
+	void PlayActionMontage(const FGameplayTag& WeaponTag, const FGameplayTag& ActionTag);
 
 protected:
 	virtual void NativeInitializeAnimation() override;
@@ -67,6 +75,10 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Character)
 	uint8 bASCInitialized : 1;
+
+	TMap<FGameplayTag, TMap<FGameplayTag, UAnimMontage*>> WeaponActionMontageTable;
+	TMap<FGameplayTag, UAnimMontage*> CommonMontageTable;
+
 
 protected:
 	UFUNCTION()

@@ -12,6 +12,33 @@ UARCharacterAnimInstance::UARCharacterAnimInstance()
 	MovingThreshould = 3.0f;
 }
 
+void UARCharacterAnimInstance::PlayActionMontage(const FGameplayTag& WeaponTag, const FGameplayTag& ActionTag)
+{
+	if (CommonMontageTable.Contains(ActionTag))
+	{
+		UAnimMontage* MontageToPlay = CommonMontageTable[ActionTag];
+		if (MontageToPlay && !Montage_IsPlaying(MontageToPlay))
+		{
+			Montage_Play(MontageToPlay);
+		}
+		return;
+	}
+
+	// 무기 + 액션 테이블 체크
+	if (WeaponActionMontageTable.Contains(WeaponTag))
+	{
+		const TMap<FGameplayTag, UAnimMontage*>& ActionMap = WeaponActionMontageTable[WeaponTag];
+		if (ActionMap.Contains(ActionTag))
+		{
+			UAnimMontage* MontageToPlay = ActionMap[ActionTag];
+			if (MontageToPlay && !Montage_IsPlaying(MontageToPlay))
+			{
+				Montage_Play(MontageToPlay);
+			}
+		}
+	}
+}
+
 void UARCharacterAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -24,6 +51,21 @@ void UARCharacterAnimInstance::NativeInitializeAnimation()
 
 	StateMachineIndex = 1;
 	bASCInitialized = false;
+
+	if (!MontageDataAsset) return;
+
+	// 공용 몽타주 초기화
+	CommonMontageTable = MontageDataAsset->CommonMontages;
+
+	// Weapon + Action → Montage 매핑
+	for (const FWeaponActionMontage& Entry : MontageDataAsset->WeaponActionMontages)
+	{
+		if (!WeaponActionMontageTable.Contains(Entry.WeaponTag))
+		{
+			WeaponActionMontageTable.Add(Entry.WeaponTag, TMap<FGameplayTag, UAnimMontage*>());
+		}
+		WeaponActionMontageTable[Entry.WeaponTag].Add(Entry.ActionTag, Entry.Montage);
+	}
 	
 }
 
