@@ -485,11 +485,11 @@ void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 	{
 		if (HitResult.bBlockingHit)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Activate ChargeAttack"));
-
 			// 인터렉션 인터페이스로 캐스팅하여 NPC 상호작용 시작
-			IAR_NPCInteractionInterface* NPCInteractionInterface = Cast<IAR_NPCInteractionInterface>(HitResult.GetActor());
-			NPCInteractionInterface->PlayInteraction(this);
+			if (IAR_NPCInteractionInterface* NPCInteractionInterface = Cast<IAR_NPCInteractionInterface>(HitResult.GetActor()))
+			{
+				NPCInteractionInterface->PlayInteraction(this);
+			}
 		}
 	}
 }
