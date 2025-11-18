@@ -36,11 +36,17 @@ class ARUA_API UDA_WeaponActionMontageData : public UPrimaryDataAsset
 
 public:
     // 몽타주 리스트
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Montages)
     TArray<FWeaponActionMontage> WeaponActionMontages;
 
     // 공용 몽타주 (Dead 등)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Montages)
     TMap<FGameplayTag, UAnimMontage*> CommonMontages;
 	
+public:
+    UFUNCTION(BlueprintCallable)
+    UAnimMontage* FindWeaponMontage(FGameplayTag WeaponTag, FGameplayTag ActionTag) const;
+
+    UFUNCTION(BlueprintCallable)
+    UAnimMontage* FindCommonMontage(FGameplayTag ActionTag) const;
 };

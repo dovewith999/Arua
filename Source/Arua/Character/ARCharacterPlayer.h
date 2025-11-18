@@ -57,7 +57,7 @@ public:
 	FORCEINLINE class UARComboActionData* GetComboActionData() const { return ComboActionData; }
 	FORCEINLINE bool GetIsWeaponChanged() { return bIsWeaponChanged; }
 	FORCEINLINE void SetIsWeaponChanged(bool change) { bIsWeaponChanged = change; }
-	FORCEINLINE class AARWeaponBase* GetWeapon() { return CurrentWeapon; }
+	FORCEINLINE FGameplayTag GetWeaponTag() { return CurrentWeapon->WeaponTag; }
 
 
 	virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
@@ -142,7 +142,8 @@ protected:
 	virtual void Roll(const FInputActionValue& Value);
 	void LockOnToggle(const FInputActionValue& Value);
 	void RollCompleted();
-	void WeaponChange();
+	AARWeaponBase* WeaponChange(AARWeaponBase* NewWeapon);
+	void WeaponChangeTest();
 
 	// NPC 상호작용 입력 콜백 함수
 	void NPCInteraction(const FInputActionValue& Value);
@@ -177,10 +178,6 @@ protected:
 	TObjectPtr<class UAnimMontage> SkillWhirlwindMontage;
 #pragma endregion
 
-	// 무기 섹션
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* Weapon;
 
 	// ASC 어빌리티 섹션
 protected:
@@ -253,17 +250,8 @@ protected:
 	TObjectPtr<class UInputAction> WeaponChangeAction;
 
 	void EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName);
-	//void UnequipWeapon(class AARWeaponBase*& WeaponSlot);
-
-	/*UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	TSoftClassPtr<UAnimInstance> NoneAnimClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	TSoftClassPtr<UAnimInstance> SwordAnimClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<class UAnimMontage> WeaponEquipMontage;*/
-
+	void UnequipWeapon(class AARWeaponBase* EWeapon);
+	void UnequipWeaponTest(class AARWeaponBase* EWeapon);
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
@@ -274,4 +262,7 @@ private:
 	UPROPERTY()
 	TMap<TObjectPtr<class UInputAction>, int> InputIds;
 
+	// 몽타주 섹션
+protected:
+	void PlayAction(FGameplayTag ActionTag);
 };

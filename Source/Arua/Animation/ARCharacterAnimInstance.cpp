@@ -14,28 +14,17 @@ UARCharacterAnimInstance::UARCharacterAnimInstance()
 
 void UARCharacterAnimInstance::PlayActionMontage(const FGameplayTag& WeaponTag, const FGameplayTag& ActionTag)
 {
-	if (CommonMontageTable.Contains(ActionTag))
-	{
-		UAnimMontage* MontageToPlay = CommonMontageTable[ActionTag];
-		if (MontageToPlay && !Montage_IsPlaying(MontageToPlay))
-		{
-			Montage_Play(MontageToPlay);
-		}
-		return;
-	}
+	UAnimMontage* MontageToPlay = FindMontageInternal(CurrentWeaponTag, ActionTag);
 
-	// 무기 + 액션 테이블 체크
-	if (WeaponActionMontageTable.Contains(WeaponTag))
+	if (MontageToPlay)
 	{
-		const TMap<FGameplayTag, UAnimMontage*>& ActionMap = WeaponActionMontageTable[WeaponTag];
-		if (ActionMap.Contains(ActionTag))
-		{
-			UAnimMontage* MontageToPlay = ActionMap[ActionTag];
-			if (MontageToPlay && !Montage_IsPlaying(MontageToPlay))
-			{
-				Montage_Play(MontageToPlay);
-			}
-		}
+		UE_LOG(LogTemp, Log, TEXT("PlayActionMontage"));
+		Montage_Play(MontageToPlay);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No montage found for Weapon(%s) / Action(%s)"),
+			*CurrentWeaponTag.ToString(), *ActionTag.ToString());
 	}
 }
 
@@ -52,20 +41,20 @@ void UARCharacterAnimInstance::NativeInitializeAnimation()
 	StateMachineIndex = 1;
 	bASCInitialized = false;
 
-	if (!MontageDataAsset) return;
+	//if (!MontageDataAsset) return;
 
-	// 공용 몽타주 초기화
-	CommonMontageTable = MontageDataAsset->CommonMontages;
+	//// 공용 몽타주 초기화
+	//CommonMontageTable = MontageDataAsset->CommonMontages;
 
-	// Weapon + Action → Montage 매핑
-	for (const FWeaponActionMontage& Entry : MontageDataAsset->WeaponActionMontages)
-	{
-		if (!WeaponActionMontageTable.Contains(Entry.WeaponTag))
-		{
-			WeaponActionMontageTable.Add(Entry.WeaponTag, TMap<FGameplayTag, UAnimMontage*>());
-		}
-		WeaponActionMontageTable[Entry.WeaponTag].Add(Entry.ActionTag, Entry.Montage);
-	}
+	//// Weapon + Action → Montage 매핑
+	//for (const FWeaponActionMontage& Entry : MontageDataAsset->WeaponActionMontages)
+	//{
+	//	if (!WeaponActionMontageTable.Contains(Entry.WeaponTag))
+	//	{
+	//		WeaponActionMontageTable.Add(Entry.WeaponTag, TMap<FGameplayTag, UAnimMontage*>());
+	//	}
+	//	WeaponActionMontageTable[Entry.WeaponTag].Add(Entry.ActionTag, Entry.Montage);
+	//}
 	
 }
 
@@ -93,7 +82,6 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 
 	if (Movement)
 	{
-		
 		Velocity = Movement->Velocity;
 		WalkSpeed = Velocity.Size2D();
 		bIsIdle = WalkSpeed < MovingThreshould;
@@ -118,11 +106,15 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 
 void UARCharacterAnimInstance::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {
-	if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag("Character.Weapon")))
+	UE_LOG(LogTemp, Log, TEXT("OnGameplayTagChanged Start"));
+	if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag("Character.Weapon")), EGameplayTagMatchType::IncludeParentTags)
 	{
-		CurrentWeaponTag = Tag;
+		CurrentWeaponTag = Cast<AARCharacterPlayer>(Owner)->GetWeaponTag();
+		UE_LOG(LogTemp, Log, TEXT("GameplayTag: %s"), *CurrentWeaponTag.ToString());
 		StateMachineIndex = GetWeaponLayerIndex();
 	}
+
+	
 }
 
 int32 UARCharacterAnimInstance::GetWeaponLayerIndex() const
@@ -132,10 +124,36 @@ int32 UARCharacterAnimInstance::GetWeaponLayerIndex() const
 	const FGameplayTagContainer& Tags = Player->GetAbilitySystemComponent()->GetOwnedGameplayTags();
 
 	if (Tags.HasTagExact(FGameplayTag::RequestGameplayTag("Character.Weapon.None")))
+	{
 		return 0;
+	}
+		
 
 	if (Tags.HasTagExact(FGameplayTag::RequestGameplayTag("Character.Weapon.Sword")))
+	{
 		return 1;
+	}
 
 	return 0;
 }
+
+UAnimMontage* UARCharacterAnimInstance::FindMontageInternal(FGameplayTag WeaponTag, FGameplayTag ActionTag) const
+{
+	if (!MontageData)
+		return nullptr;
+
+	// 1) 무기별 몽타주 우선 검색
+	if (UAnimMontage* WeaponMontage = MontageData->FindWeaponMontage(WeaponTag, ActionTag))
+	{
+			return WeaponMontage;
+	}
+		
+
+	// 2) 없으면 공통(ActionTag) 몽타주 사용
+	if (UAnimMontage* CommonMontage = MontageData->FindCommonMontage(ActionTag))
+		return CommonMontage;
+
+	return nullptr;
+}
+
+

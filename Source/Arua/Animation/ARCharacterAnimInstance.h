@@ -20,8 +20,6 @@ class ARUA_API UARCharacterAnimInstance : public UAnimInstance
 public:
 	UARCharacterAnimInstance();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montages")
-	UDA_WeaponActionMontageData* MontageDataAsset;
 
 	// 몽타주 재생
 	UFUNCTION(BlueprintCallable)
@@ -79,6 +77,9 @@ protected:
 	TMap<FGameplayTag, TMap<FGameplayTag, UAnimMontage*>> WeaponActionMontageTable;
 	TMap<FGameplayTag, UAnimMontage*> CommonMontageTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Montages")
+	UDA_WeaponActionMontageData* MontageData;
+
 
 protected:
 	UFUNCTION()
@@ -86,6 +87,9 @@ protected:
 
 	UFUNCTION()
 	int32 GetWeaponLayerIndex() const;
+
+private:
+	UAnimMontage* FindMontageInternal(FGameplayTag WeaponTag, FGameplayTag ActionTag) const;
 
 
 };
