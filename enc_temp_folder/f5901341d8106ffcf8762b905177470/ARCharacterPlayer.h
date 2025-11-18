@@ -75,11 +75,6 @@ public:
 	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
 	class UAnimMontage* GetSkillMontage(const struct FGameplayTag& InTag) const;
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
-
-	// Todo: 이름 변경할 필요 있음.
-	// 애니메이션에서 Weapon 관련 GA 이벤트 등록을 완료한 후에 호출하는 함수.
-	void EquipStartWeapon();
-
 	// 카메라 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -257,8 +252,6 @@ protected:
 	void EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName);
 	void UnequipWeapon(class AARWeaponBase* EWeapon);
 	void UnequipWeaponTest(class AARWeaponBase* EWeapon);
-
-	
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용

@@ -151,15 +151,15 @@ void AARCharacterPlayer::BeginPlay()
 	bIsWalking = false;
 	bIsRolling = false;
 
-	//if (StartWeaponClass)
-	//{
-	//	CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+	if (StartWeaponClass)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
 
-	//	if (CurrentWeapon)
-	//	{
-	//		EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
-	//	}
-	//}
+		if (CurrentWeapon)
+		{
+			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
+		}
+	}
 
 	/*WeaponType = EWeaponType::None;*/
 }
@@ -804,19 +804,6 @@ void AARCharacterPlayer::UnequipWeaponTest(AARWeaponBase* EWeapon)
 		ASC->AddLooseGameplayTag(WeaponTag);
 		CurrentWeapon = nullptr;
 
-	}
-}
-
-void AARCharacterPlayer::EquipStartWeapon()
-{
-	if (StartWeaponClass)
-	{
-		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
-
-		if (CurrentWeapon)
-		{
-			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
-		}
 	}
 }
 

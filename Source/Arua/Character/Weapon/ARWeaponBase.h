@@ -54,5 +54,8 @@ public:
 	// 무기에 따른 AnimBp
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimInstance> AnimInstanceByWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Socket)
+	FName Socket;
 	
 };
