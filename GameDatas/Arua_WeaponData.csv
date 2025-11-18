@@ -1,3 +1,4 @@
-,WeaponName,DisplayName,WeaponTag,WeaponMeshAsset,AttackPower
-NoWeapon,NoWeapon,없음,Character.Weapon.None,nullptr,0
-Sword,Sword,대검,Character.Weapon.Sword,/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01,0
+,WeaponName,DisplayName,WeaponTag,WeaponMeshAsset,AttackPower,Socket
+NoWeapon,NoWeapon,없음,Character.Weapon.None,nullptr,0,None
+Sword,Sword,대검,Character.Weapon.Sword,/Game/GreatSword/GreatSword/Weapon/GreatSword_01.GreatSword_01,0,hand_rSocket
+Katana,Katana,카타나,Character.Weapon.Katana,/Game/Katana/SM_Katana01.SM_Katana01,0,hand_Katana

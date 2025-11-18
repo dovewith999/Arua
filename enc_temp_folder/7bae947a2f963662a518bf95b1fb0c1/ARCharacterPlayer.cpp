@@ -69,7 +69,6 @@ AARCharacterPlayer::AARCharacterPlayer()
 
 	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
 	MinimapSpringArm->SetupAttachment(RootComponent);
-	SpringArm->bUsePawnControlRotation = true;
 
 	// 퀘스트 컴포넌트 CDO 초기화
 	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
@@ -152,15 +151,15 @@ void AARCharacterPlayer::BeginPlay()
 	bIsWalking = false;
 	bIsRolling = false;
 
-	//if (StartWeaponClass)
-	//{
-	//	CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+	if (StartWeaponClass)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
 
-	//	if (CurrentWeapon)
-	//	{
-	//		EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
-	//	}
-	//}
+		if (CurrentWeapon)
+		{
+			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
+		}
+	}
 
 	/*WeaponType = EWeaponType::None;*/
 }
@@ -383,7 +382,6 @@ void AARCharacterPlayer::RunTriggered(const FInputActionValue& Value)
 void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 {
 	bIsRunning = false;
-	bIsRunning = false;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0;
 }
 
@@ -535,72 +533,23 @@ void AARCharacterPlayer::WeaponChangeTest()
 
 void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 {
-	if (!GetWorld()) return;
+	FHitResult HitResult;
 
-	// #1: 트레이스 파라미터 설정
-	// 캐릭터의 오리진보다 약간 높게 시작 시점 설정
-	const float TraceStartHeight = 40.f;
+	// 카메라 위치 기준으로 선형 트레이싱을 통해 상호작용 가능 NPC 객체 감지
+	FVector Start = SpringArm->GetComponentLocation();
+	FVector End = Start + SpringArm->GetForwardVector() * 300.f;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 
-	// 아래로 트레이싱할 거리
-	const float TraceDownLength = 150.f;
-
-	// 트레이싱할 박스 반지름
-	const FVector BoxHalfExtent(20.f, 20.f, 20.f);
-
-	const FVector ActorLocation = GetActorLocation();
-
-	// 시작은 캐릭터에서 위쪽
-	const FVector Start = ActorLocation + FVector(0.f, 0.f, TraceStartHeight);
-	// 끝은 아래 방향으로
-	const FVector End = ActorLocation - FVector(0.f, 0.f, TraceDownLength);
-
-	// #2: 박스 스윕 설정
-	FCollisionShape BoxShape = FCollisionShape::MakeBox(BoxHalfExtent);
-
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(NPCInteractionTrace), false, this);
-	Params.bReturnPhysicalMaterial = false;
-	Params.AddIgnoredActor(this); // 자기 자신 무시
-
-	TArray<FHitResult> HitResults;
-
-	const bool bHit = GetWorld()->SweepMultiByChannel(
-		HitResults,
-		Start,
-		End,
-		GetActorForwardVector().ToOrientationQuat(), // 플레이어 전방 기준으로 회전
-		ECC_Visibility,
-		BoxShape,
-		Params
-	);
-
-	// 디버그 시각화 (원하면 사용)
-
-	DrawDebugBox(GetWorld(), Start, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 1.f);
-	DrawDebugBox(GetWorld(), End, BoxHalfExtent, FQuat::Identity, FColor::Red, false, 1.f);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 1.f, 0, 1.f);
-
-	// 충돌 물체가 없으면 종료
-	if (!bHit || HitResults.Num() == 0) return;
-
-	// #3: 같은 액터가 여러 컴포넌트로 여러 번 맞는 경우를 피하기 위해 Set 사용
-	TSet<AActor*> ProcessedActors;
-
-	for (const FHitResult& Hit : HitResults)
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
 	{
-		AActor* HitActor = Hit.GetActor();
-		if (!HitActor || ProcessedActors.Contains(HitActor))
+		if (HitResult.bBlockingHit)
 		{
-			continue;
-		}
-
-		// 중복 방지
-		ProcessedActors.Add(HitActor);
-
-		// #4: 인터렉션 인터페이스 체크 후 상호작용 실행
-		if (IAR_NPCInteractionInterface* NPCInteractionInterface = Cast<IAR_NPCInteractionInterface>(HitActor))
-		{
-			NPCInteractionInterface->PlayInteraction(this);
-			return; // 처음으로 상호작용을 성공하면 종료
+			// 인터렉션 인터페이스로 캐스팅하여 NPC 상호작용 시작
+			if (IAR_NPCInteractionInterface* NPCInteractionInterface = Cast<IAR_NPCInteractionInterface>(HitResult.GetActor()))
+			{
+				NPCInteractionInterface->PlayInteraction(this);
+			}
 		}
 	}
 }
@@ -818,9 +767,11 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 		{
 			ASC->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Weapon.None")));
 		}
+
 		WeaponTag = EWeapon->WeaponTag;
 		EWeapon->AttachToSocket(this, SocketName);
 		ASC->AddLooseGameplayTag(EWeapon->WeaponTag);
+		
 	}
 }
 
@@ -856,19 +807,6 @@ void AARCharacterPlayer::UnequipWeaponTest(AARWeaponBase* EWeapon)
 	}
 }
 
-void AARCharacterPlayer::EquipStartWeapon()
-{
-	if (StartWeaponClass)
-	{
-		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
-
-		if (CurrentWeapon)
-		{
-			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
-		}
-	}
-}
-
 void AARCharacterPlayer::PlayAction(FGameplayTag ActionTag)
 {
 	if (UARCharacterAnimInstance* Anim = Cast<UARCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
@@ -877,38 +815,3 @@ void AARCharacterPlayer::PlayAction(FGameplayTag ActionTag)
 	}
 }
 
-void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
-{
-	FVector ToInstigator = (InInstigator->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
-	FVector TargetForward = GetActorForwardVector();
-
-	float Dot = FVector::DotProduct(TargetForward, ToInstigator);
-	float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
-
-	UE_LOG(LogTemp, Log, TEXT("%f"), Dot);
-	FGameplayTag HitCueTag;
-
-	if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
-	else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
-	else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
-	else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
-
-	FGameplayCueParameters Params;
-	Params.Instigator = InInstigator;
-	Params.EffectCauser = InInstigator;
-	Params.Location = HitResult.ImpactPoint;
-	Params.SourceObject = this;
-	Params.Normal = HitResult.ImpactNormal;
-
-	Params.AggregatedTargetTags.AddTag(HitCueTag);
-	if (Params.AggregatedTargetTags.HasTag(HitCueTag))
-	{
-		UE_LOG(LogTemp, Log, TEXT("HitCueTag is in AggregatedTargetTags!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
-	}
-
-	ASC->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
-}

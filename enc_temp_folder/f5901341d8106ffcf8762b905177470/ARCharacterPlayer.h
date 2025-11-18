@@ -6,7 +6,6 @@
 #include "Character/ARCharacterBase.h"
 #include "InputActionValue.h"
 #include "Character/Weapon/ARWeaponBase.h"
-#include "Interface/ARHitReactableInterface.h"
 #include "ARCharacterPlayer.generated.h"
 
 // 방향을 알기 위한 enum
@@ -40,7 +39,7 @@ struct FAbilityInputMapping
  * 
  */
 UCLASS()
-class ARUA_API AARCharacterPlayer : public AARCharacterBase, public IARHitReactableInterface
+class ARUA_API AARCharacterPlayer : public AARCharacterBase
 {
 	GENERATED_BODY()
 
@@ -72,20 +71,10 @@ public:
 	FName GetLockOnDodgeMontageSection() const;
 	EInputDirection GetDodgeDirection() const;
 
-#pragma region Hit React Interface
-	// Inherited via IARHitReactableInterface
-	virtual void OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator) override;
-#pragma endregion
-
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
 	class UAnimMontage* GetSkillMontage(const struct FGameplayTag& InTag) const;
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
-
-	// Todo: 이름 변경할 필요 있음.
-	// 애니메이션에서 Weapon 관련 GA 이벤트 등록을 완료한 후에 호출하는 함수.
-	void EquipStartWeapon();
-
 	// 카메라 섹션
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -264,8 +253,6 @@ protected:
 	void UnequipWeapon(class AARWeaponBase* EWeapon);
 	void UnequipWeaponTest(class AARWeaponBase* EWeapon);
 
-	
-
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용
 
@@ -278,5 +265,4 @@ private:
 	// 몽타주 섹션
 protected:
 	void PlayAction(FGameplayTag ActionTag);
-
 };

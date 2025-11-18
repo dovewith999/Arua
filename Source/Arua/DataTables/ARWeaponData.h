@@ -45,4 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	float AttackPower;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	FName Socket;
+
 };

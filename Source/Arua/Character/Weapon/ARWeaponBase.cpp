@@ -92,6 +92,9 @@ void AARWeaponBase::InitializeFromData()
 	FName TagName = Row->WeaponTag;
 	WeaponTag = FGameplayTag::RequestGameplayTag(TagName);
 
+	FName SocketName = Row->Socket;
+	Socket = SocketName;
+
 	
 
 	/*if (UAnimMontage* WeaponEquipMontageTemp = Row->WeaponEquipMontageData.LoadSynchronous())

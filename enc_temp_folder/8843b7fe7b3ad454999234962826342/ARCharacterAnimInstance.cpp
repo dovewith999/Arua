@@ -77,8 +77,6 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 			bASCInitialized = true;
 			PA->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag("Character.Weapon"))
 				.AddUObject(this, &UARCharacterAnimInstance::OnGameplayTagChanged);
-
-			Player->EquipStartWeapon();
 		}
 	}
 
