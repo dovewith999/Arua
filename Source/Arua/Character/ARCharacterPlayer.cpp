@@ -879,6 +879,11 @@ void AARCharacterPlayer::PlayAction(FGameplayTag ActionTag)
 
 void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
 {
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Roll))
+	{
+		return;
+	}
+
 	FVector ToInstigator = (InInstigator->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
 	FVector TargetForward = GetActorForwardVector();
 
