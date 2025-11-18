@@ -116,6 +116,15 @@ void AARBoss::BeginPlay()
 			BB->SetValueAsFloat(BBKEY_ATTACKRADIUS, GetBossAttackRange());
 		}
 	}
+
+	NestLocation = GetActorLocation();
+
+	UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+	if (BB)
+	{
+		BB->SetValueAsVector (BBKEY_NESTPOS,NestLocation);
+	}
+	
 	
 }
 
