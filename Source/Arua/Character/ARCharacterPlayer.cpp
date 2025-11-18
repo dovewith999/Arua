@@ -368,10 +368,41 @@ void AARCharacterPlayer::Look(const FInputActionValue& Value)
 		return;
 	}
 
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	//FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	AddControllerYawInput(LookAxisVector.X);
-	AddControllerPitchInput(LookAxisVector.Y);
+	//AddControllerYawInput(LookAxisVector.X);
+	//AddControllerPitchInput(LookAxisVector.Y);
+
+	// 카메라 Ptich 제한 - 25/11/18 임희섭
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
+
+	if (LookAxisVector.X != 0.f)
+	{
+		AddControllerYawInput(LookAxisVector.X);
+	}
+
+	if (LookAxisVector.Y != 0.f)
+	{
+
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (PC)
+		{
+			// 현재 pitch 가져오기
+			FRotator ControlRot = PC->GetControlRotation();
+			float CurrentPitch = FRotator::NormalizeAxis(ControlRot.Pitch);
+
+			// AddControllerPitchInput는 delta라서, 일단 적용할 값 계산
+			float NewPitch = CurrentPitch - LookAxisVector.Y;
+
+			// 원하는 범위로 제한
+			NewPitch = FMath::Clamp(NewPitch, -55.f, 10.f);
+
+			// 최종 적용
+			ControlRot.Pitch = NewPitch;
+
+			PC->SetControlRotation(ControlRot);
+		}
+	}
 }
 
 void AARCharacterPlayer::RunTriggered(const FInputActionValue& Value)
