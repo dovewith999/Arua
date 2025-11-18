@@ -802,7 +802,7 @@ void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResul
 	Params.Instigator = InInstigator;
 	Params.EffectCauser = InInstigator;
 	Params.Location = HitResult.ImpactPoint;
-	Params.SourceObject = HitResult.GetActor();
+	Params.SourceObject = this;
 	Params.Normal = HitResult.ImpactNormal;
 
 	Params.AggregatedTargetTags.AddTag(HitCueTag);
@@ -815,7 +815,7 @@ void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResul
 		UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
 	}
 
-	Cast<AARCharacterPlayer>(HitResult.GetActor())->GetAbilitySystemComponent()->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
+	ASC->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
 }
 
 //void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)

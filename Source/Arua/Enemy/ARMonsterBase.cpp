@@ -63,9 +63,7 @@ void AARMonsterBase::SetDead()
 
 void AARMonsterBase::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
 {
-	ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
-
-	if (TargetCharacter && InInstigator)
+	if (InInstigator)
 	{
 		// GameplayCue 파라미터 설정
 		FGameplayCueParameters CueParams;
@@ -73,15 +71,12 @@ void AARMonsterBase::OnHitByAttack_Implementation(const FHitResult& HitResult, A
 		CueParams.EffectCauser = InInstigator;
 		CueParams.Location = HitResult.ImpactPoint;
 		CueParams.Normal = HitResult.ImpactNormal;
-		CueParams.SourceObject = HitResult.GetActor();
+		CueParams.SourceObject = this;
 
-		// 몬스터 ASC 가져오기
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
-
-		if (TargetASC)
+		if (ASC)
 		{
 			// 몬스터 Hit Cue 실행
-			TargetASC->ExecuteGameplayCue(
+			ASC->ExecuteGameplayCue(
 				AruaGamePlayTags::GameplayCue_Monster_Hit,
 				CueParams
 			);
