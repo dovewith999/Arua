@@ -75,6 +75,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 
 	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
 	MinimapSpringArm->SetupAttachment(RootComponent);
+	SpringArm->bUsePawnControlRotation = true;
 
 	//Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	//Weapon->SetupAttachment(
@@ -777,9 +778,7 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 
 			WeaponTag = EWeapon->WeaponTag;
 		}
-
 	}
-
 }
 
 void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
