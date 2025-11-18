@@ -51,6 +51,24 @@ void UBossData::TakeDamage(float InDamage)
 	AttributeSet->SetHealth(InDamage);
 }
 
+void UBossData::SetIsSensed(bool bInSensed)
+{
+	if (bIsSensed != bInSensed)
+	{
+		bIsSensed = bInSensed;
+
+		if (bIsSensed)
+		{
+			OnModelDataChanged.Broadcast(FName(TEXT("IsSensed"))); // ViewModel에 변경 알림
+		}
+		else
+		{
+			OnModelDataChanged.Broadcast(FName(TEXT("IsUnsensed"))); // ViewModel에 변경 알림
+
+		}
+	}
+}
+
 void UBossData::SetHp(float InNewHp)
 {
 	AttributeSet->SetHealth(InNewHp);

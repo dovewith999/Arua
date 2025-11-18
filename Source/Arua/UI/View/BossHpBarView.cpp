@@ -55,4 +55,17 @@ void UBossHpBarView::OnViewModelPropertyChanged_Implementation(FName PropertyNam
 		UE_LOG(LogTemp, Log, TEXT("Set Name"));
 		NameText->SetText(FText::FromString(VM->GetName()));
 	}
+
+	else if (PropertyName == "IsSensed")
+	{
+		HpProgressBar->SetPercent(VM->GetHpRatio());
+		NameText->SetText(FText::FromString(VM->GetName()));
+
+		SetVisibility(ESlateVisibility::Visible);
+	}
+
+	else if (PropertyName == "IsUnsensed")
+	{
+		SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

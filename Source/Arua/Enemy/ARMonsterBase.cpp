@@ -12,6 +12,8 @@
 #include "AI/ARAIController.h"
 #include "Tag/AruaGameplayTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AI/ARAI.h"
+#include "Behaviortree/BlackboardComponent.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -46,6 +48,17 @@ void AARMonsterBase::SetTargetLockWidget(bool InShow)
 	TargetLock->bHiddenInGame = InShow;
 }
 
+void AARMonsterBase::IsSensed(bool InIsSensed)
+{
+	if (AARAIController* AIController = Cast<AARAIController>(GetController()))
+	{
+		if (UBlackboardComponent* BB = AIController->GetBlackboardComponent())
+		{
+			BB->SetValueAsBool(BBKEY_ISSENSED, InIsSensed);
+		}
+	}
+}
+
 void AARMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -58,6 +71,7 @@ void AARMonsterBase::SetDead()
 	if(AARAIController* AIController = Cast<AARAIController>(GetController()))
 	{
 		AIController->StopAI();
+
 	}
 }
 
