@@ -132,8 +132,7 @@ void AARBoss::PossessedBy(AController* NewController)
 	}
 
 	VM = NewObject<UBossViewModel>();
-
-	UBossData* Model = NewObject<UBossData>();
+	Model = NewObject<UBossData>();
 
 	if (AttributeSet == nullptr)
 	{
@@ -321,4 +320,11 @@ void AARBoss::SpawnBossActor(TSubclassOf<AActor> ActorToSpawn, float Distance, f
 	GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnLocation, SpawnRotation, Params);
 
 
+}
+
+void AARBoss::IsSensed(bool InIsSensed)
+{
+	Super::IsSensed(InIsSensed);
+
+	Model->SetIsSensed(InIsSensed);
 }

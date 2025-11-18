@@ -29,10 +29,18 @@ public:
 	void SetName(const FString& InName);
 	void TakeDamage(float InDamage);
 
+	// UI 표시 여부를 결정하는 상태 추가
+	bool IsSensed() const { return bIsSensed; }
+	void SetIsSensed(bool bInSensed);
+
 private:
 	UPROPERTY()
 	TObjectPtr<class UMonsterAttributeSet> AttributeSet;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FString Name;
+
+	// UI 상태 제어 변수
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI State", meta = (AllowPrivateAccess = "true"))
+	bool bIsSensed = false;
 };

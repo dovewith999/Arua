@@ -68,6 +68,8 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnTornado();
 
+	virtual void IsSensed(bool InIsSensed) override;
+
 	//GA 관련 변수
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
@@ -120,5 +122,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AActor> SpawnExplode;
+
+private:
+	UPROPERTY()
+	TObjectPtr<class UBossData> Model;
+
 
 };

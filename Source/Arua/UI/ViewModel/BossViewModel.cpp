@@ -6,11 +6,15 @@
 
 void UBossViewModel::Initialize(class UModelBase* InModel)
 {
-	Model = Cast<UBossData>(InModel);
+	if (InModel == nullptr)
+	{
+		return;;
+	}
 
-	if (Model)
+	if (Model = Cast<UBossData>(InModel))
 	{
 		Model->OnModelDataChanged.AddUObject(this, &UBossViewModel::OnModelDataChanged);
+		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Binding Model"));
 	}
 }
 
@@ -51,5 +55,5 @@ float UBossViewModel::GetHpRatio() const
 void UBossViewModel::OnModelDataChanged(const FName& PropertyName)
 {
 	NotifyPropertyChanged(PropertyName);
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, PropertyName.ToString());
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, PropertyName.ToString());
 }

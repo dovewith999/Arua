@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/ARAIController.h"
@@ -12,7 +12,7 @@
 
 AARAIController::AARAIController()
 {
-	//»ç¿ëÇÒ BlackBoard
+	//ì‚¬ìš©í•  BlackBoard
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef
 	(TEXT("/Game/AI/BB_Boss_ElementalDragon.BB_Boss_ElementalDragon"));
 	if (BBAssetRef.Succeeded())
@@ -20,7 +20,7 @@ AARAIController::AARAIController()
 		BBAsset = BBAssetRef.Object;
 	}
 
-	//»ç¿ëÇÒ BehaviorTree
+	//ì‚¬ìš©í•  BehaviorTree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTAssetRef
 	(TEXT("/Game/AI/BT_Boss_ElementalDragon.BT_Boss_ElementalDragon"));
 	if (BTAssetRef.Succeeded())
@@ -35,20 +35,20 @@ AARAIController::AARAIController()
 
 void AARAIController::RunAI()
 {
-	// ºí·¢º¸µå ÄÄÆ÷³ÍÆ® ¹Ş¾Æ¿À±â.
+	// ë¸”ë™ë³´ë“œ ì»´í¬ë„ŒíŠ¸ ë°›ì•„ì˜¤ê¸°.
 	UBlackboardComponent* BB = Blackboard.Get();
 
-	// ºí·¢º¸µå »ç¿ë ¼³Á¤.
+	// ë¸”ë™ë³´ë“œ ì‚¬ìš© ì„¤ì •.
 	if (UseBlackboard(BBAsset, BB))
 	{
-		// º¸½ºÀÇ ÃÊ±â À§Ä¡ ÀúÀå
+		// ë³´ìŠ¤ì˜ ì´ˆê¸° ìœ„ì¹˜ ì €ì¥
 		APawn* MyPawn = GetPawn();
 		if (MyPawn)
 		{
 			Blackboard->SetValueAsVector(BBKEY_BOSSPOS, MyPawn->GetActorLocation());
 		}
 
-		// ÇÃ·¹ÀÌ¾î Á¤º¸ ÀúÀå
+		// í”Œë ˆì´ì–´ ì •ë³´ ì €ì¥
 		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 		if (PlayerPawn)
 		{
@@ -57,10 +57,10 @@ void AARAIController::RunAI()
 		}
 
 
-		// Çàµ¿Æ®¸® ½ÇÇà.
+		// í–‰ë™íŠ¸ë¦¬ ì‹¤í–‰.
 		bool Result = RunBehaviorTree(BTAsset);
 
-		// È®ÀÎ.
+		// í™•ì¸.
 		ensureAlways(Result);
 	}
 
@@ -69,7 +69,7 @@ void AARAIController::RunAI()
 
 void AARAIController::StopAI()
 {
-	// ½ÇÇà ÁßÀÎ BT ÄÄÆ÷³ÍÆ® ¹Ş¾Æ¿À±â.
+	// ì‹¤í–‰ ì¤‘ì¸ BT ì»´í¬ë„ŒíŠ¸ ë°›ì•„ì˜¤ê¸°.
 	UBehaviorTreeComponent* BT
 		= Cast<UBehaviorTreeComponent>(BrainComponent);
 

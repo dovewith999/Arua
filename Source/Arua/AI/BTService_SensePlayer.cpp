@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTService_SensePlayer.h"
@@ -28,52 +28,60 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	APawn* AIPawn = AIC->GetPawn();
 
 
-		AAruaPlayerController* PC = Cast<AAruaPlayerController>(UGameplayStatics::GetPlayerController(AIPawn, 0));
-		APawn* PlayerPawn = PC->GetPawn();
-		//Player ¾ø´Â°æ¿ì
-		if (!PlayerPawn)
-		{
-			BB->SetValueAsBool(BBKEY_ISSENSED, false);
-			return;
+	AAruaPlayerController* PC = Cast<AAruaPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	APawn* PlayerPawn = PC->GetPawn();
+	//Player ì—†ëŠ”ê²½ìš°
+	if (!PlayerPawn)
+	{
+		AARMonsterBase* OwnerMonster = Cast<AARMonsterBase>(AIPawn);
+		OwnerMonster->IsSensed(false);
+		//BB->SetValueAsBool(BBKEY_ISSENSED, false);
+		return;
 
-		}
+	}
 
-		const FVector BossLocation = AIPawn->GetActorLocation();
-		const FVector PlayerLocation = PlayerPawn->GetActorLocation();
+	const FVector BossLocation = AIPawn->GetActorLocation();
+	const FVector PlayerLocation = PlayerPawn->GetActorLocation();
 
-		//boss ¿Í ÇÃ·¹ÀÌ¾î »çÀÌ °Å¸®
-		const float DistSq = FVector::DistSquared(BossLocation, PlayerLocation);
-		
-		AARBoss* BossPawn = Cast<AARBoss>(AIPawn);
+	//boss ì™€ í”Œë ˆì´ì–´ ì‚¬ì´ ê±°ë¦¬
+	const float DistSq = FVector::DistSquared(BossLocation, PlayerLocation);
 
-		float SenseRadius = BossPawn->GetBossSenseRange();
+	AARBoss* BossPawn = Cast<AARBoss>(AIPawn);
 
-		//°¨Áö ¹üÀ§
-		const float SenseRadiusSq = SenseRadius * SenseRadius;
+	float SenseRadius = BossPawn->GetBossSenseRange();
 
-
-		
-		bool bInSenseRange = false;
-
-		if (DistSq <= SenseRadiusSq)
-			bInSenseRange = true;
-		else
-			bInSenseRange = false;
-
-		BB->SetValueAsBool(BBKEY_ISSENSED, bInSenseRange);
-
-		//µğ¹ö±×·Î °¨Áö ¹üÀ§
-		DrawDebugSphere(
-			AIPawn->GetWorld(),
-			BossLocation,
-			SenseRadius,
-			32,
-			bInSenseRange ? FColor::Blue : FColor::Red,
-			false,
-			Interval,  // ´ÙÀ½ Tick±îÁö À¯Áö
-			0,
-			2.f
-		);
+	//ê°ì§€ ë²”ìœ„
+	const float SenseRadiusSq = SenseRadius * SenseRadius;
 
 
+
+	bool bInSenseRange = false;
+
+	if (DistSq <= SenseRadiusSq)
+	{
+		bInSenseRange = true;
+		PC->SetTargetBoss(BossPawn);
+	}
+
+	else
+	{
+		bInSenseRange = false;
+	}
+
+	AARMonsterBase* OwnerMonster = Cast<AARMonsterBase>(AIPawn);
+	OwnerMonster->IsSensed(bInSenseRange);
+	//BB->SetValueAsBool(BBKEY_ISSENSED, bInSenseRange);
+
+	//ë””ë²„ê·¸ë¡œ ê°ì§€ ë²”ìœ„
+	DrawDebugSphere(
+		AIPawn->GetWorld(),
+		BossLocation,
+		SenseRadius,
+		32,
+		bInSenseRange ? FColor::Blue : FColor::Red,
+		false,
+		Interval,  // ë‹¤ìŒ Tickê¹Œì§€ ìœ ì§€
+		0,
+		2.f
+	);
 }

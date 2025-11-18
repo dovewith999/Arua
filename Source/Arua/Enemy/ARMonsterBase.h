@@ -25,6 +25,8 @@ public:
 	void SetTargetLockWidget(bool InShow);
 	FORCEINLINE class UBossViewModel* GetViewModel() const { return VM; }
 
+	virtual void IsSensed(bool InIsSensed);
+
 #pragma region // IARHitReactableInterface 구현 부분
 	// Inherited via IARHitReactableInterface
 	virtual void OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator) override;
