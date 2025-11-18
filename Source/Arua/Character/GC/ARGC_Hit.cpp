@@ -20,8 +20,8 @@ bool UARGC_Hit::OnExecute_Implementation(AActor* Target, const FGameplayCueParam
     }
 
     // 위치와 방향 가져오기
-    FVector Location = Parameters.Location.IsZero() ? Target->GetActorLocation() : FVector(Parameters.Location);
-
+    //FVector Location = Parameters.Location.IsZero() ? Target->GetActorLocation() : FVector(Parameters.Location);
+    FVector Location = Parameters.Location.IsZero() ? Cast<AActor>(Parameters.SourceObject)->GetActorLocation() : FVector(Parameters.Location);
     FRotator Rotation = Parameters.Normal.IsZero() ? Target->GetActorRotation() : Parameters.Normal.Rotation();
 
     // 나이아가라 파티클 재생
