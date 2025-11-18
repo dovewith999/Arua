@@ -88,7 +88,7 @@ protected:
 	UFUNCTION()
 	int32 GetWeaponLayerIndex() const;
 
-private:
+public:
 	UAnimMontage* FindMontageInternal(FGameplayTag WeaponTag, FGameplayTag ActionTag) const;
 
 
