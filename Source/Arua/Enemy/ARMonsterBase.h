@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/ARCharacterBase.h"
+#include "Interface/ARHitReactableInterface.h"
 #include "ARMonsterBase.generated.h"
 
 /**
@@ -13,7 +14,7 @@
  * 작성일 : 25/11/05
  */
 UCLASS()
-class ARUA_API AARMonsterBase : public AARCharacterBase
+class ARUA_API AARMonsterBase : public AARCharacterBase, public IARHitReactableInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,11 @@ public:
 public:
 	void SetTargetLockWidget(bool InShow);
 	FORCEINLINE class UBossViewModel* GetViewModel() const { return VM; }
+
+#pragma region // IARHitReactableInterface 구현 부분
+	// Inherited via IARHitReactableInterface
+	virtual void OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator) override;
+#pragma endregion
 
 protected:
 	virtual void BeginPlay() override;

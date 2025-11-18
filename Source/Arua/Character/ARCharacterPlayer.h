@@ -6,6 +6,7 @@
 #include "Character/ARCharacterBase.h"
 #include "InputActionValue.h"
 #include "Character/Weapon/ARWeaponBase.h"
+#include "Interface/ARHitReactableInterface.h"
 #include "ARCharacterPlayer.generated.h"
 
 // 방향을 알기 위한 enum
@@ -39,7 +40,7 @@ struct FAbilityInputMapping
  * 
  */
 UCLASS()
-class ARUA_API AARCharacterPlayer : public AARCharacterBase
+class ARUA_API AARCharacterPlayer : public AARCharacterBase, public IARHitReactableInterface
 {
 	GENERATED_BODY()
 
@@ -70,6 +71,11 @@ public:
 	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
 	FName GetLockOnDodgeMontageSection() const;
 	EInputDirection GetDodgeDirection() const;
+
+#pragma region Hit React Interface
+	// Inherited via IARHitReactableInterface
+	virtual void OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator) override;
+#pragma endregion
 
 	FORCEINLINE class UAnimMontage* GetRollMontage() const { return RollActionMontage; }
 	FORCEINLINE class UAnimMontage* GetLockOnDodgeMontage() const { return LockOnDodgeActionMontage; }
@@ -273,5 +279,4 @@ private:
 
 	UPROPERTY()
 	TMap<TObjectPtr<class UInputAction>, int> InputIds;
-
 };
