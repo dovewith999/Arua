@@ -34,6 +34,7 @@ public:
 	FORCEINLINE float GetAttackPawLeftTime() { return AttackPawLeftTime; }
 	FORCEINLINE float GetComboAttackPawLeft_TailRightTime() { return ComboAttackPawLeft_TailRightTime; }
 	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
+	FORCEINLINE float GetBossNestRange() { return BossNestRange; }
 	FORCEINLINE float GetBossSenseRange() { return BossSenseRange; }
 	FORCEINLINE float GetBossAttackRange() const { return BossAttackRange; }
 
@@ -47,19 +48,32 @@ public:
 protected:
 	//Decorator, Task 관련 변수
 	
+	//둥지 설정용 보스 위치
+	UPROPERTY()
+	FVector NestLocation;
+
+
+	// 둥지 반경
+	UPROPERTY(EditAnywhere, Category = "Nest")
+	float BossNestRange = 50.0f * 30 * 2;
+
 	// 감지 반경 
 	UPROPERTY(EditAnywhere, Category = "Sense")
 	float BossSenseRange = 50.0f * 30 * 2;
 
-	//반지름 기준 (기본 크기 50cm, 0.5m)
+	// 공격 반경
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float BossAttackRange = 50.0f * 8 * 2;
+	//반지름 기준 (기본 크기 50cm, 0.5m)
 	//기본 공격 범위 :  50*5*2 로 할듯.
 	//범위 공격 : 50.0f * 8 * 2;
-	//BP에서 설정하기
 
+	// 회전 속도
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float BossTurnSpeed = 20.0f;
+
+	
+
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnBossActor(TSubclassOf<AActor> ActorToSpawn, float Distance, float SetZAxis);

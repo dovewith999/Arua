@@ -26,6 +26,7 @@ public:
 	FORCEINLINE class UBossViewModel* GetViewModel() const { return VM; }
 
 	virtual void IsSensed(bool InIsSensed);
+	virtual void IsInNest(bool InIsInNest);
 
 #pragma region // IARHitReactableInterface 구현 부분
 	// Inherited via IARHitReactableInterface

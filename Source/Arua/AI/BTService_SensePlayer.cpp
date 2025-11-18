@@ -37,27 +37,50 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		OwnerMonster->IsSensed(false);
 		//BB->SetValueAsBool(BBKEY_ISSENSED, false);
 		return;
-
 	}
 
 	const FVector BossLocation = AIPawn->GetActorLocation();
 	const FVector PlayerLocation = PlayerPawn->GetActorLocation();
+	AARBoss* BossPawn = Cast<AARBoss>(AIPawn);
+	AARMonsterBase* OwnerMonster = Cast<AARMonsterBase>(AIPawn);
 
 	//boss 와 플레이어 사이 거리
 	const float DistSq = FVector::DistSquared(BossLocation, PlayerLocation);
-
-	AARBoss* BossPawn = Cast<AARBoss>(AIPawn);
-
-	float SenseRadius = BossPawn->GetBossSenseRange();
+	float SenseRange = BossPawn->GetBossSenseRange();
 
 	//감지 범위
-	const float SenseRadiusSq = SenseRadius * SenseRadius;
+	const float SenseRangeSq = SenseRange * SenseRange;
 
 
+	// 둥지 벗어나지 않도록 하는 로직
+
+	float NestRange = BossPawn->GetBossNestRange();
+	FVector NestLocation = BB->GetValueAsVector(BBKEY_NESTPOS);
+
+	const float DistNestSq = FVector::DistSquared(PlayerLocation, NestLocation);
+	const float NestRangeSq = NestRange * NestRange;
+
+	bool bIsInNest = false;
+
+	if (DistNestSq <= NestRangeSq)
+	{
+		bIsInNest = true;
+	}
+	else
+	{
+		bIsInNest = false;
+	}
+
+	OwnerMonster->IsInNest(bIsInNest);
+
+
+	
+
+	// 플레이어와의 거리 감지해서 쫒아가는 로직
 
 	bool bInSenseRange = false;
 
-	if (DistSq <= SenseRadiusSq)
+	if (DistSq <= SenseRangeSq)
 	{
 		bInSenseRange = true;
 		PC->SetTargetBoss(BossPawn);
@@ -68,7 +91,6 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		bInSenseRange = false;
 	}
 
-	AARMonsterBase* OwnerMonster = Cast<AARMonsterBase>(AIPawn);
 	OwnerMonster->IsSensed(bInSenseRange);
 	//BB->SetValueAsBool(BBKEY_ISSENSED, bInSenseRange);
 
@@ -76,7 +98,7 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	DrawDebugSphere(
 		AIPawn->GetWorld(),
 		BossLocation,
-		SenseRadius,
+		SenseRange,
 		32,
 		bInSenseRange ? FColor::Blue : FColor::Red,
 		false,

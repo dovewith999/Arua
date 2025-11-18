@@ -60,6 +60,18 @@ void AARMonsterBase::IsSensed(bool InIsSensed)
 	}
 }
 
+void AARMonsterBase::IsInNest(bool InIsInNest)
+{
+	if (AARAIController* AIController = Cast<AARAIController>(GetController()))
+	{
+		if (UBlackboardComponent* BB = AIController->GetBlackboardComponent())
+		{
+			BB->SetValueAsBool(BBKEY_ISINNEST, InIsInNest);
+		}
+	}
+}
+
+
 void AARMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
