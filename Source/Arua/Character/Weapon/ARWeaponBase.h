@@ -13,8 +13,8 @@ UCLASS()
 class ARUA_API AARWeaponBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AARWeaponBase();
 
@@ -31,7 +31,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Weapon)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Weapon)
 	TObjectPtr<class UDataTable> WeaponDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Weapon)
@@ -57,5 +57,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Socket)
 	FName Socket;
-	
+
+	// 아이템 형태의 무기 데이터 (아이템과 연동)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	TObjectPtr<class UDA_ItemDefinition> WeaponItemDefinition;
 };

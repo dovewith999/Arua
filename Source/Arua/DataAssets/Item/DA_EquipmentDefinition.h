@@ -20,5 +20,5 @@ public:
 
 	// 장착할 무기 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment")
-	TSubclassOf<class AARWeaponBase> WeaponBaseClass;
+	TSubclassOf<class AARWeaponBase> WeaponDataClass;
 };
