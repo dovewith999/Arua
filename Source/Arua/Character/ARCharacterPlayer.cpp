@@ -412,6 +412,7 @@ void AARCharacterPlayer::RunTriggered(const FInputActionValue& Value)
 void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 {
 	bIsRunning = false;
+	bIsRunning = false;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0;
 }
 
@@ -779,6 +780,42 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 
 	}
 
+}
+
+void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
+{
+	FVector ToInstigator = (InInstigator->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+	FVector TargetForward = GetActorForwardVector();
+
+	float Dot = FVector::DotProduct(TargetForward, ToInstigator);
+	float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
+
+	UE_LOG(LogTemp, Log, TEXT("%f"), Dot);
+	FGameplayTag HitCueTag;
+
+	if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
+	else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
+	else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
+	else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
+
+	FGameplayCueParameters Params;
+	Params.Instigator = InInstigator;
+	Params.EffectCauser = InInstigator;
+	Params.Location = HitResult.ImpactPoint;
+	Params.SourceObject = HitResult.GetActor();
+	Params.Normal = HitResult.ImpactNormal;
+
+	Params.AggregatedTargetTags.AddTag(HitCueTag);
+	if (Params.AggregatedTargetTags.HasTag(HitCueTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("HitCueTag is in AggregatedTargetTags!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
+	}
+
+	Cast<AARCharacterPlayer>(HitResult.GetActor())->GetAbilitySystemComponent()->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
 }
 
 //void AARCharacterPlayer::UnequipWeapon(AARWeaponBase*& Weapon)

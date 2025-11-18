@@ -10,6 +10,8 @@
 #include "UI/ViewModel/BossViewModel.h"
 #include "UI/Model/BossData.h"
 #include "AI/ARAIController.h"
+#include "Tag/AruaGameplayTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -56,5 +58,33 @@ void AARMonsterBase::SetDead()
 	if(AARAIController* AIController = Cast<AARAIController>(GetController()))
 	{
 		AIController->StopAI();
+	}
+}
+
+void AARMonsterBase::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
+{
+	ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+
+	if (TargetCharacter && InInstigator)
+	{
+		// GameplayCue 파라미터 설정
+		FGameplayCueParameters CueParams;
+		CueParams.Instigator = InInstigator;
+		CueParams.EffectCauser = InInstigator;
+		CueParams.Location = HitResult.ImpactPoint;
+		CueParams.Normal = HitResult.ImpactNormal;
+		CueParams.SourceObject = HitResult.GetActor();
+
+		// 몬스터 ASC 가져오기
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+
+		if (TargetASC)
+		{
+			// 몬스터 Hit Cue 실행
+			TargetASC->ExecuteGameplayCue(
+				AruaGamePlayTags::GameplayCue_Monster_Hit,
+				CueParams
+			);
+		}
 	}
 }

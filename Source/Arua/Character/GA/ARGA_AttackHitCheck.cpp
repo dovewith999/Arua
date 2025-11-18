@@ -10,6 +10,7 @@
 #include "AbilitySystemComponent.h"
 #include "Tag/AruaGameplayTags.h"
 #include "Character/ARCharacterPlayer.h"
+#include "Interface/ARHitReactableInterface.h"
 
 UARGA_AttackHitCheck::UARGA_AttackHitCheck()
 {
@@ -48,77 +49,85 @@ void UARGA_AttackHitCheck::OnTraceResultCallback(const FGameplayAbilityTargetDat
 		// 데미지 여기서 처리
 		UDamageLibrary::ApplyDamage(CurrentActorInfo->AbilitySystemComponent.Get(), HitResult.GetActor());
 
-		if (HitResult.GetActor()->ActorHasTag(FName("Player")))
+		// Interface를 통한 처리
+		if (IARHitReactableInterface* HitReactable = Cast<IARHitReactableInterface>(HitResult.GetActor()))
 		{
-			ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
 			ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
-
-			if (TargetCharacter && Instigator)
-			{
-				
-				FVector ToInstigator = (Instigator->GetActorLocation() - TargetCharacter->GetActorLocation()).GetSafeNormal2D();
-				FVector TargetForward = TargetCharacter->GetActorForwardVector();
-
-				float Dot = FVector::DotProduct(TargetForward, ToInstigator);
-				float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
-
-				UE_LOG(LogTemp, Log, TEXT("%f"), Dot);
-				FGameplayTag HitCueTag;
-
-				if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
-				else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
-				else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
-				else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
-
-				FGameplayCueParameters Params;
-				Params.Instigator = Instigator;
-				Params.EffectCauser = Instigator;
-				Params.Location = HitResult.ImpactPoint; 
-				Params.SourceObject = HitResult.GetActor();
-				Params.Normal = HitResult.ImpactNormal;
-
-				Params.AggregatedTargetTags.AddTag(HitCueTag);
-				if (Params.AggregatedTargetTags.HasTag(HitCueTag))
-				{
-					UE_LOG(LogTemp, Log, TEXT("HitCueTag is in AggregatedTargetTags!"));
-				}
-				else
-				{
-					UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
-				}
-
-				Cast<AARCharacterPlayer>(HitResult.GetActor())->GetAbilitySystemComponent()->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
-			}
+			HitReactable->OnHitByAttack(HitResult, Instigator);
 		}
 
-		else
-		{
-			ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
-			ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 
-			if (TargetCharacter && Instigator)
-			{
-				// GameplayCue 파라미터 설정
-				FGameplayCueParameters CueParams;
-				CueParams.Instigator = Instigator;
-				CueParams.EffectCauser = Instigator;
-				CueParams.Location = HitResult.ImpactPoint;
-				CueParams.Normal = HitResult.ImpactNormal;
-				CueParams.SourceObject = HitResult.GetActor();
 
-				// 몬스터 ASC 가져오기
-				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+		//if (HitResult.GetActor()->ActorHasTag(FName("Player")))
+		//{
+		//	ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+		//	ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 
-				if (TargetASC)
-				{
-					// 몬스터 Hit Cue 실행
-					TargetASC->ExecuteGameplayCue(
-						AruaGamePlayTags::GameplayCue_Monster_Hit,
-						CueParams
-					);
-				}
-			}
-		}
+		//	if (TargetCharacter && Instigator)
+		//	{
+		//		FVector ToInstigator = (Instigator->GetActorLocation() - TargetCharacter->GetActorLocation()).GetSafeNormal2D();
+		//		FVector TargetForward = TargetCharacter->GetActorForwardVector();
+
+		//		float Dot = FVector::DotProduct(TargetForward, ToInstigator);
+		//		float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
+
+		//		UE_LOG(LogTemp, Log, TEXT("%f"), Dot);
+		//		FGameplayTag HitCueTag;
+
+		//		if (Dot > 0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front");
+		//		else if (Dot < -0.7f) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back");
+		//		else if (CrossZ > 0) HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left");
+		//		else HitCueTag = FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right");
+
+		//		FGameplayCueParameters Params;
+		//		Params.Instigator = Instigator;
+		//		Params.EffectCauser = Instigator;
+		//		Params.Location = HitResult.ImpactPoint; 
+		//		Params.SourceObject = HitResult.GetActor();
+		//		Params.Normal = HitResult.ImpactNormal;
+
+		//		Params.AggregatedTargetTags.AddTag(HitCueTag);
+		//		if (Params.AggregatedTargetTags.HasTag(HitCueTag))
+		//		{
+		//			UE_LOG(LogTemp, Log, TEXT("HitCueTag is in AggregatedTargetTags!"));
+		//		}
+		//		else
+		//		{
+		//			UE_LOG(LogTemp, Log, TEXT(" HitCueTag is NOT in AggregatedTargetTags!"));
+		//		}
+
+		//		Cast<AARCharacterPlayer>(HitResult.GetActor())->GetAbilitySystemComponent()->ExecuteGameplayCue(AruaGamePlayTags::GameplayCue_Character_AttackHit, Params);
+		//	}
+		//}
+
+		//else
+		//{
+		//	ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+		//	ACharacter* Instigator = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+
+		//	if (TargetCharacter && Instigator)
+		//	{
+		//		// GameplayCue 파라미터 설정
+		//		FGameplayCueParameters CueParams;
+		//		CueParams.Instigator = Instigator;
+		//		CueParams.EffectCauser = Instigator;
+		//		CueParams.Location = HitResult.ImpactPoint;
+		//		CueParams.Normal = HitResult.ImpactNormal;
+		//		CueParams.SourceObject = HitResult.GetActor();
+
+		//		// 몬스터 ASC 가져오기
+		//		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+
+		//		if (TargetASC)
+		//		{
+		//			// 몬스터 Hit Cue 실행
+		//			TargetASC->ExecuteGameplayCue(
+		//				AruaGamePlayTags::GameplayCue_Monster_Hit,
+		//				CueParams
+		//			);
+		//		}
+		//	}
+		//}
 	}
 
 	bool bReplicatedEndAbility = true;
