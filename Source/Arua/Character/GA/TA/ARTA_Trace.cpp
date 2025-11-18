@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/GA/TA/ARTA_Trace.h"
@@ -57,6 +57,15 @@ FGameplayAbilityTargetDataHandle AARTA_Trace::MakeTargetData() const
 		float CapsuleHalfHeight = AttackRange * 0.5f;
 		FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 		DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(Forward).ToQuat(), DrawColor, false, 5.0f);
+
+		if (HitDetected)
+		{
+			// 타격이 감지되었을 경우, 실제 충돌 지점(ImpactPoint)을 노란색 점으로 표시
+			DrawDebugPoint(GetWorld(), OutHitResult.ImpactPoint, 15.0f, FColor::Yellow, false, 5.0f);
+
+			// 추가: 충돌 표면의 법선 벡터(ImpactNormal) 시각화 (타격 방향 확인용)
+			DrawDebugLine(GetWorld(), OutHitResult.ImpactPoint, OutHitResult.ImpactPoint + OutHitResult.ImpactNormal * 50.0f, FColor::Cyan, false, 5.0f, 0, 3.0f);
+		}
 	}
 #endif
 
