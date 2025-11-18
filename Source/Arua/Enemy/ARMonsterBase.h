@@ -45,4 +45,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UBossViewModel> VM;
+
+	// 몬스터가 가진 드롭 아이템 목록(사망 시, 드롭)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
+	TArray<TSubclassOf<class AItemPickupActor>> DropItems;
 };

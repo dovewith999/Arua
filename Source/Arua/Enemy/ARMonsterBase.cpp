@@ -12,6 +12,7 @@
 #include "AI/ARAIController.h"
 #include "Tag/AruaGameplayTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Actors/Items/ItemPickupActor.h"
 
 AARMonsterBase::AARMonsterBase()
 {
@@ -55,9 +56,51 @@ void AARMonsterBase::SetDead()
 {
 	Super::SetDead();
 
-	if(AARAIController* AIController = Cast<AARAIController>(GetController()))
+	if (AARAIController* AIController = Cast<AARAIController>(GetController()))
 	{
 		AIController->StopAI();
+	}
+
+	// 몬스터 사망 시, 드롭 아이템 랜덤 드롭하기
+	if (!DropItems.IsEmpty())
+	{
+		// 드롭 아이템 목록에서 드롭할 랜덤 인덱스 구하기
+		const int32 RandomIndex = FMath::RandRange(0, DropItems.Num() - 1);
+		TSubclassOf<AItemPickupActor> ItemClass = DropItems[RandomIndex];
+		if (!ItemClass || !GetWorld()) return;
+
+		// 아이템을 드롭할 위치 구하기
+		const FVector ActorLocation = GetActorLocation();
+		const FVector TraceStart = ActorLocation + FVector(0.f, 0.f, 50.f);
+		const FVector TraceEnd = ActorLocation - FVector(0.f, 0.f, 2000.f);
+
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(DropTrace), false, this);
+
+		FVector SpawnLocation = ActorLocation;
+
+		if (GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			TraceStart,
+			TraceEnd,
+			ECC_Visibility,
+			QueryParams))
+		{
+			// 지면에 맞춰 약간 위로 띄워서 스폰
+			SpawnLocation = HitResult.Location + FVector(0.f, 0.f, 5.f);
+		}
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride =
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		// 아이템 스폰
+		GetWorld()->SpawnActor<AItemPickupActor>(
+			ItemClass,
+			SpawnLocation,
+			FRotator::ZeroRotator,
+			SpawnParams
+		);
 	}
 }
 
