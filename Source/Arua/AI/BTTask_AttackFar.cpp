@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_AttackFar::ExecuteTask(UBehaviorTreeComponent& Owner
 		return EBTNodeResult::Failed;
 	}
 
-	int32 RandomNum = FMath::RandRange(0, 1);//
+	int32 RandomNum = FMath::RandRange(0, 0);//
 
 	if (RandomNum == 0)
 	{
