@@ -34,6 +34,7 @@ public:
 	FORCEINLINE float GetAttackPawLeftTime() { return AttackPawLeftTime; }
 	FORCEINLINE float GetComboAttackPawLeft_TailRightTime() { return ComboAttackPawLeft_TailRightTime; }
 	FORCEINLINE float GetBossTurnSpeed() { return BossTurnSpeed; }
+	FORCEINLINE float GetBossSenseRange() { return BossSenseRange; }
 	FORCEINLINE float GetBossAttackRange() const { return BossAttackRange; }
 
 	virtual void BeginPlay() override;
@@ -45,6 +46,11 @@ public:
 
 protected:
 	//Decorator, Task 관련 변수
+	
+	// 감지 반경 
+	UPROPERTY(EditAnywhere, Category = "Sense")
+	float BossSenseRange = 50.0f * 30 * 2;
+
 	//반지름 기준 (기본 크기 50cm, 0.5m)
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float BossAttackRange = 50.0f * 8 * 2;

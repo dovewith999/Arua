@@ -12,7 +12,7 @@
 UBTService_DetectPlayer::UBTService_DetectPlayer()
 {
 
-	NodeName = TEXT("Detect");
+	NodeName = TEXT("DetectPlayer");
 
 	Interval = 0.1f;
 }
