@@ -60,6 +60,8 @@ public:
 	FORCEINLINE void SetIsWeaponChanged(bool change) { bIsWeaponChanged = change; }
 	FORCEINLINE FGameplayTag GetWeaponTag() { return CurrentWeapon->WeaponTag; }
 
+	FORCEINLINE class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	FORCEINLINE class UQuestComponent* GetQuestComponent() const { return QuestComponent; }
 
 	virtual class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 
@@ -71,6 +73,9 @@ public:
 	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
 	FName GetLockOnDodgeMontageSection() const;
 	EInputDirection GetDodgeDirection() const;
+
+	UFUNCTION(BlueprintCallable)
+	AARWeaponBase* WeaponChange(AARWeaponBase* NewWeapon);
 
 #pragma region Hit React Interface
 	// Inherited via IARHitReactableInterface
@@ -85,6 +90,8 @@ public:
 	// Todo: 이름 변경할 필요 있음.
 	// 애니메이션에서 Weapon 관련 GA 이벤트 등록을 완료한 후에 호출하는 함수.
 	void EquipStartWeapon();
+
+
 
 	// 카메라 섹션
 protected:
@@ -153,7 +160,6 @@ protected:
 	virtual void Roll(const FInputActionValue& Value);
 	void LockOnToggle(const FInputActionValue& Value);
 	void RollCompleted();
-	AARWeaponBase* WeaponChange(AARWeaponBase* NewWeapon);
 	void WeaponChangeTest();
 
 	// NPC 상호작용 입력 콜백 함수

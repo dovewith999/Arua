@@ -37,6 +37,7 @@ namespace AruaGamePlayTags
 	//ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Start)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Update)
 	//ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Complete)
+		ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Interaction_Start)
 
 	/*WidgetStack Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(WidgetStack_Modal)

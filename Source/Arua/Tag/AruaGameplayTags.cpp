@@ -28,6 +28,7 @@ namespace AruaGamePlayTags
 	/*Event Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Quest_Update, "Event.Quest.Update")
+		UE_DEFINE_GAMEPLAY_TAG(Event_Interaction_Start, "Event.Interaction.Start")
 	
 	/*WidgetStack Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_Modal, "WidgetStack.Modal")

@@ -19,6 +19,8 @@ class ARUA_API AItemPickupActor : public AActor, public IAR_NPCInteractionInterf
 public:
 	AItemPickupActor();
 
+	FORCEINLINE class UDA_ItemDefinition* GetItemDefinition() const { return ItemDefinition; }
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -2,14 +2,21 @@
 
 
 #include "Actors/Items/ItemPickupActor.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/BoxComponent.h"
 #include "DataAssets/Item/DA_ItemDefinition.h"
-#include "Components/Inventory/InventoryComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/Interact/ARInteractComponent.h"
 #include "NiagaraComponent.h"
+
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/Inventory/InventoryComponent.h"
+#include "Components/Interact/ARInteractComponent.h"
+
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
+#include "AbilitySystemBlueprintLibrary.h"
+
+#include "Tag/AruaGameplayTags.h"
 
 AItemPickupActor::AItemPickupActor()
 {
@@ -85,5 +92,11 @@ void AItemPickupActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActo
 
 void AItemPickupActor::PlayInteraction(APawn* InInteractor)
 {
+	// 상호작용자에게 상호작용 시작 이벤트 전달
+	if (UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InInteractor))
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(InInteractor, AruaGamePlayTags::Event_Interaction_Start, FGameplayEventData());
+	}
+
 	Interact(InInteractor);
 }
