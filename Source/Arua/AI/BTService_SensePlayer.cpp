@@ -9,6 +9,7 @@
 #include "AI/ARAI.h"
 #include "Controller/AruaPlayerController.h"
 #include "Enemy/ARMonsterBase.h"
+#include "Enemy/Boss/ARBoss.h"
 
 UBTService_SensePlayer::UBTService_SensePlayer()
 {
@@ -43,6 +44,10 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		//boss 와 플레이어 사이 거리
 		const float DistSq = FVector::DistSquared(BossLocation, PlayerLocation);
 		
+		AARBoss* BossPawn = Cast<AARBoss>(AIPawn);
+
+		float SenseRadius = BossPawn->GetBossSenseRange();
+
 		//감지 범위
 		const float SenseRadiusSq = SenseRadius * SenseRadius;
 

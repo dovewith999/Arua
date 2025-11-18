@@ -20,8 +20,4 @@ public:
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	// 감지 반경 
-	UPROPERTY(EditAnywhere, Category = "Sense")
-	float SenseRadius = 50.0f * 30 * 2;
-
 };
