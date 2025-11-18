@@ -23,6 +23,11 @@ public:
 	FText SetToolTip(const class UDA_ItemDefinition* InItemDefinition);
 
 protected:
+	 virtual void NativeConstruct() override;
+	 virtual void NativeOnFocusLost(const FFocusEvent& InFocusEvent) override;
+	 virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
+
+protected:
 	// 아이템 이름
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UTextBlock> ItemNameText;

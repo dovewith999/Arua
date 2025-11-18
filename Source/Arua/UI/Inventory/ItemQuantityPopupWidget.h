@@ -22,6 +22,8 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnFocusLost(const FFocusEvent& InFocusEvent) override;
+	virtual void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
 
 	// 확인 버튼 이벤트
 	UFUNCTION()

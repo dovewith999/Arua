@@ -86,3 +86,35 @@ FText UItemToolTipWidget::SetToolTip(const UDA_ItemDefinition* InItemDefinition)
 
 	return FText::GetEmpty();
 }
+
+void UItemToolTipWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	/* 포커스를 통한 위젯 생명주기 관리 */
+	SetIsFocusable(true);
+
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		FInputModeGameAndUI Mode;
+		Mode.SetWidgetToFocus(TakeWidget());
+		Mode.SetHideCursorDuringCapture(false);
+		PC->SetInputMode(Mode);
+	}
+}
+
+void UItemToolTipWidget::NativeOnFocusLost(const FFocusEvent& InFocusEvent)
+{
+	Super::NativeOnFocusLost(InFocusEvent);
+
+	// 위젯이 포커스를 잃을 경우 위젯 제거
+	RemoveFromParent();
+}
+
+void UItemToolTipWidget::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
+{
+	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
+
+	// 포커스 경로에서 완전히 빠질 때에도 위젯 제거
+	RemoveFromParent();
+}

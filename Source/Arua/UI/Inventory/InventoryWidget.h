@@ -78,8 +78,4 @@ protected:
 	// 현재 연결된 인벤토리 컴포넌트
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> Inventory;
-
-	// 관리가 필요한 자식 위젯들
-	UPROPERTY()
-	TArray<TWeakObjectPtr<class UUserWidget>> ChildWidgets;
 };

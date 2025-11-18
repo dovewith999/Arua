@@ -92,6 +92,8 @@ void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetIsFocusable(true);
+
 	// 위젯이 생성되면 그리드 재생성
 	RefreshGrid();
 }
@@ -103,16 +105,6 @@ void UInventoryWidget::NativeDestruct()
 		// 인벤토리의 업데이트 이벤트 등록 해제
 		Inventory->OnInventoryUpdated.RemoveDynamic(this, &UInventoryWidget::OnInventoryUpdated);
 	}
-
-	// 관리가 필요한 자식 위젯들 모두 제거
-	for (TWeakObjectPtr<UUserWidget>& PopupPtr : ChildWidgets)
-	{
-		if (UUserWidget* Popup = PopupPtr.Get())
-		{
-			Popup->RemoveFromParent();
-		}
-	}
-	ChildWidgets.Empty();
 
 	Super::NativeDestruct();
 }
