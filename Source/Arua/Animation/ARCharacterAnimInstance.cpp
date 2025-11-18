@@ -108,15 +108,12 @@ void UARCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimes)
 
 void UARCharacterAnimInstance::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnGameplayTagChanged Start"));
 	if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag("Character.Weapon")), EGameplayTagMatchType::IncludeParentTags)
 	{
 		CurrentWeaponTag = Cast<AARCharacterPlayer>(Owner)->GetWeaponTag();
 		StateMachineIndex = GetWeaponLayerIndex();
-		UE_LOG(LogTemp, Log, TEXT("StateMachineIndex: %d"), StateMachineIndex);
-	}
 
-	
+	}
 }
 
 int32 UARCharacterAnimInstance::GetWeaponLayerIndex() const
