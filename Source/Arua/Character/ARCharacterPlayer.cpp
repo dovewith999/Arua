@@ -919,7 +919,11 @@ void AARCharacterPlayer::PlayAction(FGameplayTag ActionTag)
 
 void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
 {
-	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Roll) || ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Dead))
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Roll) ||
+		ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Dead) ||
+		ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Skill_ChargeAttack) ||
+		ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Skill_Whirlwind)
+		)
 	{
 		return;
 	}

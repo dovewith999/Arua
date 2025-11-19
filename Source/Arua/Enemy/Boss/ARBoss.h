@@ -146,7 +146,7 @@ protected:
 	TSubclassOf<AActor> SpawnExplode;
 
 private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MVVM", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UBossData> Model;
 
 
