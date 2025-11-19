@@ -59,6 +59,35 @@ void AAruaPlayerController::BeginPlay()
 
 	FInputModeGameOnly Mode;
 	this->SetInputMode(Mode);
+}
+
+void AAruaPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
+	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
+	{
+		UPlayerData* PlayerData = NewObject<UPlayerData>();
+
+		if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(aPawn))
+		{
+			UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(OwnerPlayer->GetAttributeSet());
+			PlayerData->BindToAttributeSet(PlayerAttributeSet);
+		}
+
+		ViewModel = NewObject<UPlayerViewModel>();
+		ViewModel->Initialize(PlayerData);
+
+		// 뷰모델 세팅
+		HUD->SetViewModelChildWidget(ViewModel);
+
+		// HUD 뷰포트에 띄우기
+		HUD->AddToViewport();
+
+		// Todo : 연동 확인용 값 초기화
+		ViewModel->SetMaxHp(100.f);
+		ViewModel->SetHp(100.f);
+	}
 
 	// 퀘스트 HUD 위젯 생성 및 그리기
 	if (QuestHUDClass)
@@ -92,34 +121,5 @@ void AAruaPlayerController::BeginPlay()
 		{
 			//QuestJournal->BindToQuestComponent(QuestComponent);
 		}
-	}
-}
-
-void AAruaPlayerController::OnPossess(APawn* aPawn)
-{
-	Super::OnPossess(aPawn);
-
-	if (HUD = Cast<UPlayerHUDView>(CreateWidget(this, HUDClass)))
-	{
-		UPlayerData* PlayerData = NewObject<UPlayerData>();
-
-		if (AARCharacterPlayer* OwnerPlayer = Cast<AARCharacterPlayer>(aPawn))
-		{
-			UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(OwnerPlayer->GetAttributeSet());
-			PlayerData->BindToAttributeSet(PlayerAttributeSet);
-		}
-
-		ViewModel = NewObject<UPlayerViewModel>();
-		ViewModel->Initialize(PlayerData);
-
-		// 뷰모델 세팅
-		HUD->SetViewModelChildWidget(ViewModel);
-
-		// HUD 뷰포트에 띄우기
-		HUD->AddToViewport();
-
-		// Todo : 연동 확인용 값 초기화
-		ViewModel->SetMaxHp(100.f);
-		ViewModel->SetHp(100.f);
 	}
 }
