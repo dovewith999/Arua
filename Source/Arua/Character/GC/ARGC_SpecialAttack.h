@@ -3,25 +3,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayCueNotify_Static.h"
+#include "GameplayCueNotify_Actor.h"
 #include "ARGC_SpecialAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARUA_API UARGC_SpecialAttack : public UGameplayCueNotify_Static
+class ARUA_API AARGC_SpecialAttack : public AGameplayCueNotify_Actor
 {
 	GENERATED_BODY()
 
 public:
-    UARGC_SpecialAttack();
+    AARGC_SpecialAttack();
 
 public:
     virtual bool OnExecute_Implementation(
         AActor* Target,
-        const FGameplayCueParameters& Parameters) const override;
+        const FGameplayCueParameters& Parameters) override;
 
+    virtual bool OnRemove_Implementation(
+        AActor* Target,
+        const FGameplayCueParameters& Parameters) override;
+
+public:
     // 타이머를 설정하고 시작하는 함수
     void StartOffsetEffect();
 
@@ -34,11 +39,11 @@ public:
 protected:
     // 재생할 나이아가라 시스템
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
-    TObjectPtr<class UNiagaraSystem> HitParticle;
+    TObjectPtr<class UNiagaraSystem> EffectParticle;
 
     // 재생할 사운드
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
-    TObjectPtr<class USoundBase> HitSound;
+    TObjectPtr<class USoundBase> EffectSound;
 
     // 파티클 스케일
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
@@ -60,8 +65,10 @@ protected:
     UMaterialInstanceDynamic* UVOffsetMID; // Post Process에 할당된 MID 참조
 
     // 타이머 관련 변수
-    FTimerHandle OffsetTimerHandle; // 타이머 핸들
-    float CurrentOffsetTime = 0.0f; // 현재 진행 시간
+   FTimerHandle OffsetTimerHandle; // 타이머 핸들
+   float CurrentOffsetTime = 0.0f; // 현재 진행 시간
+   UPROPERTY()
+   TObjectPtr<class UMaterialInterface> PostProcessMat;
 #pragma endregion
 	
 };
