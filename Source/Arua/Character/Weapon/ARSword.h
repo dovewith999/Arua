@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,7 +17,16 @@ class ARUA_API AARSword : public AARWeaponBase
 public:
 	AARSword();
 
+public:
+	void ChargeEffect();
+	void InitVisible();
 private:
 	virtual void InitializeFromData() override;
-	
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<class UNiagaraComponent> ChargeEffect1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<class UNiagaraComponent> ChargeEffect2;
 };

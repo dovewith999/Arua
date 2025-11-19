@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 #include "Tag/AruaGameplayTags.h"
+#include "Character/Weapon/ARSword.h"
 
 UARGA_PlayerAddChargeCount::UARGA_PlayerAddChargeCount()
 {
@@ -33,8 +34,12 @@ void UARGA_PlayerAddChargeCount::ActivateAbility(const FGameplayAbilitySpecHandl
 
 	FGameplayEffectSpecHandle AddChargeEffectSpec = MakeOutgoingGameplayEffectSpec(AddChargeEffectClass);
 	Player->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*AddChargeEffectSpec.Data.Get());
+	//Player->GetCurrentWeapon()->GetStaticMesh()->SetActorHiddenInGame(true);
 
-	Player->GetCurrentWeapon()->SetActorHiddenInGame(true);
+	if (AARSword* Weapon = Cast<AARSword>(Player->GetCurrentWeapon()))
+	{
+		Weapon->ChargeEffect();
+	}
 }
 
 void UARGA_PlayerAddChargeCount::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
@@ -47,4 +52,5 @@ void UARGA_PlayerAddChargeCount::CancelAbility(const FGameplayAbilitySpecHandle 
 void UARGA_PlayerAddChargeCount::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
 }

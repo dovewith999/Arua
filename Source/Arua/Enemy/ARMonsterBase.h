@@ -28,6 +28,8 @@ public:
 	virtual void IsSensed(bool InIsSensed);
 	virtual void IsInNest(bool InIsInNest);
 
+	virtual void Recovery();
+
 #pragma region // IARHitReactableInterface 구현 부분
 	// Inherited via IARHitReactableInterface
 	virtual void OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator) override;

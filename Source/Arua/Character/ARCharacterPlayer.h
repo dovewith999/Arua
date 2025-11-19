@@ -200,14 +200,7 @@ protected:
 #pragma endregion
 
 
-	// ASC 어빌리티 섹션
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = GAS)
-	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
-	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
-
+// ASC 어빌리티 섹션
 protected:
 	void SetupGASInputComponent();
 	void GASInputHoldStart(int32 InputId);
@@ -276,8 +269,6 @@ protected:
 	void EquipWeapon(class AARWeaponBase* EWeapon, FName SocketName);
 	void UnequipWeapon(class AARWeaponBase* EWeapon);
 	void UnequipWeaponTest(class AARWeaponBase* EWeapon);
-
-	
 
 private:
 	FVector2D CurrentInputAxis = FVector2D::ZeroVector;			// 방향 입력 값 저장용

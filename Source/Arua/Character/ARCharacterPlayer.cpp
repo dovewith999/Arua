@@ -900,6 +900,7 @@ void AARCharacterPlayer::EquipStartWeapon()
 	if (StartWeaponClass)
 	{
 		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
+		CurrentWeapon->SetOwnerPlayer(this);
 
 		if (CurrentWeapon)
 		{

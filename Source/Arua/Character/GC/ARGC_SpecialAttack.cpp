@@ -173,6 +173,11 @@ void AARGC_SpecialAttack::FinishOffsetEffect()
 			PPVolume = Cast<APostProcessVolume>(FoundActors[0]);
 		}
 
+		if (PPVolume->Settings.WeightedBlendables.Array.Num() == 0)
+		{
+			return;
+		}
+
 		PPVolume->Settings.WeightedBlendables.Array[0].Object = PostProcessMat;
 	}
 

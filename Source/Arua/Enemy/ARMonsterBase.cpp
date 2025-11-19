@@ -71,6 +71,22 @@ void AARMonsterBase::IsInNest(bool InIsInNest)
 	}
 }
 
+void AARMonsterBase::Recovery()
+{
+	if (ASC == nullptr)
+	{
+		return;
+	}
+
+	/*UARAttributeSetBase**/ AttributeSet = const_cast<UARAttributeSetBase*>(Cast<UARAttributeSetBase>(ASC->GetAttributeSet(UARAttributeSetBase::StaticClass())));
+	
+	if (AttributeSet)
+	{
+		float MaxHealth = AttributeSet->GetMaxHealth();
+		AttributeSet->SetHealth(MaxHealth);
+	}
+}
+
 
 void AARMonsterBase::BeginPlay()
 {

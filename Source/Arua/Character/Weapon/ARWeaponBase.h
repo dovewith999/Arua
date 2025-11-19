@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,14 +18,18 @@ public:
 	// Sets default values for this actor's properties
 	AARWeaponBase();
 
-	// ¹«±â¸¦ ÀåÂøÇÏ´Â ÇÔ¼ö
+	// ë¬´ê¸°ë¥¼ ì¥ì°©í•˜ëŠ” í•¨ìˆ˜
 	virtual void AttachToSocket(class ACharacter* Character, FName SocketName);
-	// ¹«±â¸¦ ÇØÁ¦ÇÏ´Â ÇÔ¼ö
+	// ë¬´ê¸°ë¥¼ í•´ì œí•˜ëŠ” í•¨ìˆ˜
 	virtual void DetachFromCharacter();
 
 	virtual void InitializeFromData();
 
 	//FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; } 
+
+	void SetOwnerPlayer(class AARCharacterPlayer* InOwnerPlayer) { OwnerPlayer = InOwnerPlayer; }	
+
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return WeaponStaticMesh; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,25 +47,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 	TObjectPtr<class UStaticMeshComponent> WeaponStaticMesh;
 
-	// ¹«±â Å¸ÀÔ
+	// ë¬´ê¸° íƒ€ì…
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 	FGameplayTag WeaponTag;
 
-	// ¹«±â ÀåÂø ¸ùÅ¸ÁÖ
+	// ë¬´ê¸° ì¥ì°© ëª½íƒ€ì£¼
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> WeaponEquipMontage;
 
-	// ¹«±â¿¡ µû¸¥ AnimBp
+	// ë¬´ê¸°ì— ë”°ë¥¸ AnimBp
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimInstance> AnimInstanceByWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Socket)
 	FName Socket;
 
-	// ¾ÆÀÌÅÛ ÇüÅÂÀÇ ¹«±â µ¥ÀÌÅÍ (¾ÆÀÌÅÛ°ú ¿¬µ¿)
+	// ì•„ì´í…œ í˜•íƒœì˜ ë¬´ê¸° ë°ì´í„° (ì•„ì´í…œê³¼ ì—°ë™)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<class UDA_ItemDefinition> WeaponItemDefinition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	TObjectPtr<class UARComboActionData> ComboActionData;
+
+protected:
+	UPROPERTY()
+	TObjectPtr<class AARCharacterPlayer> OwnerPlayer;
 };

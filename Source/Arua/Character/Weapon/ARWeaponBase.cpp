@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/Weapon/ARWeaponBase.h"
@@ -68,8 +68,6 @@ void AARWeaponBase::AttachToSocket(class ACharacter* Character, FName SocketName
 					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 					SocketName);
 			});
-
-
 	}
 }
 
@@ -84,7 +82,7 @@ void AARWeaponBase::InitializeFromData()
 
 	WeaponData = *Row;
 
-	// ½ºÅÂÆ½¸Þ½Ã ÃÊ±âÈ­
+	// ìŠ¤íƒœí‹±ë©”ì‹œ ì´ˆê¸°í™”
 	if (UStaticMesh* WeaponMesh = Row->WeaponMeshAsset.LoadSynchronous())
 	{
 		WeaponStaticMesh->SetStaticMesh(WeaponMesh);

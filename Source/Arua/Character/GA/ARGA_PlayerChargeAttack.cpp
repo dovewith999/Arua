@@ -8,6 +8,7 @@
 #include "AbilitySystemComponent.h"
 #include "AttributeSet/PlayerAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
+#include "Character/Weapon/ARSword.h"
 
 UARGA_PlayerChargeAttack::UARGA_PlayerChargeAttack()
 {
@@ -69,7 +70,11 @@ void UARGA_PlayerChargeAttack::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 	PlayerAttributeSet->SetChargeCount(0.f);
 
-	Player->GetCurrentWeapon()->SetActorHiddenInGame(false);	
+
+	if (AARSword* Weapon = Cast<AARSword>(Player->GetCurrentWeapon()))
+	{
+		Weapon->InitVisible();
+	}
 }
 
 void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
