@@ -59,4 +59,6 @@ namespace AruaGamePlayTags
 	/*Gameplay Cue Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Monster_Hit, "GameplayCue.Monster.Hit")
 	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack, "GameplayCue.Player.Attack")
+	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack_Special, "GameplayCue.Player.Attack.Special")
+	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack_Impact, "GameplayCue.Player.Attack.Impact")
 }

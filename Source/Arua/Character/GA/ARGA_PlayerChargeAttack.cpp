@@ -94,7 +94,7 @@ void UARGA_PlayerChargeAttack::InputReleased(const FGameplayAbilitySpecHandle Ha
 
 		if (SectionNameString == "Attack3")
 		{
-			StartOffsetEffect();
+			//StartOffsetEffect();
 		}
 
 		MontageJumpToSection(SectionName);

@@ -69,4 +69,6 @@ namespace AruaGamePlayTags
 	/*Gameplay Cue Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Monster_Hit)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack_Special)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack_Impact)
 }
