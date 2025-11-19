@@ -118,6 +118,7 @@ void AARBoss::BeginPlay()
 	}
 
 	NestLocation = GetActorLocation();
+	NestLocation.Z += 1588.0001;
 
 	UBlackboardComponent* BB = AICon->GetBlackboardComponent();
 	if (BB)
