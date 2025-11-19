@@ -919,7 +919,7 @@ void AARCharacterPlayer::PlayAction(FGameplayTag ActionTag)
 
 void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResult, AActor* InInstigator)
 {
-	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Roll))
+	if (ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Roll) || ASC->HasMatchingGameplayTag(AruaGamePlayTags::Player_State_Dead))
 	{
 		return;
 	}
