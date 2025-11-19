@@ -78,10 +78,18 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SpawnBossActor(TSubclassOf<AActor> ActorToSpawn, float Distance, float SetZAxis);
 
+	
+public:
+	//BP에만 구현한 함수들
 	//토네이도 쏘는 이벤트
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnTornado();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BossEncounter();
+
+protected:
+	//bool 용 함수
 	virtual void IsSensed(bool InIsSensed) override;
 
 	//GA 관련 변수
