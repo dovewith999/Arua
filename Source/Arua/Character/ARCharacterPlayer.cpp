@@ -762,9 +762,7 @@ void AARCharacterPlayer::SetDead()
 
 	// 후에 있을지 모르는 플레이어 죽음 이후 상태 구현.
 
-	// 플레이어 사망 어빌리티 이벤트 전달
-	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AruaGamePlayTags::Player_Event_Dead, Payload);
+	// BPGA_Daed를 상속받아 구현
 }
 
 void AARCharacterPlayer::SetupGASInputComponent()
