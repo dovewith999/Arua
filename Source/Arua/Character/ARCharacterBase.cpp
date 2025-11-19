@@ -3,6 +3,7 @@
 
 #include "Character/ARCharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PaperSpriteComponent.h"
 
 // Sets default values
 AARCharacterBase::AARCharacterBase()
@@ -11,6 +12,10 @@ AARCharacterBase::AARCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	MinimapIcon = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("MinimapIcon"));
+	MinimapIcon->SetupAttachment(RootComponent);
+	MinimapIcon->SetCollisionProfileName(TEXT("NoCollision"));
 
 	// 상속받은 클래스의 생성자에서 초기화.
 	ASC = nullptr;

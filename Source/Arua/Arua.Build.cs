@@ -31,7 +31,8 @@ public class Arua : ModuleRules
             "LevelSequence",
             "CommonUI",
             "CommonInput",
-            "PreLoadScreen"
+            "PreLoadScreen",
+            "Paper2D"
         });
 
 

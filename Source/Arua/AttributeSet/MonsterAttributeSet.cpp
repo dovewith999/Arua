@@ -22,7 +22,7 @@ UMonsterAttributeSet::UMonsterAttributeSet()
 
 void UMonsterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
-    Super::PostGameplayEffectExecute(Data);
+    Super::PostGameplayEffectExecute(Data); 
 
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
