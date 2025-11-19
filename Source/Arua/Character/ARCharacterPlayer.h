@@ -59,6 +59,7 @@ public:
 	FORCEINLINE bool GetIsWeaponChanged() { return bIsWeaponChanged; }
 	FORCEINLINE void SetIsWeaponChanged(bool change) { bIsWeaponChanged = change; }
 	FORCEINLINE FGameplayTag GetWeaponTag() { return CurrentWeapon->WeaponTag; }
+	FORCEINLINE AARWeaponBase* GetCurrentWeapon() { return CurrentWeapon; }
 
 	FORCEINLINE class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	FORCEINLINE class UQuestComponent* GetQuestComponent() const { return QuestComponent; }
@@ -67,12 +68,15 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	void MontageEnded();
+
 public:
 	void BeginLockOn();
 	void FinishLockOn();
 	void SetInputDirection(); // 카메라 기준 입력 방향을 계산하기 위한 함수 - 25/11/12 임희섭
 	FName GetLockOnDodgeMontageSection() const;
 	EInputDirection GetDodgeDirection() const;
+
 
 	UFUNCTION(BlueprintCallable)
 	AARWeaponBase* WeaponChange(AARWeaponBase* NewWeapon);
@@ -253,6 +257,9 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AARWeaponBase> CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AARWeaponBase> WeaponForChange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 	FGameplayTag WeaponTag;

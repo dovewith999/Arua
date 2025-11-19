@@ -5,6 +5,7 @@
 #include "Character/ARCharacterPlayer.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARComboActionData.h"
+#include "Animation/ARCharacterAnimInstance.h"
 
 UARGA_Attack::UARGA_Attack()
 {
@@ -17,9 +18,13 @@ void UARGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ARCharacter = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
-	CurrentComboData = ARCharacter->GetComboActionData();
+	CurrentComboData = ARCharacter->GetCurrentWeapon()->ComboActionData;
 
-	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), ARCharacter->GetComboActionMontage(),1.0f,GetNextSection());
+
+	UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(ARCharacter->GetMesh()->GetAnimInstance());
+	UAnimMontage* AttackMontage = PlayerAnim->FindMontageInternal(ARCharacter->GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.Attack")));
+
+	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), AttackMontage, 1.0f,GetNextSection());
 	PlayAttackTask->OnCompleted.AddDynamic(this, &UARGA_Attack::OnCompleteCallback);
 	PlayAttackTask->OnInterrupted.AddDynamic(this, &UARGA_Attack::OnInterruptedCallback);
 	PlayAttackTask->ReadyForActivation();

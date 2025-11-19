@@ -6,6 +6,7 @@
 #include "Tag/AruaGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystemComponent.h"
+#include "Animation/ARCharacterAnimInstance.h"
 
 UARGA_LockOnDodge::UARGA_LockOnDodge()
 {
@@ -35,7 +36,15 @@ void UARGA_LockOnDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	AARCharacterPlayer* Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 	Player->SetInputDirection();
 
-	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), Player->GetLockOnDodgeMontage(), 1.f, Player->GetLockOnDodgeMontageSection());
+	UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(Player->GetMesh()->GetAnimInstance());
+	UAnimMontage* DodgeMontage = PlayerAnim->FindMontageInternal(Player->GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.LockOnSlide")));
+	if (DodgeMontage)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Montage Found!"));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("%s"),*Player->GetWeaponTag().ToString());
+	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), DodgeMontage, 1.f, Player->GetLockOnDodgeMontageSection());
 	PlayRollTask->OnCompleted.AddDynamic(this, &UARGA_LockOnDodge::OnCompleteCallback);
 	PlayRollTask->OnInterrupted.AddDynamic(this, &UARGA_LockOnDodge::OnInterruptedCallback);
 	PlayRollTask->ReadyForActivation();

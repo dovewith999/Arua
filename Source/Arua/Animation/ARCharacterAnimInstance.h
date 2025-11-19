@@ -20,10 +20,10 @@ class ARUA_API UARCharacterAnimInstance : public UAnimInstance
 public:
 	UARCharacterAnimInstance();
 
-
 	// 몽타주 재생
 	UFUNCTION(BlueprintCallable)
 	void PlayActionMontage(const FGameplayTag& WeaponTag, const FGameplayTag& ActionTag);
+
 
 protected:
 	virtual void NativeInitializeAnimation() override;
@@ -88,7 +88,7 @@ protected:
 	UFUNCTION()
 	int32 GetWeaponLayerIndex() const;
 
-private:
+public:
 	UAnimMontage* FindMontageInternal(FGameplayTag WeaponTag, FGameplayTag ActionTag) const;
 
 

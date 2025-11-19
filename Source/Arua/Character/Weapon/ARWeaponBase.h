@@ -61,4 +61,7 @@ public:
 	// 아이템 형태의 무기 데이터 (아이템과 연동)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<class UDA_ItemDefinition> WeaponItemDefinition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	TObjectPtr<class UARComboActionData> ComboActionData;
 };
