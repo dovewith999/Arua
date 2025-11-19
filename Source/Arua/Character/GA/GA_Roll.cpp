@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/ARCharacterPlayer.h"
 #include "AbilitySystemComponent.h"
+#include "Animation/ARCharacterAnimInstance.h"
 
 UGA_Roll::UGA_Roll()
 {
@@ -35,8 +36,11 @@ void UGA_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 
 	AARCharacterPlayer* Player = CastChecked<AARCharacterPlayer>(ActorInfo->AvatarActor.Get());
 	Player->SetInputDirection();
+	
+	UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(Player->GetMesh()->GetAnimInstance());
+	UAnimMontage* RollMontage = PlayerAnim->FindMontageInternal(Player->GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.Roll")));
 
-	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayRoll"), Player->GetRollMontage());
+	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayRoll"), RollMontage);
 	PlayRollTask->OnCompleted.AddDynamic(this, &UGA_Roll::OnCompleteCallback);
 	PlayRollTask->OnInterrupted.AddDynamic(this, &UGA_Roll::OnInterruptedCallback);
 	PlayRollTask->ReadyForActivation();

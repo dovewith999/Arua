@@ -74,6 +74,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Character)
 	uint8 bASCInitialized : 1;
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Character)
+	uint8 bIsFalling : 1;
+
 	TMap<FGameplayTag, TMap<FGameplayTag, UAnimMontage*>> WeaponActionMontageTable;
 	TMap<FGameplayTag, UAnimMontage*> CommonMontageTable;
 
