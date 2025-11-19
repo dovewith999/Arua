@@ -30,29 +30,33 @@ void AARSword::ChargeEffect()
 	if (AttributeSet->GetChargeCount() == 0)
 	{
 		WeaponStaticMesh->SetVisibility(true);
-		ChargeEffect1->SetVisibility(false);
-		ChargeEffect2->SetVisibility(false);
+
+		ChargeEffect1->Deactivate();
+		ChargeEffect2->Deactivate();
 	}
 
 	else if (AttributeSet->GetChargeCount() == 1)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Charge Count1"));
-		ChargeEffect1->SetVisibility(true);
+
 		WeaponStaticMesh->SetVisibility(false);
+		ChargeEffect1->Activate();;
 	}
 	else if (AttributeSet->GetChargeCount() == 2)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Charge Count2"));
-		ChargeEffect1->SetVisibility(false);
-		ChargeEffect2->SetVisibility(true);
+
+		ChargeEffect1->Deactivate();
+		ChargeEffect2->Activate();
 	}
 }
 
 void AARSword::InitVisible()
 {
 	WeaponStaticMesh->SetVisibility(true);
-	ChargeEffect1->SetVisibility(false);
-	ChargeEffect2->SetVisibility(false);
+
+	ChargeEffect1->Deactivate();
+	ChargeEffect2->Deactivate();
 }
 
 void AARSword::InitializeFromData()
