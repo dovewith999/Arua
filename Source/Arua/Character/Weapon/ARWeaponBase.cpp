@@ -3,6 +3,7 @@
 
 #include "Character/Weapon/ARWeaponBase.h"
 #include "GameFramework/Character.h"
+#include "Character/ARComboActionData.h"
 
 // Sets default values
 AARWeaponBase::AARWeaponBase()
@@ -95,6 +96,10 @@ void AARWeaponBase::InitializeFromData()
 	FName SocketName = Row->Socket;
 	Socket = SocketName;
 
+	if (UARComboActionData* ComboActionDataRef = Row->ComboActionData.LoadSynchronous())
+	{
+		ComboActionData = ComboActionDataRef;
+	}
 	
 
 	/*if (UAnimMontage* WeaponEquipMontageTemp = Row->WeaponEquipMontageData.LoadSynchronous())

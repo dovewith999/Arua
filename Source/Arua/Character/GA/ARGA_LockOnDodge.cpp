@@ -43,7 +43,7 @@ void UARGA_LockOnDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		UE_LOG(LogTemp, Log, TEXT("Montage Found!"));
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), *Player->GetLockOnDodgeMontageSection().ToString());
+	UE_LOG(LogTemp, Log, TEXT("%s"),*Player->GetWeaponTag().ToString());
 	UAbilityTask_PlayMontageAndWait* PlayRollTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("LockOnRoll"), DodgeMontage, 1.f, Player->GetLockOnDodgeMontageSection());
 	PlayRollTask->OnCompleted.AddDynamic(this, &UARGA_LockOnDodge::OnCompleteCallback);
 	PlayRollTask->OnInterrupted.AddDynamic(this, &UARGA_LockOnDodge::OnInterruptedCallback);

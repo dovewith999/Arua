@@ -48,4 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	FName Socket;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Data)
+	TSoftObjectPtr<class UARComboActionData> ComboActionData;
+
 };

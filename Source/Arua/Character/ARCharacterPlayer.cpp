@@ -454,7 +454,7 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 	{
 		TagContainer.AddTag(AruaGamePlayTags::Ability_LockOnDodge);
 		ASC->TryActivateAbilitiesByTag(TagContainer);
-		PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.LockOnSlide"));
+		//PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.LockOnSlide"));
 	}
 
 }
@@ -496,9 +496,6 @@ AARWeaponBase* AARCharacterPlayer::WeaponChange(AARWeaponBase* NewWeapon)
 
 	TObjectPtr<class AARWeaponBase> PreviousWeapon = CurrentWeapon;
 
-	FTimerHandle TimerHandle;
-	FTimerHandle AnimTimerHandle;
-	FName SectionName;
 	if (CurrentWeapon == nullptr)
 	{
 		CurrentWeapon = NewWeapon;
@@ -506,27 +503,27 @@ AARWeaponBase* AARCharacterPlayer::WeaponChange(AARWeaponBase* NewWeapon)
 		if (CurrentWeapon)
 		{
 			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
-			/*GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-			GetMesh()->SetAnimInstanceClass(SwordAnimClass.LoadSynchronous());*/
-			//SectionName = TEXT("WeaponEquip")
+			PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Equip"));
 		}
 		return nullptr;
 	}
 	else
 	{
-		UnequipWeapon(CurrentWeapon);
+		WeaponForChange = NewWeapon;
+		UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+		UAnimMontage* TargetMontage = PlayerAnim->FindMontageInternal(GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.Equip")));
+
+		PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Equip"));
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(TEXT("WeaponUnarm"), TargetMontage);
+
+	
+		/*UnequipWeapon(CurrentWeapon);
 		CurrentWeapon = NewWeapon;
-		EquipWeapon(CurrentWeapon,CurrentWeapon->Socket);
-
+		EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);*/
+		
 		return PreviousWeapon;
-		//SectionName = TEXT("WeaponUnarm");
+
 	}
-
-
-	/*float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
-	GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);*/
-	//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
-
 }
 
 void AARCharacterPlayer::WeaponChangeTest()
@@ -536,32 +533,27 @@ void AARCharacterPlayer::WeaponChangeTest()
 		return;
 	}
 
-	FTimerHandle TimerHandle;
-	FTimerHandle AnimTimerHandle;
-	FName SectionName;
 	if (CurrentWeapon == nullptr)
 	{
 		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
 
 		if (CurrentWeapon)
 		{
-			EquipWeapon(CurrentWeapon, TEXT("hand_rSocket"));
-			/*GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-			GetMesh()->SetAnimInstanceClass(SwordAnimClass.LoadSynchronous());*/
-			//SectionName = TEXT("WeaponEquip")
+			EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
+			PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Equip"));
 		}
 	}
 	else
 	{
-		UnequipWeapon(CurrentWeapon);
-		//SectionName = TEXT("WeaponUnarm");
+		UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+		UAnimMontage* TargetMontage = PlayerAnim->FindMontageInternal(GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.Equip")));
+		
+		PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Equip"));
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(TEXT("WeaponUnarm"), TargetMontage);
+
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("%s"), *WeaponTag.ToString());
-
-	/*float MontageLength = GetMesh()->GetAnimInstance()->Montage_Play(WeaponEquipMontage, 1.0f);
-	GetMesh()->GetAnimInstance()->Montage_JumpToSection(SectionName, WeaponEquipMontage);*/
-	//GetWorldTimerManager().SetTimer(TimerHandle, []() { /* 아무 작업 안함 */ }, WeaponEquipMontage->GetSectionLength(WeaponEquipMontage->GetSectionIndex(SectionName)), false);
 }
 
 void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
@@ -606,9 +598,9 @@ void AARCharacterPlayer::NPCInteraction(const FInputActionValue& Value)
 
 	// 디버그 시각화 (원하면 사용)
 
-	DrawDebugBox(GetWorld(), Start, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 1.f);
+	/*DrawDebugBox(GetWorld(), Start, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 1.f);
 	DrawDebugBox(GetWorld(), End, BoxHalfExtent, FQuat::Identity, FColor::Red, false, 1.f);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 1.f, 0, 1.f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 1.f, 0, 1.f);*/
 
 	// 충돌 물체가 없으면 종료
 	if (!bHit || HitResults.Num() == 0) return;
@@ -849,7 +841,9 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 		{
 			ASC->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Character.Weapon.None")));
 		}
+		
 		WeaponTag = EWeapon->WeaponTag;
+		UE_LOG(LogTemp, Log, TEXT("%s"), *WeaponTag.ToString());
 		EWeapon->AttachToSocket(this, SocketName);
 		ASC->AddLooseGameplayTag(EWeapon->WeaponTag);
 	}
@@ -864,10 +858,11 @@ void AARCharacterPlayer::UnequipWeapon(AARWeaponBase* EWeapon)
 		EWeapon->Destroy();
 
 		WeaponTag = FGameplayTag::RequestGameplayTag("Character.Weapon.None");
-		
+
 		ASC->AddLooseGameplayTag(WeaponTag);
 		CurrentWeapon = nullptr;
 		
+		UE_LOG(LogTemp, Log, TEXT("UnequipWeapon is Success"));
 	}
 }
 
@@ -885,6 +880,14 @@ void AARCharacterPlayer::UnequipWeaponTest(AARWeaponBase* EWeapon)
 		CurrentWeapon = nullptr;
 
 	}
+}
+
+void AARCharacterPlayer::MontageEnded()
+{
+	UnequipWeapon(CurrentWeapon);
+	CurrentWeapon = WeaponForChange;
+	EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);
+	PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Equip"));
 }
 
 void AARCharacterPlayer::EquipStartWeapon()
