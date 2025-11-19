@@ -447,7 +447,8 @@ void AARCharacterPlayer::Roll(const FInputActionValue& Value)
 	{
 		TagContainer.AddTag(AruaGamePlayTags::Ability_Roll);
 		ASC->TryActivateAbilitiesByTag(TagContainer);
-		PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Roll"));
+		//PlayAction(FGameplayTag::RequestGameplayTag("Character.Action.Roll"));
+		// Roll 어빌리티로 가서 몽타주 찾아서 넘겨줘야 됨.
 	}
 
 	else
