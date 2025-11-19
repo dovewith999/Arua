@@ -126,7 +126,7 @@ protected:
 	float ComboAttackPawLeft_TailRightTime = 3.1f;
 
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
-	float AttackShootTornadoTime = 1.066f * 2;
+	float AttackShootTornadoTime = 2.95f;
 
 	UPROPERTY(EditAnywhere, Category = BossMontageTime, meta = (AllowPrivateAccess = "true"))
 	float AttackStumpTime = 2.46f;
