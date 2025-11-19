@@ -310,8 +310,8 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 	PC->bShowMouseCursor = true;
 	PC->SetIgnoreLookInput(true);
 	PC->SetIgnoreMoveInput(true);
-	PC->bEnableClickEvents = true;
-	PC->bEnableMouseOverEvents = true;
+	PC->bEnableClickEvents = false;
+	PC->bEnableMouseOverEvents = false;
 
 	/* 플레이어 HUD 비가시화 */
 	TArray<FWidgetVisibilityRecord> Records;
@@ -366,8 +366,8 @@ void AQuestGiverActor::RestoreGameplayMode()
 	PC->bShowMouseCursor = false;
 	PC->SetIgnoreLookInput(false);
 	PC->SetIgnoreMoveInput(false);
-	PC->bEnableClickEvents = false;
-	PC->bEnableMouseOverEvents = false;
+	PC->bEnableClickEvents = true;
+	PC->bEnableMouseOverEvents = true;
 
 	/* 플레이어 HUD 비가시화 */
 	TArray<FWidgetVisibilityRecord>* Found = CachedWidgetStates.Find(PC);
