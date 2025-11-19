@@ -9,6 +9,9 @@
 */
 namespace AruaGamePlayTags
 {
+	/*Player Ability Tags*/
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Dead)
+
 	/*Player State Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_LockOn)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Roll)
@@ -22,6 +25,7 @@ namespace AruaGamePlayTags
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Whirlwind)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ChargeAttack)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AddChargeCount)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_PickUp)
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
@@ -34,10 +38,11 @@ namespace AruaGamePlayTags
 
 	/*Event Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Dead)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Dead)
 	//ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Start)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Update)
 	//ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Quest_Complete)
-		ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Interaction_Start)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Interaction_Start)
 
 	/*WidgetStack Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(WidgetStack_Modal)

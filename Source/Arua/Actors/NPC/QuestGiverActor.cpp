@@ -28,7 +28,7 @@ AQuestGiverActor::AQuestGiverActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//// 상호작용 콜리전 박스 CDO 생성
+	// 상호작용 콜리전 박스 CDO 생성
 	InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
 	InteractionVolume->SetBoxExtent(FVector(100, 100, 100));
 	RootComponent = InteractionVolume;

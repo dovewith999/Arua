@@ -2,6 +2,9 @@
 
 namespace AruaGamePlayTags
 {
+	/*Player Ability Tags*/
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Dead, "Player.Ability.Dead")
+
 	/*Player State Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_LockOn, "Player.State.LockOn")
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Roll, "Player.State.Roll")
@@ -15,6 +18,7 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Whirlwind, "Ability.Whirlwind")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_ChargeAttack, "Ability.ChargeAttack")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_AddChargeCount, "Ability.AddChargeCount")
+	UE_DEFINE_GAMEPLAY_TAG(Ability_PickUp, "Ability.PickUp")
 
 	/*Condition State Tags*/
 	// 상태 이상 관련 태그
@@ -27,8 +31,9 @@ namespace AruaGamePlayTags
 
 	/*Event Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Dead, "Player.Event.Dead")
 	UE_DEFINE_GAMEPLAY_TAG(Event_Quest_Update, "Event.Quest.Update")
-		UE_DEFINE_GAMEPLAY_TAG(Event_Interaction_Start, "Event.Interaction.Start")
+	UE_DEFINE_GAMEPLAY_TAG(Event_Interaction_Start, "Event.Interaction.Start")
 	
 	/*WidgetStack Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(WidgetStack_Modal, "WidgetStack.Modal")

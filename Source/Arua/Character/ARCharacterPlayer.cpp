@@ -14,6 +14,7 @@
 #include "AbilitySystemComponent.h"
 #include "GA/ARGA_Attack.h"
 #include "Character/ARComboActionData.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 #include "Components/Quest/QuestComponent.h"
 #include "Components/Inventory/InventoryComponent.h"
@@ -757,8 +758,13 @@ void AARCharacterPlayer::ToggleInventory()
 void AARCharacterPlayer::SetDead()
 {
 	Super::SetDead();
+	if (!ASC) return;
 
 	// 후에 있을지 모르는 플레이어 죽음 이후 상태 구현.
+
+	// 플레이어 사망 어빌리티 이벤트 전달
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AruaGamePlayTags::Player_Event_Dead, Payload);
 }
 
 void AARCharacterPlayer::SetupGASInputComponent()
