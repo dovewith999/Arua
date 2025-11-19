@@ -42,4 +42,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GAS)
 	TObjectPtr<class UARAttributeSetBase> AttributeSet;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Minimap", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UPaperSpriteComponent> MinimapIcon;
+
 };

@@ -10,6 +10,7 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Roll, "Player.State.Roll")
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Skill_Whirlwind, "Player.State.Skill.Whirlwind")
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Skill_ChargeAttack, "Player.State.Skill.ChargeAttack")
+	UE_DEFINE_GAMEPLAY_TAG(Player_State_Dead, "Player.State.Dead")
 
 	/*Ability Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Ability_LockOn, "Ability.LockOn")
