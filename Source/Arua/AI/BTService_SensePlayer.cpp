@@ -10,6 +10,7 @@
 #include "Controller/AruaPlayerController.h"
 #include "Enemy/ARMonsterBase.h"
 #include "Enemy/Boss/ARBoss.h"
+#include "AbilitySystemComponent.h"
 
 UBTService_SensePlayer::UBTService_SensePlayer()
 {
@@ -73,9 +74,6 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	OwnerMonster->IsInNest(bIsInNest);
 
-
-	
-
 	// 플레이어와의 거리 감지해서 쫒아가는 로직
 
 	bool bInSenseRange = false;
@@ -89,6 +87,7 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	else
 	{
 		bInSenseRange = false;
+		OwnerMonster->Recovery();
 	}
 
 	OwnerMonster->IsSensed(bInSenseRange);
