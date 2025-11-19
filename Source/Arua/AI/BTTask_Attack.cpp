@@ -27,7 +27,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	int32 RandomNum = FMath::RandRange(1, 1);
+	int32 RandomNum = FMath::RandRange(0, 1);
 
 	if (RandomNum == 0)
 		AIPawn->AttackPawLeft();
