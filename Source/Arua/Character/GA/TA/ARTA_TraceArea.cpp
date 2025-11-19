@@ -77,12 +77,12 @@ FGameplayAbilityTargetDataHandle AARTA_TraceArea::MakeTargetData() const
 	}
 
 #if ENABLE_DRAW_DEBUG
-	if (bShowDebug)
-	{
-		FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-		// 플레이어 위치에 반경 AttackRadius의 구체를 그림.
-		DrawDebugSphere(GetWorld(), PlayerStartLocation, AttackRadius, 16, DrawColor, false, 5.0f);
-	}
+	//if (bShowDebug)
+	//{
+	//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+	//	// 플레이어 위치에 반경 AttackRadius의 구체를 그림.
+	//	DrawDebugSphere(GetWorld(), PlayerStartLocation, AttackRadius, 16, DrawColor, false, 5.0f);
+	//}
 #endif
 
 	return DataHandle;
