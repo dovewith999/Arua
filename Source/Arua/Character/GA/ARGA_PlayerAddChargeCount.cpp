@@ -33,6 +33,8 @@ void UARGA_PlayerAddChargeCount::ActivateAbility(const FGameplayAbilitySpecHandl
 
 	FGameplayEffectSpecHandle AddChargeEffectSpec = MakeOutgoingGameplayEffectSpec(AddChargeEffectClass);
 	Player->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*AddChargeEffectSpec.Data.Get());
+
+	Player->GetCurrentWeapon()->SetActorHiddenInGame(true);
 }
 
 void UARGA_PlayerAddChargeCount::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)

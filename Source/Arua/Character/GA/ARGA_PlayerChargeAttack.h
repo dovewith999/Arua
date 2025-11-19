@@ -50,15 +50,6 @@ private:
     UFUNCTION()
     void OnInterruptedCallback();
 
-    // 타이머를 설정하고 시작하는 함수
-    void StartOffsetEffect();
-
-    // 타이머에 의해 반복 호출되어 파라미터를 업데이트하는 함수
-    void UpdateOffsetEffect();
-
-    // 효과가 완료되었을 때 호출되는 정리 함수
-    void FinishOffsetEffect();
-
 protected:
     UPROPERTY()
     bool bInputReleaseHandled = false;
@@ -66,16 +57,4 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> ChargeAttackMontage;
-
-#pragma region UVOffsetEffect
-    UPROPERTY(EditDefaultsOnly, Category = "Post Process")
-    float OffsetDuration = 0.3f; // 0.0 -> 0.5 -> 0.0 까지 걸리는 총 시간
-
-    UPROPERTY()
-    UMaterialInstanceDynamic* UVOffsetMID; // Post Process에 할당된 MID 참조
-
-    // 타이머 관련 변수
-    FTimerHandle OffsetTimerHandle; // 타이머 핸들
-    float CurrentOffsetTime = 0.0f; // 현재 진행 시간
-#pragma endregion
 };
