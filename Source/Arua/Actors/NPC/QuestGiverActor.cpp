@@ -19,6 +19,8 @@
 #include "UI/Quest/QuestSelectWidget.h"
 #include "Components/Interact/ARInteractComponent.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
 static const FString QuestGiverActorContext(TEXT("QuestGiver_OnAccept"));
 TMap<TWeakObjectPtr<APlayerController>, TArray<FWidgetVisibilityRecord>> AQuestGiverActor::CachedWidgetStates;
 
@@ -38,7 +40,8 @@ AQuestGiverActor::AQuestGiverActor()
 	// NPC 위젯 컴포넌트 COD 생성
 	NPCWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NPCWidgetComponent"));
 	NPCWidgetComponent->SetupAttachment(RootComponent);
-	
+	NPCWidgetComponent->SetCullDistance(5000.f);
+
 	// InterctComponent CDO 생성
 	InteractComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractComponent"));
 	InteractComponent->SetInteractCollision(InteractionVolume, FString(TEXT("퀘스트 판")));
@@ -47,7 +50,11 @@ AQuestGiverActor::AQuestGiverActor()
 void AQuestGiverActor::Interact(APawn* InInteractor)
 {
 	// 플레이어 컨트롤러 가져오기 및 저장
-	PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!PC)
+	{
+		PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	}
+
 	if (!PC || !InInteractor || bInteracting || !UICameraActor)
 	{
 		return;
@@ -189,6 +196,20 @@ void AQuestGiverActor::HandleQuestTurnIn(FName QuestID)
 void AQuestGiverActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 위젯 컴포넌트 빌보드 설정
+	if (UWorld* World = GetWorld())
+	{
+		const float UpdateInterval = 0.04f;
+
+		World->GetTimerManager().SetTimer(
+			WidgetComponentBillboardTimerHandle,
+			this,
+			&AQuestGiverActor::WidgetComponentBillboard,
+			UpdateInterval,
+			true
+		);
+	}
 }
 
 TArray<FQuestData> AQuestGiverActor::GetProvidedQuests() const
@@ -234,6 +255,44 @@ TArray<FQuestData> AQuestGiverActor::GetProvidedQuests() const
 	}
 
 	return ProvidedQuests;
+}
+
+void AQuestGiverActor::WidgetComponentBillboard()
+{
+	if (!NPCWidgetComponent || !GetWorld()) return;
+
+	if (!PC)
+	{
+		PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	}
+	if (!PC) return;
+
+	// 플레이어 카메라 위치
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+	// 위젯 컴포넌트 위치
+	const FVector WidgetLocation = NPCWidgetComponent->GetComponentLocation();
+
+	// 위젯 → 카메라 방향을 향하는 회전 계산
+	FRotator TargetRot = UKismetMathLibrary::FindLookAtRotation(WidgetLocation, CameraLocation);
+
+	// Pitch/Roll 고정
+	TargetRot.Pitch = 0.f;
+	TargetRot.Roll = 0.f;
+
+	// 현재 회전
+	const FRotator CurrentRot = NPCWidgetComponent->GetComponentRotation();
+
+	// DeltaTime은 World에서 가져옴
+	const float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+	// 회전 보간
+	const FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, 5.f);
+
+	// 적용
+	NPCWidgetComponent->SetWorldRotation(NewRot);
 }
 
 void AQuestGiverActor::ApplyUIInteractionMode()

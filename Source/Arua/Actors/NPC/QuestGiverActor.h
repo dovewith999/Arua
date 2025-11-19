@@ -59,6 +59,9 @@ protected:
 	// 이 NPC가 제공하는 퀘스트 리스트 Getter
 	TArray<FQuestData> GetProvidedQuests() const;
 
+	// 위젯 컴포넌트 빌보드 함수
+	void WidgetComponentBillboard();
+
 protected:
 	//// 상호작용 콜리전
 	UPROPERTY(VisibleAnywhere)
@@ -114,6 +117,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UARInteractComponent> InteractComponent;
+
+	// 위젯 컴포넌트 빌보드 타이머
+	FTimerHandle WidgetComponentBillboardTimerHandle;
 
 private:
 	// 다이얼로그 위젯 인스턴스
