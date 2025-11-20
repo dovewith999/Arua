@@ -9,8 +9,7 @@
 #include "DA_ItemDefinition.generated.h"
 
 /**
- * 게임에서 사용될 아이템의 기본 정의 클래스
- * UPrimaryDataAsset을 상속하여 에디터에서 관리 가능한 데이터 자산으로 구현
+ * 아이템의 기본 정의 클래스
  */
 UCLASS()
 class ARUA_API UDA_ItemDefinition : public UPrimaryDataAsset
@@ -46,12 +45,4 @@ public:
 	// 최대 겹침 수량 (1이면 겹침 불가)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	int32 MaxStackSize = 1;
-
-
-	// 장비의 경우, 공겨력/방어력 등 스탯 추가 정의
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EAR_ItemCategory::Equipment"))
-	int32 AttackPower = 0;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (EditCondition = "Category == EAR_ItemCategory::Equipment"))
-	int32 DefensePower = 0;
 };

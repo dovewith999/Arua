@@ -10,6 +10,10 @@
 // 퀘스트 버튼 클릭 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestButtonClicked, FName, QuestID);
 
+/**
+ * 실제 퀘스트 창을 표시하는 버튼 위젯 클래스
+ * 버튼을 누르면 눌린 퀘스트와 바인딩 되는 퀘스트 창을 표시함
+ */
 UCLASS()
 class ARUA_API UQuestButtonWidget : public UUserWidget
 {

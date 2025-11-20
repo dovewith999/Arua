@@ -10,7 +10,10 @@
 
 class InteractComponent;
 
-// 위젯 가시화 기록 구조체
+/**
+ * 뷰포트에 존재하는 모든 위젯의 가시화를 관리하는 구조체
+ * 상호작용하는 동안 모든 위젯을 비가시화하고 이를 기록하여 상호작용 종료 시 다시 복구함
+ */
 USTRUCT()
 struct FWidgetVisibilityRecord
 {
@@ -20,6 +23,10 @@ struct FWidgetVisibilityRecord
 	ESlateVisibility PrevVisibility;	// 이전 가시화 여부
 };
 
+/**
+ * 퀘스트(임무) 수주/완료 등의 상호작용을 처리하는 퀘스트 NPC 액터 클래스
+ * 'E'를 통해 상호작용 시작 / 'Q'를 통해 상호작용 종료
+ */
 UCLASS()
 class ARUA_API AQuestGiverActor : public AActor, public IAR_NPCInteractionInterface
 {

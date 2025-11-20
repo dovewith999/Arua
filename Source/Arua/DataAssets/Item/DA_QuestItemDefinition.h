@@ -7,7 +7,7 @@
 #include "DA_QuestItemDefinition.generated.h"
 
 /**
- * 퀘스트 진행과 연동되는 퀘스트 아이템 정의
+ * 퀘스트 아이템 정의 클래스
  */
 UCLASS()
 class ARUA_API UDA_QuestItemDefinition : public UDA_ItemDefinition

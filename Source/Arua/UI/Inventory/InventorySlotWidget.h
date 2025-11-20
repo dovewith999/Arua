@@ -7,7 +7,7 @@
 #include "InventorySlotWidget.generated.h"
 
 /**
- * 인벤토리의 각 슬롯을 표시하는 위젯
+ * 인벤토리의 각 슬롯을 표시하는 위젯 클래스
  * 아이콘과 수량 표시, 마우스 오버, 드래그 앤 드롭 등 처리
  */
 UCLASS()

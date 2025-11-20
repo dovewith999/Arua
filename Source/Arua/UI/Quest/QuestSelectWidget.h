@@ -12,6 +12,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestAccepted, FName, QuestID);
 // 퀘스트 보상 수령 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestTurnInRequested, FName, QuestID);
 
+/**
+ * 진행할 수 있는 퀘스트(수주/완료)들의 목록들을 표시하는 컨테이너 위젯 클래스
+ */
 UCLASS()
 class ARUA_API UQuestSelectWidget : public UUserWidget
 {

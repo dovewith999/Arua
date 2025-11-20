@@ -344,10 +344,9 @@ void AQuestGiverActor::ApplyUIInteractionMode()
 	}
 
 	// 입력 모드 UI Only로 설정 및 다이얼로그 위젯으로 포커싱
-	FInputModeGameAndUI Mode;
+	FInputModeUIOnly Mode;
 	Mode.SetWidgetToFocus(DialogWidgetInstance ? DialogWidgetInstance->TakeWidget() : TSharedPtr<SWidget>());
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	Mode.SetHideCursorDuringCapture(false);
 	PC->SetInputMode(Mode);
 }
 
@@ -369,7 +368,7 @@ void AQuestGiverActor::RestoreGameplayMode()
 	PC->bEnableClickEvents = true;
 	PC->bEnableMouseOverEvents = true;
 
-	/* 플레이어 HUD 비가시화 */
+	// 플레이어 HUD 비가시화
 	TArray<FWidgetVisibilityRecord>* Found = CachedWidgetStates.Find(PC);
 	if (!Found) return;
 

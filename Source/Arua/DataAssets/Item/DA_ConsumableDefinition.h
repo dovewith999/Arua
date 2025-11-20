@@ -8,7 +8,7 @@
 #include "DA_ConsumableDefinition.generated.h"
 
 /**
- * 플레이어 속성과 연동되는 소모품 아이템 정의
+ * 소모품 아이템 정의 클래스
  */
 UCLASS()
 class ARUA_API UDA_ConsumableDefinition : public UDA_ItemDefinition

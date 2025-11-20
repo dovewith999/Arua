@@ -8,7 +8,7 @@
 #include "ItemContextMenuWidget.generated.h"
 
 /**
- * 우클릭 시 표시되는 아이템 컨텍스트 메뉴 위젯
+ * 우클릭 시 표시되는 아이템 컨텍스트 메뉴 위젯 클래스
  */
 UCLASS()
 class ARUA_API UItemContextMenuWidget : public UUserWidget

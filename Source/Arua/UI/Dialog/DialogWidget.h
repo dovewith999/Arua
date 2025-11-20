@@ -9,6 +9,9 @@
 // 키 입력 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestInput);
 
+/**
+ * NPC 액터와 상호작용 시, 가장 루트에 생성되는 위젯 클래스
+ */
 UCLASS()
 class ARUA_API UDialogWidget : public UUserWidget
 {

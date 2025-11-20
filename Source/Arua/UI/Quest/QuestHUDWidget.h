@@ -6,6 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "QuestHUDWidget.generated.h"
 
+/**
+ * 플레이어 화면에 현재 진행 중인 퀘스트 목록과 진행 상황을 표시하는 컨테이너 위젯 클래스
+ */
 UCLASS()
 class ARUA_API UQuestHUDWidget : public UUserWidget
 {

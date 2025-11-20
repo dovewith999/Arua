@@ -7,6 +7,10 @@
 #include "DataTables/QuestData.h"
 #include "QuestHUDItemWidget.generated.h"
 
+/**
+ * 현재 진행 중인 퀘스트와 진행 상황을 표시하는 클래스
+ * 퀘스트 HUD 컨테이너에 아래로 쌓이며 퀘스트의 정보와 진행 상황을 간소화하여 표시함
+ */
 UCLASS()
 class ARUA_API UQuestHUDItemWidget : public UUserWidget
 {
