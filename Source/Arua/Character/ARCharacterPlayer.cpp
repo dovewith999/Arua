@@ -931,8 +931,12 @@ void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResul
 		return;
 	}
 
+
+
 	FVector ToInstigator = (InInstigator->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
 	FVector TargetForward = GetActorForwardVector();
+
+	ASC->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("GameplayCue.Hit"));
 
 	float Dot = FVector::DotProduct(TargetForward, ToInstigator);
 	float CrossZ = FVector::CrossProduct(TargetForward, ToInstigator).Z;
