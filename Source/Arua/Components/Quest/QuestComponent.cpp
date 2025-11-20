@@ -2,8 +2,7 @@
 
 
 #include "Components/Quest/QuestComponent.h"
-#include "GameFramework/Actor.h"
-#include "Engine/Engine.h"
+#include "Components/Inventory/InventoryComponent.h"
 
 UQuestComponent::UQuestComponent()
 {
@@ -19,8 +18,8 @@ bool UQuestComponent::AcceptQuest(const FQuestData& Quest)
 	}
 
 	// 수락한 퀘스트 로그 출력
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
-		FString::Printf(TEXT("Accepted: %s"), *Quest.Title.ToString()));
+	//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green,
+	//	FString::Printf(TEXT("Accepted: %s"), *Quest.Title.ToString()));
 
 	// 새 퀘스트 진행 구조체 생성
 	FActiveQuest NewQuest;
@@ -78,7 +77,7 @@ bool UQuestComponent::TurnInQuest(FName QuestID)
 {
 	// 반납할 퀘스트 가져오기
 	FActiveQuest* Quest = ActiveQuests.Find(QuestID);
-	if (!Quest) 
+	if (!Quest)
 	{
 		return false;
 	}
@@ -147,7 +146,13 @@ const EQuestStatus UQuestComponent::GetQuestStatusFromQuestID(const FName QuestI
 
 void UQuestComponent::GrantReward(const FQuestData& Quest)
 {
-	// Todo 김준형: 퀘스트 완료 보상 지급 구현 (인벤토리/골드 연동)
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow,
-		FString::Printf(TEXT("Reward: Gold %d (%s)"), Quest.RewardGold, *Quest.Title.ToString()));
+	// 퀘스트 완료 보상 지급
+	// 재화(골드) 추가
+	if (AActor* Owner = GetOwner())
+	{
+		if (UInventoryComponent* InventoryComp = Owner->FindComponentByClass<UInventoryComponent>())
+		{
+			InventoryComp->AddGolds(Quest.RewardGold);
+		}
+	}
 }

@@ -28,7 +28,6 @@ namespace AruaGamePlayTags
 	/*Damage Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Base, "Data.Damage.Base")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage_Multiplier, "Data.Damage.Multiplier")
-	UE_DEFINE_GAMEPLAY_TAG(Data_Heal_Consumable, "Data.Heal.Consumable")
 
 	/*Event Tags*/
 	UE_DEFINE_GAMEPLAY_TAG(Event_Dead, "Event.Dead")
@@ -61,4 +60,8 @@ namespace AruaGamePlayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack, "GameplayCue.Player.Attack")
 	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack_Special, "GameplayCue.Player.Attack.Special")
 	UE_DEFINE_GAMEPLAY_TAG(GameplayCue_Player_Attack_Impact, "GameplayCue.Player.Attack.Impact")
+
+	/*SetByCaller Tags*/
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Health, "SetByCaller.Health")
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_MovementSpeed, "SetByCaller.MovementSpeed")
 }

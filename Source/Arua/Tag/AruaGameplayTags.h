@@ -36,7 +36,6 @@ namespace AruaGamePlayTags
 	/*Damage Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Multiplier)
-	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Heal_Consumable)
 
 	/*Event Tags*/
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Dead)
@@ -71,4 +70,9 @@ namespace AruaGamePlayTags
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack_Special)
 	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Player_Attack_Impact)
+
+	/*SetByCaller Tags*/
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Health)
+	ARUA_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_MovementSpeed)
+
 }

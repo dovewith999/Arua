@@ -183,11 +183,7 @@ void AQuestGiverActor::HandleQuestTurnIn(FName QuestID)
 	{
 		if (QuestComp->TurnInQuest(QuestID))
 		{
-			// 보상 지급/상태 변경은 컴포넌트가 처리, 여기서는 안내만
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan,
-				FString::Printf(TEXT("[보상 수령 완료] %s"), *QuestID.ToString()));
-
-			// 이 NPC에서 제공하는 퀘스트 리스트에서 수락한 퀘스트 제거
+			// 이 NPC에서 제공하는 퀘스트 리스트에서 완료한 퀘스트 제거
 			ProvidedQuestIDs.Remove(QuestID);
 		}
 	}
