@@ -17,14 +17,18 @@ UARGameEffectManager::UARGameEffectManager()
 	{
 		RadialBlurMaterialInstance = RadialBlurMatFinder.Object;
 	}
+
+	static ConstructorHelpers::FClassFinder<UCameraShakeBase> ImpactCameraShakeBPClassFinder(TEXT("/Game/Blueprints/Etc/BP_CameraShake.BP_CameraShake_C"));
+	if (ImpactCameraShakeBPClassFinder.Succeeded())
+	{
+		ImpactCameraShakeClass = ImpactCameraShakeBPClassFinder.Class;
+	}
 }
 
 void UARGameEffectManager::StartBlur()
 {
 	if (RadialBlurMaterialInstance)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Start Blur"));
-
 		for (TActorIterator<APostProcessVolume> psIt(GetWorld()); psIt; ++psIt)
 		{
 			APostProcessVolume* postProcessVolume = *psIt;
