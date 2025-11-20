@@ -522,6 +522,8 @@ AARWeaponBase* AARCharacterPlayer::WeaponChange(AARWeaponBase* NewWeapon)
 		/*UnequipWeapon(CurrentWeapon);
 		CurrentWeapon = NewWeapon;
 		EquipWeapon(CurrentWeapon, CurrentWeapon->Socket);*/
+
+		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString::Printf(TEXT("Current Weapon: %s"), CurrentWeapon->GetName()));
 		
 		return PreviousWeapon;
 
@@ -554,7 +556,7 @@ void AARCharacterPlayer::WeaponChangeTest()
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(TEXT("WeaponUnarm"), TargetMontage);
 
 	}
-
+	
 	UE_LOG(LogTemp, Log, TEXT("%s"), *WeaponTag.ToString());
 }
 
@@ -851,6 +853,8 @@ void AARCharacterPlayer::EquipWeapon(class AARWeaponBase* EWeapon, FName SocketN
 		UE_LOG(LogTemp, Log, TEXT("%s"), *WeaponTag.ToString());
 		EWeapon->AttachToSocket(this, SocketName);
 		ASC->AddLooseGameplayTag(EWeapon->WeaponTag);
+
+		CurrentWeapon->SetOwnerPlayer(this);
 	}
 }
 
@@ -900,7 +904,6 @@ void AARCharacterPlayer::EquipStartWeapon()
 	if (StartWeaponClass)
 	{
 		CurrentWeapon = GetWorld()->SpawnActor<AARWeaponBase>(StartWeaponClass);
-		CurrentWeapon->SetOwnerPlayer(this);
 
 		if (CurrentWeapon)
 		{

@@ -40,7 +40,7 @@ void AARSword::ChargeEffect()
 		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Charge Count1"));
 
 		WeaponStaticMesh->SetVisibility(false);
-		ChargeEffect1->Activate();;
+		ChargeEffect1->Activate();
 	}
 
 	else if (AttributeSet->GetChargeCount() == 2)

@@ -18,6 +18,9 @@ public:
 	UARGameEffectManager();
 
 public:
+	FORCEINLINE TSubclassOf<class UCameraShakeBase> GetImpactCameraShakeClass() const { return ImpactCameraShakeClass; }	
+
+public:
 #pragma region BlurEffect
 	UFUNCTION()
 	void StartBlur();
@@ -29,4 +32,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect|PostProcess", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UMaterialInstance> RadialBlurMaterialInstance;
+
+	UPROPERTY(EditAnywhere, Category = "Effect|CameraShake", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UCameraShakeBase> ImpactCameraShakeClass;
 };
