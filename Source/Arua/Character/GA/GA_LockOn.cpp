@@ -87,7 +87,7 @@ void UGA_LockOn::ActivateAbility(
 
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Target Not Found"));
+		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Target Not Found"));
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 	}
 }
@@ -156,16 +156,16 @@ AActor* UGA_LockOn::FindLockOnTarget()
 		FoundActors
 	);
 
-	// 디버그 구체 그리기
-	DrawDebugSphere(
-		GetWorld(),             // 월드 객체 포인터
-		CharacterLocation,      // 구체의 중심 위치 (OverlapActors의 첫 번째 인자와 동일)
-		LockOnRange,            // 구체의 반지름 (OverlapActors의 세 번째 인자와 동일)
-		12,                     // 구체를 구성하는 선분의 개수 (높을수록 부드러움)
-		FColor::Red,            // 구체의 색상 (원하는 색상으로 설정)
-		false,                  // bPersistentLines: true면 계속 남아있고, false면 Duration 동안만 표시
-		3.0f                    // Duration: 구체가 화면에 표시될 시간 (초 단위)
-	);
+	//// 디버그 구체 그리기
+	//DrawDebugSphere(
+	//	GetWorld(),             // 월드 객체 포인터
+	//	CharacterLocation,      // 구체의 중심 위치 (OverlapActors의 첫 번째 인자와 동일)
+	//	LockOnRange,            // 구체의 반지름 (OverlapActors의 세 번째 인자와 동일)
+	//	12,                     // 구체를 구성하는 선분의 개수 (높을수록 부드러움)
+	//	FColor::Red,            // 구체의 색상 (원하는 색상으로 설정)
+	//	false,                  // bPersistentLines: true면 계속 남아있고, false면 Duration 동안만 표시
+	//	3.0f                    // Duration: 구체가 화면에 표시될 시간 (초 단위)
+	//);
 
 	// 가장 좋은 타겟 찾기 (각도 + 거리 고려)
 	AActor* BestTarget = nullptr;
@@ -187,22 +187,6 @@ AActor* UGA_LockOn::FindLockOnTarget()
 			BestTarget = Actor;
 			continue;
 		}
-
-		//FVector ToTarget = (Actor->GetActorLocation() - CharacterLocation).GetSafeNormal();
-		//float DotProduct = FVector::DotProduct(ForwardVector, ToTarget);
-		//float Angle = FMath::RadiansToDegrees(FMath::Acos(DotProduct));
-
-		//if (Angle <= LockOnAngle)
-		//{
-		//	float Distance = FVector::Dist(CharacterLocation, Actor->GetActorLocation());
-		//	float Score = (1.0f - (Angle / LockOnAngle)) * (1.0f - (Distance / LockOnRange));
-
-		//	if (Score > BestScore)
-		//	{
-		//		BestScore = Score;
-		//		BestTarget = Actor;
-		//	}
-		//}
 	}
 
 	return BestTarget;
