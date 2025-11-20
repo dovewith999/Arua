@@ -64,6 +64,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> PrevPageButton;
 
+	// 현재 재화(골드) 텍스트
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> GoldsText;
+
 	// 슬롯 위젯 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UInventorySlotWidget> SlotWidgetClass;

@@ -89,6 +89,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory | Gold")
 	bool SpendGolds(int32 Amount);
 
+	// 재화(골드) Getter 함수
+	UFUNCTION(BlueprintCallable, Category = "Inventory | Gold")
+	FORCEINLINE int32 GetGolds() const { return Golds; }
+
 	// 카테고리의 슬롯 배열 const Getter
 	const TArray<FInventorySlot>& GetSlotsByCategory(EAR_ItemCategory Category) const;
 

@@ -8,6 +8,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 void UInventoryWidget::InitializeInventory(UInventoryComponent* InInventory)
 {
@@ -203,5 +204,16 @@ void UInventoryWidget::RefreshGrid()
 				GridSlot->SetColumn(Col);
 			}
 		}
+	}
+
+	if (GoldsText && Inventory)
+	{
+		// 숫자 포맷 옵션 설정
+		FNumberFormattingOptions NumberFormat;
+		NumberFormat.SetUseGrouping(true);        // 3자리마다 , 찍기 (1,234,567)
+		NumberFormat.MinimumIntegralDigits = 1;   // 최소 정수 자릿수
+
+		// 텍스트 설정
+		GoldsText->SetText(FText::AsNumber(Inventory->GetGolds(), &NumberFormat));
 	}
 }
