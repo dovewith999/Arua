@@ -7,6 +7,7 @@
 #include "Character/ARCharacterPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystemComponent.h"
+#include "Subsystems/ARGameEffectManager.h"
 
 UARGA_PlayerWhirlwind::UARGA_PlayerWhirlwind()
 {
@@ -52,6 +53,12 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 			AnimInstance->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
 		}
 	}
+
+	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Start Blur"));
+		GameEffectManager->StartBlur();
+	}
 }
 
 void UARGA_PlayerWhirlwind::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
@@ -91,6 +98,11 @@ void UARGA_PlayerWhirlwind::InputReleased(const FGameplayAbilitySpecHandle Handl
 		{
 			AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
 		}
+	}
+
+	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+	{
+		GameEffectManager->EndBlur();
 	}
 }
 

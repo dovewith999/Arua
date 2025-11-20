@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class ARUA_API UARGameEffectManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -18,14 +18,15 @@ public:
 	UARGameEffectManager();
 
 public:
+#pragma region BlurEffect
 	UFUNCTION()
 	void StartBlur();
 
 	UFUNCTION()
 	void EndBlur();
+#pragma endregion
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect|PostProcess", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UMaterialInstance> RadialBlurMaterialInstance;
-	
 };
