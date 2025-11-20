@@ -6,6 +6,8 @@
 #include "Engine/PostProcessVolume.h"
 #include "Engine/BlendableInterface.h"
 #include "EngineUtils.h"
+#include "Engine/RendererSettings.h"
+#include "GameFramework/GameUserSettings.h"
 
 UARGameEffectManager::UARGameEffectManager()
 {
@@ -28,6 +30,17 @@ void UARGameEffectManager::StartBlur()
 			APostProcessVolume* postProcessVolume = *psIt;
 			if (postProcessVolume)
 			{
+				static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
+				if (CVarAntiAliasing)
+				{
+					CVarAntiAliasing->Set(0, ECVF_SetByCode);
+					UE_LOG(LogTemp, Warning, TEXT("AntiAliasing set to None"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
+				}
+
 				//blending list setting!
 				TArray<FWeightedBlendable>& blendables = postProcessVolume->Settings.WeightedBlendables.Array;
 
@@ -43,8 +56,6 @@ void UARGameEffectManager::StartBlur()
 				}
 				if (!alreadyAdded)
 				{
-					GetWorld()->Exec(GetWorld(), TEXT("r.AntiAliasingMethod 0")); // 0 = None
-
 					if (blendables.Num() >= 1)
 					{
 						blendables.Insert(FWeightedBlendable(1.0f, RadialBlurMaterialInstance), 1);
@@ -75,10 +86,21 @@ void UARGameEffectManager::EndBlur()
 				{
 					if (blendables[i].Object == RadialBlurMaterialInstance)
 					{
-						GetWorld()->Exec(GetWorld(), TEXT("r.AntiAliasingMethod 4")); // 4 = TSR
 						blendables.RemoveAt(i);
+
+						static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
+						if (CVarAntiAliasing)
+						{
+							CVarAntiAliasing->Set(4, ECVF_SetByCode);
+							UE_LOG(LogTemp, Warning, TEXT("AntiAliasing set to None"));
+						}
+						else
+						{
+							UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
+						}
 					}
 				}
+
 			}
 		}
 	}

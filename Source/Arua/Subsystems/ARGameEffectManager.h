@@ -29,5 +29,4 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect|PostProcess", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UMaterialInstance> RadialBlurMaterialInstance;
-	
 };
