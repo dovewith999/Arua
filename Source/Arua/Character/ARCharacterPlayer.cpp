@@ -182,7 +182,7 @@ void AARCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AARCharacterPlayer::LockOnToggle);
 	EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::NPCInteraction);
 	EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::ToggleInventory);
-	EnhancedInputComponent->BindAction(WeaponChangeAction, ETriggerEvent::Started, this, &AARCharacterPlayer::WeaponChangeTest);
+	//EnhancedInputComponent->BindAction(WeaponChangeAction, ETriggerEvent::Started, this, &AARCharacterPlayer::WeaponChangeTest);
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AARCharacterPlayer::GASInputPressed, 0);
 
 	SetupGASInputComponent();
