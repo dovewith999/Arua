@@ -56,7 +56,6 @@ void UARGA_PlayerWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Start Blur"));
 		GameEffectManager->StartBlur();
 	}
 }

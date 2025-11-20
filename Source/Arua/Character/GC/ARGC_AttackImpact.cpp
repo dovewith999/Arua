@@ -7,6 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Subsystems/ARGameEffectManager.h"
 
 UARGC_AttackImpact::UARGC_AttackImpact()
 {
@@ -70,6 +71,15 @@ bool UARGC_AttackImpact::OnExecute_Implementation(AActor* Target, const FGamepla
 			);
 		}
 	}
+
+    if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+    {
+        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+        if (PlayerController)
+        {
+			PlayerController->ClientStartCameraShake(GameEffectManager->GetImpactCameraShakeClass());
+        }
+    }
 
     return true;
 }
