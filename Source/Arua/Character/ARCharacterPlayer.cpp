@@ -43,7 +43,7 @@ AARCharacterPlayer::AARCharacterPlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 
-	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMesh(TEXT("/Game/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet"));
 	if (CharacterMesh.Succeeded())
@@ -416,7 +416,7 @@ void AARCharacterPlayer::RunComplete(const FInputActionValue& Value)
 {
 	bIsRunning = false;
 	bIsRunning = false;
-	GetCharacterMovement()->MaxWalkSpeed = 600.0;
+	GetCharacterMovement()->MaxWalkSpeed = 400.0;
 }
 
 void AARCharacterPlayer::Roll(const FInputActionValue& Value)
