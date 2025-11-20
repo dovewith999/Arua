@@ -5,3 +5,11 @@ Q_KillGreenDragon,Q_KillGreenDragon,마을 습격,녹청 용 토벌,"녹청 용�
 녹청 용을 토벌하여 마을의 안전을 지켜주세요!!",Kill,1,GreenDragon,500
 Q_CollectBlueDragonScales,Q_CollectBlueDragonScales,비늘 수집 1,푸른 용의 비늘 수집,푸른 용의 비늘 3개를 모아와주세요!!,Collect,3,BlueDragonScales,300
 Q_CollectGoldDragonScales,Q_CollectGoldDragonScales,비늘 수집 2,금휘 용의 비늘 수집,금휘 용의 비늘 3개를 모아와주세요!!,Collect,5,GoldDragonScales,1000
+Q_CollectPileOfWoods,Q_CollectPileOfWoods,땔감이 필요해,외곽 숲에서 목재 더미 모아오기,"마을의 장작 창고가 거의 바닥이 난 상황에서, 다가올 겨울을 버티기 위해 땔감이 필요하다.
+마을 외곽 숲에서 목재 더미 10개를 모아오자.",Collect,10,PileOfWoods,200
+Q_CollectLeaves,Q_CollectLeaves,마을 청소,나뭇잎 청소하기,"최근 불어온 거센 바람 때문에 나뭇잎이 크게 쌓여 있다.
+가벼운 일처럼 보이지만, 깔끔한 정리는 마을 사람들의 일상을 더 편하게 만드는 중요한 작업이다.
+
+주변에 흩어진 나뭇잎을 모두 수거하자.",Collect,20,Leaf,300
+Q_CollectOre,Q_CollectOre,광석 캐기,빛바랜 광석 채굴,"마을 곳곳에 있는 바위에서 광석이 나온다는 소문이 있다.
+빛바랜 광석 10개를 모아오자",Collect,10,Ore,500
