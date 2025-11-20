@@ -166,8 +166,8 @@ void AARBoss::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-		DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
-		DrawDebugSphere(GetWorld(), NestLocation, BossNestRange, 32, FColor::Purple, false, -1.f, 0, 2.f);
+		//DrawDebugSphere(GetWorld(), GetActorLocation(), BossAttackRange, 32, FColor::Red, false, -1.f, 0, 2.f);
+		//DrawDebugSphere(GetWorld(), NestLocation, BossNestRange, 32, FColor::Purple, false, -1.f, 0, 2.f);
 
 }
 

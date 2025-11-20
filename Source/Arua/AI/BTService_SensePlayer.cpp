@@ -93,16 +93,16 @@ void UBTService_SensePlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	OwnerMonster->IsSensed(bInSenseRange);
 	//BB->SetValueAsBool(BBKEY_ISSENSED, bInSenseRange);
 
-	//디버그로 감지 범위
-	DrawDebugSphere(
-		AIPawn->GetWorld(),
-		BossLocation,
-		SenseRange,
-		32,
-		bInSenseRange ? FColor::Blue : FColor::Red,
-		false,
-		Interval,  // 다음 Tick까지 유지
-		0,
-		2.f
-	);
+	////디버그로 감지 범위
+	//DrawDebugSphere(
+	//	AIPawn->GetWorld(),
+	//	BossLocation,
+	//	SenseRange,
+	//	32,
+	//	bInSenseRange ? FColor::Blue : FColor::Red,
+	//	false,
+	//	Interval,  // 다음 Tick까지 유지
+	//	0,
+	//	2.f
+	//);
 }
