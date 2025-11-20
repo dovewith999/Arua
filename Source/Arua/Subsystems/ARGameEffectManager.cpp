@@ -9,12 +9,20 @@
 
 UARGameEffectManager::UARGameEffectManager()
 {
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> RadialBlurMatFinder(TEXT("/Game/Personal/LIM_H_S/Material/M_RadialBlur_Inst.M_RadialBlur_Inst"));
+
+	if (RadialBlurMatFinder.Succeeded())
+	{
+		RadialBlurMaterialInstance = RadialBlurMatFinder.Object;
+	}
 }
 
 void UARGameEffectManager::StartBlur()
 {
 	if (RadialBlurMaterialInstance)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Start Blur"));
+
 		for (TActorIterator<APostProcessVolume> psIt(GetWorld()); psIt; ++psIt)
 		{
 			APostProcessVolume* postProcessVolume = *psIt;
@@ -35,6 +43,8 @@ void UARGameEffectManager::StartBlur()
 				}
 				if (!alreadyAdded)
 				{
+					GetWorld()->Exec(GetWorld(), TEXT("r.AntiAliasingMethod 0")); // 0 = None
+
 					if (blendables.Num() >= 1)
 					{
 						blendables.Insert(FWeightedBlendable(1.0f, RadialBlurMaterialInstance), 1);
@@ -65,6 +75,7 @@ void UARGameEffectManager::EndBlur()
 				{
 					if (blendables[i].Object == RadialBlurMaterialInstance)
 					{
+						GetWorld()->Exec(GetWorld(), TEXT("r.AntiAliasingMethod 4")); // 4 = TSR
 						blendables.RemoveAt(i);
 					}
 				}
