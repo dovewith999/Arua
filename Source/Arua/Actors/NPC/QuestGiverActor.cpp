@@ -43,8 +43,8 @@ AQuestGiverActor::AQuestGiverActor()
 	NPCWidgetComponent->SetCullDistance(5000.f);
 
 	// InterctComponent CDO 생성
-	InteractComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractComponent"));
-	InteractComponent->SetInteractCollision(InteractionVolume, FString(TEXT("퀘스트 판")));
+	InteractionComponent = CreateDefaultSubobject<UARInteractComponent>(TEXT("InteractComponent"));
+	//InteractionComponent->SetInteractCollision(InteractionVolume, FString(TEXT("퀘스트 판")));
 }
 
 void AQuestGiverActor::Interact(APawn* InInteractor)
@@ -206,6 +206,8 @@ void AQuestGiverActor::BeginPlay()
 			true
 		);
 	}
+
+	InteractionComponent->SetInteractCollision(InteractionVolume, ObjectName);
 }
 
 TArray<FQuestData> AQuestGiverActor::GetProvidedQuests() const

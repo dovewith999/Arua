@@ -123,7 +123,7 @@ private:
 	FTimerHandle ViewTargetBlendTimer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UARInteractComponent> InteractComponent;
+	TObjectPtr<class UARInteractComponent> InteractionComponent;
 
 	// 위젯 컴포넌트 빌보드 타이머
 	FTimerHandle WidgetComponentBillboardTimerHandle;
@@ -139,4 +139,9 @@ private:
 
 	// PlayerCharacter 별로 숨긴 위젯과 이전 상태를 저장
 	static TMap<TWeakObjectPtr<APlayerController>, TArray<FWidgetVisibilityRecord>> CachedWidgetStates;
+
+	// Todo : ItemPickupActor와 공통 부모 클래스 하나 만들어서 위로 올리는게 best
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	FString ObjectName;
+
 };
