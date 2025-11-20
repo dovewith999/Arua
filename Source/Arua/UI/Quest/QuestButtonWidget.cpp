@@ -13,7 +13,7 @@ void UQuestButtonWidget::Init(const FQuestData& InQuestData, bool IsCompletedQue
 
 	if (!QuestButton || !QuestNameText)
 	{
-		GEngine->AddOnScreenDebugMessage(0, 10.f, FColor::Red, FString("InValid: QuestButton or QuestNameText"));
+		//GEngine->AddOnScreenDebugMessage(0, 10.f, FColor::Red, FString("InValid: QuestButton or QuestNameText"));
 		return;
 	}
 
