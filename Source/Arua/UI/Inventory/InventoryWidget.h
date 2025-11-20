@@ -8,7 +8,8 @@
 #include "InventoryWidget.generated.h"
 
 /**
- * 인벤토리 UI를 표시하는 위젯
+ * 인벤토리 UI를 표시하는 위젯 클래스
+ * 각 카테고리별 최대 슬롯을 한 번에 보여줄 수 있는 최대 슬롯 개수로 나누고 페이징 하여 전환함
  */
 UCLASS()
 class ARUA_API UInventoryWidget : public UUserWidget

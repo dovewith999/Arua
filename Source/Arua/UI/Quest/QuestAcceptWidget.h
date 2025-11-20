@@ -22,6 +22,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestClose);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestTurnIn, FName, QuestID);
 
+/**
+ * 퀘스트 창 위젯 클래스
+ * 퀘스트의 상세 내용과 퀘스트 수락/완료 이벤트를 전달
+ */
 UCLASS()
 class ARUA_API UQuestAcceptWidget : public UUserWidget
 {

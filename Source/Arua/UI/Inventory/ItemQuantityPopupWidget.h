@@ -8,7 +8,7 @@
 #include "ItemQuantityPopupWidget.generated.h"
 
 /**
- * 여러 개 아이템을 사용할 때, 나눌 때, 제거할 때 수량을 선택하는 팝업 위젯
+ * 여러 개 아이템을 사용할 때, 나눌 때, 제거할 때 수량을 선택하는 팝업 위젯 클래스
  */
 UCLASS()
 class ARUA_API UItemQuantityPopupWidget : public UUserWidget

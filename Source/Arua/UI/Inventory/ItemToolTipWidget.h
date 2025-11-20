@@ -7,7 +7,7 @@
 #include "ItemToolTipWidget.generated.h"
 
 /**
- * 아이템 슬롯에 마우스 오버 시, 아이템 정보를 나타내는 툴팁 위젯
+ * 아이템 슬롯에 마우스 오버 시, 아이템 정보를 나타내는 툴팁 위젯 클래스
  */
 UCLASS()
 class ARUA_API UItemToolTipWidget : public UUserWidget

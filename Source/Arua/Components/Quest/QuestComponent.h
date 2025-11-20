@@ -7,7 +7,10 @@
 #include "DataTables/QuestData.h"
 #include "QuestComponent.generated.h"
 
-// 퀘스트 진행 상태 열거형
+/**
+ * 각 퀘스트의 진행 상태를 관리하는 열거형
+ * 진행 상태에 따라 분기를 나누어 퀘스트 진행을 관리
+ */
 UENUM(BlueprintType)
 enum class EQuestStatus : uint8
 {
@@ -17,7 +20,9 @@ enum class EQuestStatus : uint8
 	TurnedIn        // 반납 완료(보상 지급됨)
 };
 
-// 퀘스트 진행 구조체
+/**
+ * 각 퀘스트의 데이터와 진행도, 진행 상태를 관리하는 구조체
+ */
 USTRUCT(BlueprintType)
 struct FActiveQuest
 {
@@ -48,6 +53,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestReadyToTurnInSig, FName, Que
 // 퀘스트 반납 완료 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestTurnedInSig, FName, QuestID);
 
+/**
+ * 액터에 부착하여 퀘스트 관련 상호작용을 담당하는 컴포넌트
+ * 퀘스트에 진행 흐름을 모두 관리하고, 진행 중/완료된 퀘스트를 관리
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ARUA_API UQuestComponent : public UActorComponent
 {
