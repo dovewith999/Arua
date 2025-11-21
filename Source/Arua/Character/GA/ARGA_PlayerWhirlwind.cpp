@@ -65,6 +65,11 @@ void UARGA_PlayerWhirlwind::CancelAbility(const FGameplayAbilitySpecHandle Handl
 	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
 
 	EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility, true);
+
+	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+	{
+		GameEffectManager->EndBlur();
+	}
 }
 
 void UARGA_PlayerWhirlwind::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -77,6 +82,11 @@ void UARGA_PlayerWhirlwind::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 		{
 			AnimInstance->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
 		}
+	}
+
+	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+	{
+		GameEffectManager->EndBlur();
 	}
 }
 
@@ -117,4 +127,9 @@ void UARGA_PlayerWhirlwind::OnInterruptedCallback()
 	bool bReplicatedEndAbility = true;
 	bool bWasCancelled = true;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+
+	if (UARGameEffectManager* GameEffectManager = GetWorld()->GetGameInstance()->GetSubsystem<UARGameEffectManager>())
+	{
+		GameEffectManager->EndBlur();
+	}
 }

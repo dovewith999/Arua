@@ -70,7 +70,6 @@ void UARGA_PlayerChargeAttack::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 	PlayerAttributeSet->SetChargeCount(0.f);
 
-
 	if (AARSword* Weapon = Cast<AARSword>(Player->GetCurrentWeapon()))
 	{
 		Weapon->InitVisible();
