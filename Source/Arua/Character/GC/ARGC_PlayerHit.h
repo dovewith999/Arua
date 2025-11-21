@@ -20,8 +20,8 @@ public:
 	virtual bool OnExecute_Implementation(AActor* Target, const FGameplayCueParameters& Parameters) const override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GameplayCue)
-	TObjectPtr<class UAnimMontage> HitActionMontage;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GameplayCue)
+	TObjectPtr<class UAnimMontage> HitActionMontage;*/
 	
 	
 };

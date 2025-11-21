@@ -3,25 +3,29 @@
 
 #include "Character/GC/ARGC_PlayerHit.h"
 #include "GameFramework/Character.h"
+#include "Animation/ARCharacterAnimInstance.h"
+#include "Character/ARCharacterPlayer.h"
+#include "Animation/AnimMontage.h"
 
 UARGC_PlayerHit::UARGC_PlayerHit()
 {
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> HitActionMontageRef(TEXT("/Game/Animation/Player/AM_Hit.AM_Hit"));
-	if (HitActionMontageRef.Object)
-	{
-		HitActionMontage = HitActionMontageRef.Object;
-	}
+
+	
 }
 
 bool UARGC_PlayerHit::OnExecute_Implementation(AActor* Target, const FGameplayCueParameters& Parameters) const
 {
 
     ACharacter* Character = Cast<ACharacter>(Target);
+    AARCharacterPlayer* Player = CastChecked<AARCharacterPlayer>(Character);
+    UARCharacterAnimInstance* PlayerAnim = Cast<UARCharacterAnimInstance>(Player->GetMesh()->GetAnimInstance());
+    UAnimMontage* HitActionMontage = PlayerAnim->FindMontageInternal(Player->GetWeaponTag(), (FGameplayTag::RequestGameplayTag("Character.Action.Hit")));
+  
 
-    UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-    if (AnimInstance)
+  
+    if (PlayerAnim)
     {
-        AnimInstance->Montage_Play(HitActionMontage,1.0f);
+        PlayerAnim->Montage_Play(HitActionMontage,1.0f);
         //if (!Character->GetMesh())
         //{
         //    UE_LOG(LogTemp, Error, TEXT("[MontageDebug] MeshComp is NULL"));
@@ -65,37 +69,37 @@ bool UARGC_PlayerHit::OnExecute_Implementation(AActor* Target, const FGameplayCu
         if (Parameters.AggregatedTargetTags.HasTag(FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Front")))
         {
             UE_LOG(LogTemp, Log, TEXT("FrontOK"));
-            if (AnimInstance->Montage_IsPlaying(HitActionMontage))
+            if (PlayerAnim->Montage_IsPlaying(HitActionMontage))
             {
                 // 현재 재생 중이면 해당 섹션으로 점프
-                AnimInstance->Montage_JumpToSection("Front", HitActionMontage);
+                PlayerAnim->Montage_JumpToSection("Front", HitActionMontage);
             }
         }
         else if (Parameters.AggregatedTargetTags.HasTag(FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Back")))
         {
             UE_LOG(LogTemp, Log, TEXT("BackOK"));
-            if (AnimInstance->Montage_IsPlaying(HitActionMontage))
+            if (PlayerAnim->Montage_IsPlaying(HitActionMontage))
             {
                 // 현재 재생 중이면 해당 섹션으로 점프
-                AnimInstance->Montage_JumpToSection("Back", HitActionMontage);
+                PlayerAnim->Montage_JumpToSection("Back", HitActionMontage);
             }
         }
         else if (Parameters.AggregatedTargetTags.HasTag(FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Right")))
         {
             UE_LOG(LogTemp, Log, TEXT("RightOK"));
-            if (AnimInstance->Montage_IsPlaying(HitActionMontage))
+            if (PlayerAnim->Montage_IsPlaying(HitActionMontage))
             {
                 // 현재 재생 중이면 해당 섹션으로 점프
-                AnimInstance->Montage_JumpToSection("Right", HitActionMontage);
+                PlayerAnim->Montage_JumpToSection("Right", HitActionMontage);
             }
         }
         else if (Parameters.AggregatedTargetTags.HasTag(FGameplayTag::RequestGameplayTag("GameplayCue.Hit.Left")))
         {
             UE_LOG(LogTemp, Log, TEXT("LeftOK"));
-            if (AnimInstance->Montage_IsPlaying(HitActionMontage))
+            if (PlayerAnim->Montage_IsPlaying(HitActionMontage))
             {
                 // 현재 재생 중이면 해당 섹션으로 점프
-                AnimInstance->Montage_JumpToSection("Left", HitActionMontage);
+                PlayerAnim->Montage_JumpToSection("Left", HitActionMontage);
             }
         }
     }

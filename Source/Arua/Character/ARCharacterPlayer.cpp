@@ -932,7 +932,6 @@ void AARCharacterPlayer::OnHitByAttack_Implementation(const FHitResult& HitResul
 	}
 
 
-
 	FVector ToInstigator = (InInstigator->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
 	FVector TargetForward = GetActorForwardVector();
 
