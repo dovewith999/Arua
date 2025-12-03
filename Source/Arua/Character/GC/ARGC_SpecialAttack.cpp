@@ -66,7 +66,7 @@ void AARGC_SpecialAttack::StartOffsetEffect()
 		return;
 	}
 
-	// 머티리얼 인스턴스 찾기 및 MID 생성 (M_UVOffset_Inst를 가정)
+	// 머티리얼 인스턴스 찾기 및 MID 생성
 	// Post Process Volume의 Settings Array에서 머티리얼을 찾아야 함
 	FWeightedBlendables Blendables = PPVolume->Settings.WeightedBlendables;
 
@@ -86,19 +86,14 @@ void AARGC_SpecialAttack::StartOffsetEffect()
 
 	if (UVOffsetMID)
 	{
-		// 기존 타이머가 있다면 해제하고 CurrentOffsetTime 초기화
 		if (OffsetTimerHandle.IsValid())
 		{
-			// 기존 타이머를 클리어 (활성화 여부와 상관없이 안전하게 초기화)
 			GetWorld()->GetTimerManager().ClearTimer(OffsetTimerHandle);
 		}
 
 		CurrentOffsetTime = 0.0f;
 
-		// 타이머 설정: 0.01초마다 UpdateOffsetEffect 함수를 반복 호출
 		const float TickInterval = 0.01f;
-
-		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("UVOffsetMID")); // 화면출력
 
 		GetWorld()->GetTimerManager().SetTimer(
 			OffsetTimerHandle,          // 타이머 핸들
@@ -112,24 +107,18 @@ void AARGC_SpecialAttack::StartOffsetEffect()
 
 void AARGC_SpecialAttack::UpdateOffsetEffect()
 {
-	// 매 프레임의 DeltaTime 대신, 타이머 설정 시 사용한 간격(0.01초)을 사용
 	const float TickInterval = 0.01f;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Timer Update")); // 화면출력
-
-	// 현재 진행 시간을 누적
 	CurrentOffsetTime += TickInterval;
 
-	// 전체 지속 시간에 대한 현재 진행 비율 (0.0 -> 1.0)
+	// 전체 지속 시간에 대한 현재 진행 비율 
 	float TimeRatio = CurrentOffsetTime / OffsetDuration;
 
-	// 만약 TimeRatio가 1.0을 초과하면 애니메이션을 종료하고 강제로 1.0으로 설정
 	if (TimeRatio >= 1.0f)
 	{
 		TimeRatio = 1.0f;
 	}
 
-	// 0.0 -> 0.5f -> 0.0f 로직 구현
 	float NewOffsetValue = 0.0f;
 
 	if (TimeRatio <= 0.5f)

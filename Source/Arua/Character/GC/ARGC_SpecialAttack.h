@@ -6,8 +6,10 @@
 #include "GameplayCueNotify_Actor.h"
 #include "ARGC_SpecialAttack.generated.h"
 
-/**
- * 
+/*
+ * ChargeAttack 마지막 타격 시 발동되는 Effect에 대한 Cue
+ * 작성자 : 임희섭
+ * 작성일 : 25/11/17
  */
 UCLASS()
 class ARUA_API AARGC_SpecialAttack : public AGameplayCueNotify_Actor
@@ -37,10 +39,6 @@ public:
     void FinishOffsetEffect();
 
 protected:
-    // 재생할 나이아가라 시스템
-    UPROPERTY(EditDefaultsOnly, Category = "Effects")
-    TObjectPtr<class UNiagaraSystem> EffectParticle;
-
     // 재생할 사운드
     UPROPERTY(EditDefaultsOnly, Category = "Effects")
     TObjectPtr<class USoundBase> EffectSound;
@@ -59,7 +57,7 @@ protected:
 
 #pragma region UVOffsetEffect
     UPROPERTY(EditDefaultsOnly, Category = "Post Process")
-    float OffsetDuration = 0.3f; // 0.0 -> 0.5 -> 0.0 까지 걸리는 총 시간
+    float OffsetDuration = 0.3f; // Iffset 변환에 걸리는 총 시간
 
     UPROPERTY()
     UMaterialInstanceDynamic* UVOffsetMID; // Post Process에 할당된 MID 참조
