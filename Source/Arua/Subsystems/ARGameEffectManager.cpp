@@ -34,16 +34,15 @@ void UARGameEffectManager::StartBlur()
 			APostProcessVolume* postProcessVolume = *psIt;
 			if (postProcessVolume)
 			{
-				static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
-				if (CVarAntiAliasing)
-				{
-					CVarAntiAliasing->Set(0, ECVF_SetByCode);
-					UE_LOG(LogTemp, Warning, TEXT("AntiAliasing set to None"));
-				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
-				}
+				//static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
+				//if (CVarAntiAliasing)
+				//{
+				//	CVarAntiAliasing->Set(4, ECVF_SetByCode);
+				//}
+				//else
+				//{
+				//	UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
+				//}
 
 				//blending list setting!
 				TArray<FWeightedBlendable>& blendables = postProcessVolume->Settings.WeightedBlendables.Array;
@@ -92,16 +91,15 @@ void UARGameEffectManager::EndBlur()
 					{
 						blendables.RemoveAt(i);
 
-						static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
-						if (CVarAntiAliasing)
-						{
-							CVarAntiAliasing->Set(4, ECVF_SetByCode);
-							UE_LOG(LogTemp, Warning, TEXT("AntiAliasing set to None"));
-						}
-						else
-						{
-							UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
-						}
+						//static IConsoleVariable* CVarAntiAliasing = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod"));
+						//if (CVarAntiAliasing)
+						//{
+						//	CVarAntiAliasing->Set(4, ECVF_SetByCode);
+						//}
+						//else
+						//{
+						//	UE_LOG(LogTemp, Error, TEXT("Failed to find r.AntiAliasingMethod"));
+						//}
 					}
 				}
 
